@@ -26,9 +26,9 @@ RVTEST_CODE_BEGIN
   TEST_ILLEGAL_VT_REGID(3, 5, 5, add, x1, x7, x2)
   TEST_ILLEGAL_VT_REGID(4, 5, 5, add, x1, x2, x7)
 
-  TEST_ILLEGAL_VT_REGID(5, 5, 5, fadd.d, f7, f1, f2)
-  TEST_ILLEGAL_VT_REGID(6, 5, 5, fadd.d, f1, f7, f2)
-  TEST_ILLEGAL_VT_REGID(7, 5, 5, fadd.d, f1, f2, f7)
+  TEST_ILLEGAL_VT_REGID(5, 5, 5, fadd.d, x7, x1, x2)
+  TEST_ILLEGAL_VT_REGID(6, 5, 5, fadd.d, x1, x7, x2)
+  TEST_ILLEGAL_VT_REGID(7, 5, 5, fadd.d, x1, x2, x7)
 
   TEST_PASSFAIL
 

@@ -284,10 +284,10 @@ test_ ## testnum: \
   addi a5,a5,8; \
   vmsa va5, a5; \
   addi a5,a5,8; \
-  lui a0,%hi(vtcode ## testnum ); \
-  vf %lo(vtcode ## testnum )(a0); \
   la a4,dst; \
   vmsa va6, a4; \
+  lui a0,%hi(vtcode ## testnum ); \
+  vf %lo(vtcode ## testnum )(a0); \
   fence; \
   ld  a1, 0(a5); \
   li a2, 0; \
@@ -302,11 +302,11 @@ skip ## testnum : \
   bne a2,a3,test_loop ## testnum; \
   j 1f; \
 vtcode ## testnum : \
-  vld vx2, va5; \
-  vld vx3, va5; \
+  vld vx2, va3; \
+  vld vx3, va4; \
   vld vx4, va5; \
   code; \
-  vsd vx1, va4; \
+  vsd vx1, va6; \
   vstop; \
   .align 3; \
   test_ ## testnum ## _data: \
@@ -317,54 +317,60 @@ vtcode ## testnum : \
 1:
 
 #define TEST_FCVT_S_D( testnum, result, val1 ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 0, double result, val1, 0.0, 0.0, \
-                    vfcvt.s.d vx5, vx2; vfcvt.d.s vx1, vx5)
+  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 1, double result, val1, 0.0, 0.0, \
+                    vfcvt.s.d 1,1, vx5, vx2; vfcvt.d.s 1,1, vx1, vx5)
 
 #define TEST_FCVT_D_S( testnum, result, val1 ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 0, float result, val1, 0.0, 0.0, \
-                    vfcvt.d.s vx5, vx2; vfcvt.s.d vx1, vx5)
+  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 1, float result, val1, 0.0, 0.0, \
+                    vfcvt.d.s 1,1, vx5, vx2; vfcvt.s.d 1,1, vx1, vx5)
 
 #define TEST_FP_OP2_S( testnum, inst, flags, result, val1, val2 ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 0, float result, val1, val2, 0.0, \
-                    v ## inst 1,1,1 vx1, vx2, vx3)
+  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 1, float result, val1, val2, 0.0, \
+                    v ## inst 1,1,1, vx1, vx2, vx3)
 
 #define TEST_FP_OP2_D( testnum, inst, flags, result, val1, val2 ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 0, double result, val1, val2, 0.0, \
-                    v ## inst 1,1,1 vx1, vx2, vx3)
+  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 1, double result, val1, val2, 0.0, \
+                    v ## inst 1,1,1, vx1, vx2, vx3)
 
 #define TEST_FP_OP3_S( testnum, inst, flags, result, val1, val2, val3 ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 0, float result, val1, val2, val3, \
-                    v ## inst 1,1,1,1 vx1, vx2, vx3, vx4)
+  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 1, float result, val1, val2, val3, \
+                    v ## inst 1,1,1,1, vx1, vx2, vx3, vx4)
 
 #define TEST_FP_OP3_D( testnum, inst, flags, result, val1, val2, val3 ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 0, double result, val1, val2, val3, \
-                    v ## inst 1,1,1,1 vx1, vx2, vx3, vx4)
+  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 1, double result, val1, val2, val3, \
+                    v ## inst 1,1,1,1, vx1, vx2, vx3, vx4)
 
 #define TEST_FP_INT_OP_S( testnum, inst, flags, result, val1, rm ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 0, word result, val1, 0.0, 0.0, \
-                    v ## inst 1,1,1, vx1, vx2, rm)
+  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 1, word result, val1, 0.0, 0.0, \
+                    v ## inst 1,1, vx1, vx2, rm)
 
 #define TEST_FP_INT_OP_D( testnum, inst, flags, result, val1, rm ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 0, dword result, val1, 0.0, 0.0, \
-                    v ## inst 1,1,1, vx1, vx2, rm)
+  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 1, dword result, val1, 0.0, 0.0, \
+                    v ## inst 1,1, vx1, vx2, rm)
 
 #define TEST_FP_CMP_OP_S( testnum, inst, result, val1, val2 ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 0, word result, val1, val2, 0.0, \
-                    v ## inst 1,1,1,1 vx1, vx2, vx3)
+  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 2, word result, val1, val2, 0.0, \
+                    vcmp ## inst 1,1, vp1, vx2, vx3;\
+                    vaddi vs1,vs0,1; @vp1 vadd 1,0,0, vx1,vs0,vs1;\
+                    @!vp1 vadd 1,0,0, vx1,vs0,vs0 )
 
 #define TEST_FP_CMP_OP_D( testnum, inst, result, val1, val2 ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 0, dword result, val1, val2, 0.0, \
-                    v ## inst 1,1,1,1 vx1, vx2, vx3)
+  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 2, dword result, val1, val2, 0.0, \
+                    vcmp ## inst 1,1, vp1, vx2, vx3;\
+                    vaddi vs1,vs0,1; @vp1 vadd 1,0,0, vx1,vs0,vs1;\
+                    @!vp1 vadd 1,0,0, vx1,vs0,vs0 )
 
 #define TEST_INT_FP_OP_S( testnum, inst, result, val1 ) \
 test_ ## testnum: \
   vsetcfg 2,0; \
   li a3,2048; \
   vsetvl a3,a3; \
+  la a4,dst; \
+  vmsa va4, a4; \
+  li a5, val1; \
+  vmss vs1, a5; \
   lui a0,%hi(vtcode ## testnum ); \
   vf %lo(vtcode ## testnum )(a0); \
-  la a4,dst; \
-  vsw vx1, a4; \
   fence; \
   la  a5, test_ ## testnum ## _data ;\
   lw  a1, 0(a5); \
@@ -380,8 +386,9 @@ skip ## testnum : \
   bne a2,a3,test_loop ## testnum; \
   j 1f; \
 vtcode ## testnum : \
-  li vx1, val1; \
-  v ## inst vx1, vx1; \
+  vadd 1,0,0, vx1, vs1, vs0; \
+  v ## inst 1,1, vx1, vx1; \
+  vsw vx1, va4; \
   vstop; \
   .align 2; \
   test_ ## testnum ## _data: \
@@ -393,10 +400,12 @@ test_ ## testnum: \
   vsetcfg 2,0; \
   li a3,2048; \
   vsetvl a3,a3; \
+  la a4,dst; \
+  vmsa va4, a4; \
+  li a5, val1; \
+  vmss vs1, a5; \
   lui a0,%hi(vtcode ## testnum ); \
   vf %lo(vtcode ## testnum )(a0); \
-  la a4,dst; \
-  vsd vx1, a4; \
   fence; \
   la  a5, test_ ## testnum ## _data ;\
   ld  a1, 0(a5); \
@@ -412,8 +421,9 @@ skip ## testnum : \
   bne a2,a3,test_loop ## testnum; \
   j 1f; \
 vtcode ## testnum : \
-  li vx1, val1; \
-  v ## inst vx1, vx1; \
+  vadd 1,0,0, vx1, vs1, vs0; \
+  v ## inst 1,1, vx1, vx1; \
+  vsd vx1, va4; \
   vstop; \
   .align 3; \
   test_ ## testnum ## _data: \

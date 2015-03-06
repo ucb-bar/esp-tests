@@ -638,22 +638,28 @@ handler ## testnum: \
   li a0, 4; \
   vsetvl a0, a0; \
   la a0, src1; \
+  vmsa va0, a0; \
   la a1, src2; \
-  vld vx2, a0; \
-  vld vx3, a1; \
+  vmsa va1, a1; \
+  la a3, dest; \
+  vmsa va2, a3; \
   lui a0,%hi(vtcode1 ## testnum); \
   vf %lo(vtcode1 ## testnum)(a0); \
-  la a3, dest; \
-  vsd vx2, a3; \
   fence; \
 vtcode1 ## testnum: \
-  add x2, x2, x3; \
+  vld vx2,va0; \
+  vld vx3,va1; \
+  vadd 1,1,1, vx2, vx2, vx3; \
+  vsd vx2, va2; \
 illegal ## testnum: \
-  inst reg1, reg2, reg3; \
-  stop; \
+  v ## inst 1,1,1, v ## reg1, v ## reg2, v ## reg3; \
+  vstop; \
 vtcode2 ## testnum: \
-  add x2, x2, x3; \
-  stop; \
+  vld vx2,va0; \
+  vld vx3,va1; \
+  vadd 1,1,1, vx2, vx2, vx3; \
+  vsd vx2, va2; \
+  vstop; \
 handler ## testnum: \
   vxcptkill; \
   li TESTNUM,2; \
@@ -666,14 +672,14 @@ handler ## testnum: \
   vsetcfg 32,0; \
   li a0,4; \
   vsetvl a0,a0; \
-  la a0,src1; \
-  la a1,src2; \
-  vld vx2,a0; \
-  vld vx3,a1; \
+  la a0, src1; \
+  vmsa va0, a0; \
+  la a1, src2; \
+  vmsa va1, a1; \
+  la a3, dest; \
+  vmsa va2, a3; \
   lui a0,%hi(vtcode2 ## testnum); \
   vf %lo(vtcode2 ## testnum)(a0); \
-  la a3,dest; \
-  vsd vx2,a3; \
   fence; \
   ld a1,0(a3); \
   li a2,5; \

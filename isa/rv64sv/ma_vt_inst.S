@@ -34,8 +34,8 @@ RVTEST_CODE_BEGIN
 1:      j 1b
 
 vtcode1:
-  add x2,x2,x3
-  stop
+  vadd 1,1,1, vx2,vx2,vx3
+  vstop
 
 handler:
   vxcptkill
@@ -60,13 +60,13 @@ handler:
   vsetvl a3,a3
 
   la a3,src1
+  vmsa va2,a3
   la a4,src2
-  vld vx2,a3
-  vld vx3,a4
+  vmsa va3,a4
+  la a5,dest
+  vmsa va1,a5
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
-  la a5,dest
-  vsd vx2,a5
   fence
 
   ld a1,0(a5)

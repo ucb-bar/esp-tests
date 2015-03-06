@@ -18,11 +18,13 @@ RVTEST_CODE_BEGIN
   vsetvl a4,a4
 
   la a5,amodest
-  vmsv vx2,a5
+  vmss vs2,a5
+  li a6,0xaaaaaaaaaaaaaaaa
+  vmss vs3, a6
+  la a6,dest
+  vmsa va1,a6
   lui a0,%hi(vtcode)
   vf %lo(vtcode)(a0)
-  la a6,dest
-  vsw vx1,a6
   fence
 
   li a1,0
@@ -39,9 +41,11 @@ loop:
   j pass
 
 vtcode:
-  li x3,0xcafe
-  amoxor.w x1,x3,0(x2)
-  stop
+  vadd 1,0,0, vx3,vs3,vs0
+  vadd 1,0,0, vx2,vs2,vs0
+  vamoxor.w 1,1,1, vx1,vx3,vx2
+  vsw vx1,va1
+  vstop
 
   TEST_PASSFAIL
 

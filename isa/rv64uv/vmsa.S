@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# fmovn.S
+# vmsa.S
 #-----------------------------------------------------------------------------
 #
-# Test fmovn instruction in a vf block.
+# Test vmsa instruction.
 #
 
 #include "riscv_test.h"
@@ -13,40 +13,32 @@
 RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
-  vsetcfg 4,2
-  li a6,2048
-  vsetvl a6,a6
+  vsetcfg 3,0
+  li a2,4
+  vsetvl a2,a2
 
+  la a3,src1
+  vmsa va1,a3
+  la a4,dest
+  vmsa va2,a4
   lui a0,%hi(vtcode)
   vf %lo(vtcode)(a0)
-  la a7,dest
-  vfsd vf0,a7
   fence
 
   li a1,0
-  li a2,-1
 loop:
-  ld a0,0(a7)
-  slti a4,a1,10
-  slli a4,a4,63
-  srai a4,a4,63
-  and a5,a2,a4
+  ld a0,0(a4)
   addi TESTNUM,a1,2
-  bne a0,a5,fail
-  addi a7,a7,8
+  bne a0,a1,fail
+  addi a4,a4,8
   addi a1,a1,1
-  bne a1,a6,loop
+  bne a1,a2,loop
   j pass
 
 vtcode:
-  utidx x1
-  slti x2,x1,10
-  li x1,-1
-  li x3,0
-  fmv.d.x f0,x3
-  fmv.d.x f1,x1
-  fmovn f0,x2,f1
-  stop
+  vld vx1,va1
+  vsd vx2,va2
+  vstop
 
   TEST_PASSFAIL
 
@@ -56,6 +48,11 @@ RVTEST_CODE_END
 RVTEST_DATA_BEGIN
 
   TEST_DATA
+src1:
+  .dword 0
+  .dword 1
+  .dword 2
+  .dword 3
 
 dest:
   .skip 16384

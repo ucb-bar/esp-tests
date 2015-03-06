@@ -20,7 +20,7 @@ RVTEST_CODE_BEGIN
 loop:
 	vsetvl x4, x1
 	la x2, addr
-	vmsv vx1, x2
+  vmsa va1,x2
 	la x3, test
 	vf 0(x3)
 	sub x1, x1, x4
@@ -49,13 +49,15 @@ enable_fp:
 	ret
 
 test:
-	utidx x2
-	slli x2, x2, 2
-	add x1, x1, x2
-	flh f0, 0(x1)
-	fmul.h f0, f0, f0
-	fsh f0, 0(x1)
-	stop
+  vlh vx1,va1
+	veidx vx2
+	vslli vs2, vs2, 2
+  vadd 1,1,0, vx2,vx2,vs2
+	vadd 1,1,1, vx1, vx1, vx2
+	vlxh vx2, vs0, vx1
+	vfmul.h 1,1,1, vx2, vx2, vx2
+	vsxh vx2, vs0, vx1
+	vstop
 
 check:
 	la x2, addr

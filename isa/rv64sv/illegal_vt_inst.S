@@ -30,22 +30,27 @@ RVTEST_CODE_BEGIN
   vsetvl a3,a3
 
   la a3,src1
+  vmsa va2,a3
   la a4,src2
-  vld vx2,a3
-  vld vx3,a4
+  vmsa va3,a4
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
   fence
 
 vtcode1:
-  add x2,x2,x3
+  vld vx2,va2
+  vld vx3,va3
+  vadd 1,1,1, vx2,vx2,vx3
 illegal:
   .word 0x0
-  stop
+  vstop
 
 vtcode2:
-  add x2,x2,x3
-  stop
+  vld vx2,va2
+  vld vx3,va3
+  vadd 1,1,1, vx2,vx2,vx3
+  vsd vx2, va1
+  vstop
 
 handler:
   vxcptkill
@@ -68,13 +73,13 @@ handler:
   vsetvl a3,a3
 
   la a3,src1
+  vmsa va2,a3
   la a4,src2
-  vld vx2,a3
-  vld vx3,a4
+  vmsa va3,a4
+  la a5,dest
+  vmsa va1,a5
   lui a0,%hi(vtcode2)
   vf %lo(vtcode2)(a0)
-  la a5,dest
-  vsd vx2,a5
   fence
 
   ld a1,0(a5)

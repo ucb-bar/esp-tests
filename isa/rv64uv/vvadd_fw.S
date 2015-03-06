@@ -18,13 +18,13 @@ RVTEST_CODE_BEGIN
   vsetvl a3,a3
 
   la a3,src1
+  vmsa va2,a3
   la a4,src2
-  vflw vf2,a3
-  vflw vf3,a4
+  vmsa va3,a4
+  la a5,dest
+  vmsa va1,a5
   lui a0,%hi(vtcode)
   vf %lo(vtcode)(a0)
-  la a5,dest
-  vfsw vf2,a5
   fence
   la a6,result
   lw a1,0(a5)
@@ -43,8 +43,11 @@ RVTEST_CODE_BEGIN
   j pass
 
 vtcode:
-  fadd.s f2,f2,f3
-  stop
+  vlw vx2,va2
+  vlw vx3,va3
+  vfadd.s 1,1,1, vx2,vx2,vx3
+  vsw vx2,va1
+  vstop
 
   TEST_PASSFAIL
 

@@ -19,7 +19,9 @@ RVTEST_CODE_BEGIN
 
   li a4,20
   li s0,2
-  vmsv vx1,a4
+  vmss vs1,a4
+  la a5,dest
+  vmsa va1,a5
   lui a0,%hi(vtcode)
   vf %lo(vtcode)(a0)
 
@@ -45,8 +47,6 @@ RVTEST_CODE_BEGIN
   nop
   mul s1,a4,s0
 
-  la a5,dest
-  vsd vx1,a5
   fence
 
   li s2,40
@@ -66,9 +66,10 @@ loop:
   j pass
 
 vtcode:
-  utidx x2
-  mul x1,x2,x1
-  stop
+  veidx vx2
+  vmul 1,1,0, vx1,vx2,vs1
+  vsd vx1,va1
+  vstop
 
   TEST_PASSFAIL
 

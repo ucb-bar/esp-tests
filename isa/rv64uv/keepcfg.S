@@ -17,19 +17,19 @@ RVTEST_CODE_BEGIN
   li s0,2048
   vsetvl s0,s0
 
+  la a4,dest1
+  vmsa va1, a4
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
-  la a4,dest1
-  vsd vx1,a4
 
   vsetcfg 3,0
   li s1,2048
   vsetvl s1,s1
 
+  la a4,dest2
+  vmsa va1,a4
   lui a0,%hi(vtcode2)
   vf %lo(vtcode2)(a0)
-  la a4,dest2
-  vsd vx1,a4
 
   fence
 
@@ -58,14 +58,18 @@ loop2:
   j pass
 
 vtcode1:
-  utidx x1
-  addi x1,x1,1
-  stop
+  veidx vx1
+  vaddi vs1,vs0,1
+  vadd 1,1,0, vx1,vx1,vs1
+  vsd vx1,va1
+  vstop
 
 vtcode2:
-  utidx x1
-  addi x1,x1,1024
-  stop
+  veidx vx1
+  vaddi vs1,vs0,1024
+  vadd 1,1,0, vx1,vx1,vs1
+  vsd vx1,va1
+  vstop
 
   TEST_PASSFAIL
 
