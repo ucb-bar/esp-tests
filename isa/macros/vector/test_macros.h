@@ -20,12 +20,12 @@ test_ ## testnum: \
   vsetcfg nxreg,1; \
   li a3,2048; \
   vsetvl a3,a3; \
-  la a4,dst; \
-  vmsa va4, a4; \
   li a4, val1; \
   vmss vs1, a4; \
   li a4, val2; \
   vmss vs2, a4; \
+  la a4,dst; \
+  vmsa va4, a4; \
   lui a0,%hi(vtcode ## testnum ); \
   vf %lo(vtcode ## testnum )(a0); \
   fence; \
@@ -240,10 +240,10 @@ test_ ## testnum: \
   addi a5,a5,4; \
   vmsa va5, a5; \
   addi a5,a5,4; \
-  lui a0,%hi(vtcode ## testnum ); \
-  vf %lo(vtcode ## testnum )(a0); \
   la a4,dst; \
   vmsa va6,a4; \
+  lui a0,%hi(vtcode ## testnum ); \
+  vf %lo(vtcode ## testnum )(a0); \
   fence; \
   lw  a1, 0(a5); \
   li a2, 0; \
@@ -365,10 +365,10 @@ test_ ## testnum: \
   vsetcfg 2,0; \
   li a3,2048; \
   vsetvl a3,a3; \
-  la a4,dst; \
-  vmsa va4, a4; \
   li a5, val1; \
   vmss vs1, a5; \
+  la a4,dst; \
+  vmsa va4, a4; \
   lui a0,%hi(vtcode ## testnum ); \
   vf %lo(vtcode ## testnum )(a0); \
   fence; \
@@ -400,10 +400,10 @@ test_ ## testnum: \
   vsetcfg 2,0; \
   li a3,2048; \
   vsetvl a3,a3; \
-  la a4,dst; \
-  vmsa va4, a4; \
   li a5, val1; \
   vmss vs1, a5; \
+  la a4,dst; \
+  vmsa va4, a4; \
   lui a0,%hi(vtcode ## testnum ); \
   vf %lo(vtcode ## testnum )(a0); \
   fence; \
