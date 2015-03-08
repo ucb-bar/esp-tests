@@ -41,6 +41,7 @@ skip ## testnum : \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j next ## testnum; \
+.align 8; \
 vtcode ## testnum : \
   code; \
   vsd v ## testreg, va4; \
@@ -51,16 +52,16 @@ next ## testnum :
 # of bubble cycles.
 
 #define TEST_INSERT_NOPS_0
-#define TEST_INSERT_NOPS_1  nop; TEST_INSERT_NOPS_0
-#define TEST_INSERT_NOPS_2  nop; TEST_INSERT_NOPS_1
-#define TEST_INSERT_NOPS_3  nop; TEST_INSERT_NOPS_2
-#define TEST_INSERT_NOPS_4  nop; TEST_INSERT_NOPS_3
-#define TEST_INSERT_NOPS_5  nop; TEST_INSERT_NOPS_4
-#define TEST_INSERT_NOPS_6  nop; TEST_INSERT_NOPS_5
-#define TEST_INSERT_NOPS_7  nop; TEST_INSERT_NOPS_6
-#define TEST_INSERT_NOPS_8  nop; TEST_INSERT_NOPS_7
-#define TEST_INSERT_NOPS_9  nop; TEST_INSERT_NOPS_8
-#define TEST_INSERT_NOPS_10 nop; TEST_INSERT_NOPS_9
+#define TEST_INSERT_NOPS_1  vnop; TEST_INSERT_NOPS_0
+#define TEST_INSERT_NOPS_2  vnop; TEST_INSERT_NOPS_1
+#define TEST_INSERT_NOPS_3  vnop; TEST_INSERT_NOPS_2
+#define TEST_INSERT_NOPS_4  vnop; TEST_INSERT_NOPS_3
+#define TEST_INSERT_NOPS_5  vnop; TEST_INSERT_NOPS_4
+#define TEST_INSERT_NOPS_6  vnop; TEST_INSERT_NOPS_5
+#define TEST_INSERT_NOPS_7  vnop; TEST_INSERT_NOPS_6
+#define TEST_INSERT_NOPS_8  vnop; TEST_INSERT_NOPS_7
+#define TEST_INSERT_NOPS_9  vnop; TEST_INSERT_NOPS_8
+#define TEST_INSERT_NOPS_10 vnop; TEST_INSERT_NOPS_9
 
 
 #-----------------------------------------------------------------------
