@@ -14,7 +14,6 @@ rv64uv_sc_tests = \
 	imul \
 	fcvt \
 	vvadd_d vvadd_w vvadd_fd vvadd_fw \
-	vvadd_packed \
 	vvmul_d \
 
 rv64uv_sc_vec_tests = \

@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# xcpt_illegal_vt_regid.S
+# illegal_tvec_regid.S
 #-----------------------------------------------------------------------------
 #
-# Test illegal vt regid trap.
+# Test illegal tvec regid trap.
 #
 
 #include "riscv_test.h"
@@ -13,13 +13,11 @@
 RVTEST_RV64SV
 RVTEST_CODE_BEGIN
 
-  TEST_ILLEGAL_VT_REGID(2, 5, 5, add, x7, x1, x2)
-  TEST_ILLEGAL_VT_REGID(3, 5, 5, add, x1, x7, x2)
-  TEST_ILLEGAL_VT_REGID(4, 5, 5, add, x1, x2, x7)
+  TEST_ILLEGAL_TVEC_REGID(2, 5, 5, vsd, vx7, a2)
+  TEST_ILLEGAL_TVEC_REGID(3, 5, 5, vld, vx7, a2)
 
-  TEST_ILLEGAL_VT_REGID(5, 5, 5, fadd.d, x7, x1, x2)
-  TEST_ILLEGAL_VT_REGID(6, 5, 5, fadd.d, x1, x7, x2)
-  TEST_ILLEGAL_VT_REGID(7, 5, 5, fadd.d, x1, x2, x7)
+  TEST_ILLEGAL_TVEC_REGID(4, 5, 5, vfsd, vf7, a2)
+  TEST_ILLEGAL_TVEC_REGID(5, 5, 5, vfld, vf7, a2)
 
   TEST_PASSFAIL
 
