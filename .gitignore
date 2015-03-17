@@ -5,5 +5,5 @@
 *.dump
 *.out
 *.hex
-.*.swp
+*.swp
 autom4te.cache
