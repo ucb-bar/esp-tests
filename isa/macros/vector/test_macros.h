@@ -258,10 +258,14 @@ skip ## testnum : \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j 1f; \
+.align 8; \
 vtcode ## testnum : \
-  vlw vx2, va3; \
-  vlw vx3, va4; \
-  vlw vx4, va5; \
+  vlaw vs2, va3; \
+  vlaw vs3, va4; \
+  vlaw vs4, va5; \
+  vadd 1,0,0, vx2, vs2, vs0; \
+  vadd 1,0,0, vx3, vs3, vs0; \
+  vadd 1,0,0, vx4, vs4, vs0; \
   code; \
   vsw vx1, va6; \
   vstop; \
@@ -302,10 +306,14 @@ skip ## testnum : \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j 1f; \
+.align 8; \
 vtcode ## testnum : \
-  vld vx2, va3; \
-  vld vx3, va4; \
-  vld vx4, va5; \
+  vlad vs2, va3; \
+  vlad vs3, va4; \
+  vlad vs4, va5; \
+  vadd 1,0,0, vx2, vs2, vs0; \
+  vadd 1,0,0, vx3, vs3, vs0; \
+  vadd 1,0,0, vx4, vs4, vs0; \
   code; \
   vsd vx1, va6; \
   vstop; \
@@ -386,6 +394,7 @@ skip ## testnum : \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j 1f; \
+.align 8; \
 vtcode ## testnum : \
   vadd 1,0,0, vx1, vs1, vs0; \
   v ## inst 1,1, vx1, vx1; \
@@ -421,6 +430,7 @@ skip ## testnum : \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j 1f; \
+.align 8; \
 vtcode ## testnum : \
   vadd 1,0,0, vx1, vs1, vs0; \
   v ## inst 1,1, vx1, vx1; \
@@ -569,6 +579,7 @@ skip ## testnum : \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j next ## testnum; \
+.align 8; \
 vtcode ## testnum : \
   code; \
   stop; \
