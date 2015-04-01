@@ -14,12 +14,10 @@ RVTEST_RV64M
 RVTEST_CODE_BEGIN
 
   # Turn on VM with superpage identity mapping
-  la a1, handler
-  csrw stvec, a1
   la a1, page_table_1
   csrw sptbr, a1
   sfence.vm
-  li a1, (MSTATUS_VM & ~(MSTATUS_VM<<1)) * VM_SV43
+  li a1, ((MSTATUS_VM & ~(MSTATUS_VM<<1)) * VM_SV43) | ((MSTATUS_PRV1 & ~(MSTATUS_PRV1<<1)) * PRV_S)
   csrs mstatus, a1
   la a1, 1f
   csrw mepc, a1
@@ -50,7 +48,7 @@ RVTEST_CODE_BEGIN
 
   TEST_PASSFAIL
 
-handler:
+stvec_handler:
   csrr t0, scause
   li t1, 2
   bne TESTNUM, t1, 1f
@@ -75,10 +73,10 @@ die:
   RVTEST_FAIL
 
 .data
-.align 13
-page_table_1: .dword PTE_V | PTE_SX | PTE_SR
+.align 12
+page_table_1: .dword PTE_TYPE_US_SRX
 dummy: .dword 0
-.align 13
-page_table_2: .dword PTE_V | PTE_SX | PTE_SR | PTE_SW
+.align 12
+page_table_2: .dword PTE_TYPE_US_SRWX
 
 RVTEST_CODE_END
