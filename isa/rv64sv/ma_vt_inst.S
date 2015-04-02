@@ -13,9 +13,6 @@
 RVTEST_RV64SV
 RVTEST_CODE_BEGIN
 
-  la a3,handler
-  csrw stvec,a3 # set exception handler
-
   vsetcfg 32,0
   li a3,4
   vsetvl a3,a3
@@ -28,7 +25,7 @@ vtcode1:
   vadd 1,1,1, vx2,vx2,vx3
   vstop
 
-handler:
+stvec_handler:
   vxcptkill
 
   li TESTNUM,2
