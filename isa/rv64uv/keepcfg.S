@@ -57,6 +57,7 @@ loop2:
 
   j pass
 
+.align 3
 vtcode1:
   veidx vx1
   vaddi vs1,vs0,1
@@ -64,6 +65,7 @@ vtcode1:
   vsd vx1,va1
   vstop
 
+.align 3
 vtcode2:
   veidx vx1
   vaddi vs1,vs0,1024

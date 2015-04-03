@@ -49,6 +49,7 @@ loop:
   bne a2,a4,loop
   j pass
 
+.align 3
 vtcode:
   vld vx1,va1
   veidx vx3

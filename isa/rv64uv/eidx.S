@@ -33,6 +33,7 @@ loop:
   bne a1,a2,loop
   j pass
 
+.align 3
 vtcode:
   veidx vx1
   vaddi vs1,vs0,1

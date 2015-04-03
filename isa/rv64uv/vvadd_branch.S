@@ -98,18 +98,21 @@ RVTEST_CODE_BEGIN
 
   j pass
 
+.align 3
 vtcode1:
   beq x2, x2, end
   add x2,x2,x3
 end:    add x2, x3, x3
   stop
 
+.align 3
 vtcode2:
   blt x4, x5, end2
   add x4, x0, x0
 end2:   add x4, x4, x0
   stop
 
+.align 3
 vtcode3:
   bge x5, x0, end3
   add x5, x0, x0

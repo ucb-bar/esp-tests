@@ -44,6 +44,7 @@ RVTEST_CODE_BEGIN
   bne a1,a2,fail
   j pass
 
+.align 3
 vtcode:
   vld vx2,va2
   vld vx3,va3

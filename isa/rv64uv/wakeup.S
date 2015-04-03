@@ -128,6 +128,7 @@ RVTEST_CODE_BEGIN
 
   j pass
 
+.align 3
 vtcode1:
   vld vx2,va2
   vld vx3,va3
