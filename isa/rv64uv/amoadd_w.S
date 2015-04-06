@@ -37,6 +37,7 @@ loop:
   bne a1,a4,loop
   j pass
 
+.align 3
 vtcode:
   vadd 1,0,0, vx2,vs2,vs0
   vamoadd.d 1,0,1, vx1,vs3,vx2

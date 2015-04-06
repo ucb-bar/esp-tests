@@ -48,6 +48,7 @@ enable_fp:
 	beqz x2, fail
 	ret
 
+.align 3
 test:
   vlh vx1,va1
 	veidx vx2

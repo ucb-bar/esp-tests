@@ -93,6 +93,7 @@ RVTEST_CODE_BEGIN
 
   j pass
 
+.align 3
 vtcode1:
   vld vx2,va2
   vld vx3,va3
@@ -100,12 +101,14 @@ vtcode1:
   vsd vx2,va1
   vstop
 
+.align 3
 vtcode2:
   vld vx2,va2
   vadd 1,1,1, vx1,vx0,vx2
   vsd vx1,va1
   vstop
 
+.align 3
 vtcode3:
   vld vx2,va2
   vadd 1,1,1, vx1,vx2,vx0

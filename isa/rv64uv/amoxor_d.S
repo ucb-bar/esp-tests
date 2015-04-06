@@ -40,6 +40,7 @@ loop:
   bne a1,a4,loop
   j pass
 
+.align 3
 vtcode:
   vadd 1,0,0, vx3,vs3,vs0
   vadd 1,0,0, vx2,vs2,vs0
