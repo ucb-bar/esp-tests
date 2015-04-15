@@ -104,14 +104,14 @@ vtcode1:
 .align 3
 vtcode2:
   vld vx2,va2
-  vadd 1,1,1, vx1,vx0,vx2
+  vadd 1,0,1, vx1,vs0,vx2
   vsd vx1,va1
   vstop
 
 .align 3
 vtcode3:
   vld vx2,va2
-  vadd 1,1,1, vx1,vx2,vx0
+  vadd 1,1,0, vx1,vx2,vs0
   vsd vx1,va1
   vstop
 
