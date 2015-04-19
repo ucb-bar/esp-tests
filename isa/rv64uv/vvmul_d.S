@@ -46,8 +46,8 @@ RVTEST_CODE_BEGIN
 
 .align 3
 vtcode:
-  vld vx2,va2
-  vld vx3,va3
+  vld vx2,va1
+  vld vx3,va2
   vmul 1,1,1, vx2,vx2,vx3
   vsd vx2,va3
   vstop
