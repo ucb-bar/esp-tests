@@ -199,18 +199,18 @@ next ## testnum :
 #define TEST_RR_ZEROSRC1( testnum, inst, result, val ) \
     TEST_CASE_NREG( testnum, 3, x2, result, val, 0, \
       vadd 1,0,0,  vx1, vs1, vs0; \
-      v ## inst 1,1,1, vx2, vx0, vx1; \
+      v ## inst 1,0,1, vx2, vs0, vx1; \
     )
 
 #define TEST_RR_ZEROSRC2( testnum, inst, result, val ) \
     TEST_CASE_NREG( testnum, 3, x2, result, val, 0, \
       vadd 1,0,0,  vx1, vs1, vs0; \
-      v ## inst 1,1,1, vx2, vx1, vx0; \
+      v ## inst 1,1,0, vx2, vx1, vs0; \
     )
 
 #define TEST_RR_ZEROSRC12( testnum, inst, result ) \
     TEST_CASE_NREG( testnum, 2, x1, result, 0, 0, \
-      v ## inst 1,1,1, vx1, vx0, vx0; \
+      v ## inst 1,0,0, vx1, vs0, vs0; \
     )
 
 #define TEST_RR_ZERODEST( testnum, inst, val1, val2 ) \
@@ -218,6 +218,7 @@ next ## testnum :
       vadd 1,0,0,  vx1, vs1, vs0; \
       vadd 1,0,0,  vx2, vs2, vs0; \
       v ## inst 1,1,1, vx0, vx1, vx2; \
+      v ## inst 1,0,0, vx0, vs0, vs0; \
     )
 
 
