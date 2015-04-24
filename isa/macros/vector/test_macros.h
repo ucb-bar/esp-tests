@@ -230,9 +230,9 @@ next ## testnum :
 # Tests floating-point instructions
 #-----------------------------------------------------------------------
 
-#define TEST_FP_OP_S_INTERNAL_NREG( testnum, nxreg, nfreg, result, val1, val2, val3, code... ) \
+#define TEST_FP_OP_S_INTERNAL_NREG( testnum, nxreg, npreg, result, val1, val2, val3, code... ) \
 test_ ## testnum: \
-  vsetcfg nxreg,nfreg; \
+  vsetcfg nxreg,npreg; \
   li a3,2048; \
   vsetvl a3,a3; \
   la  a5, test_ ## testnum ## _data ;\
@@ -278,9 +278,9 @@ vtcode ## testnum : \
   .result; \
 1:
 
-#define TEST_FP_OP_D_INTERNAL_NREG( testnum, nxreg, nfreg, result, val1, val2, val3, code... ) \
+#define TEST_FP_OP_D_INTERNAL_NREG( testnum, nxreg, npreg, result, val1, val2, val3, code... ) \
 test_ ## testnum: \
-  vsetcfg nxreg,nfreg; \
+  vsetcfg nxreg,npreg; \
   li a3,2048; \
   vsetvl a3,a3; \
   la  a5, test_ ## testnum ## _data ;\
@@ -559,9 +559,9 @@ vtcode ## testnum : \
     code; \
                  )
 
-#define TEST_CASE_NREG_MEM( testnum, nxreg, nfreg, correctval, code... ) \
+#define TEST_CASE_NREG_MEM( testnum, nxreg, npreg, correctval, code... ) \
 test_ ## testnum: \
-  vsetcfg nxreg,nfreg; \
+  vsetcfg nxreg,npreg; \
   li a3,2048; \
   vsetvl a3,a3; \
   lui a0,%hi(vtcode ## testnum ); \
