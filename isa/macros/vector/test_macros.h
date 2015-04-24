@@ -17,7 +17,7 @@
 
 #define TEST_CASE_NREG( testnum, nxreg, testreg, correctval, val1, val2, code... ) \
 test_ ## testnum: \
-  vsetcfg nxreg,1; \
+  vsetcfg nxreg,0; \
   li a3,2048; \
   vsetvl a3,a3; \
   li a4, val1; \
