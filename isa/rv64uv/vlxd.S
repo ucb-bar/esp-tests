@@ -42,7 +42,7 @@ vtcode:
   veidx vx3
   vaddi vs3,vs0,3
   vsll  1,1,0, vx3,vx3,vs3
-  vadd 1,0,0, vx2,vs2,vs3
+  vadd 1,0,1, vx2,vs2,vx3
   vlxd vx1,vs0, vx2
   vsd vx1,va1
   vstop

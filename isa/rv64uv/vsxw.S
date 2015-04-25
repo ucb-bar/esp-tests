@@ -56,7 +56,7 @@ vtcode:
   vaddi vs3,vs0,3
   vsll  1,1,0, vx3,vx3,vs3
   vadd 1,0,1, vx2,vs2,vx3
-  vsxb vx1,vs0,vx2
+  vsxw vx1,vs0,vx2
   vstop
 
   TEST_PASSFAIL

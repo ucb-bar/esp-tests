@@ -30,7 +30,7 @@ loop:
   ld a0,0(a6)
   ld a1,0(a5)
   sll a3,a1,56
-  sra a3,a3,56
+  srl a3,a3,56
   addi TESTNUM,a2,2
   bne a0,a3,fail
   addi a6,a6,8
@@ -44,7 +44,7 @@ vtcode:
   veidx vx3
   vaddi vs3,vs0,3
   vsll  1,1,0, vx3,vx3,vs3
-  vadd 1,0,0, vx2,vs2,vs3
+  vadd 1,0,1, vx2,vs2,vx3
   vlxbu vx1, vs0, vx2
   vsd vx1,va1
   vstop
