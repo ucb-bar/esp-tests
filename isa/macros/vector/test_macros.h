@@ -230,142 +230,107 @@ next ## testnum :
 # Tests floating-point instructions
 #-----------------------------------------------------------------------
 
-#define TEST_FP_OP_S_INTERNAL_NREG( testnum, nxreg, npreg, result, val1, val2, val3, code... ) \
+#define TEST_FP_OP_INTERNAL_NREG( testnum, nxreg, npreg, result, val1, val2, val3, vload, vstore, load, lskip, code... ) \
 test_ ## testnum: \
   vsetcfg nxreg,npreg; \
   li a3,2048; \
   vsetvl a3,a3; \
-  la  a5, test_ ## testnum ## _data ;\
-  vmsa va3, a5; \
-  addi a5,a5,4; \
-  vmsa va4, a5; \
-  addi a5,a5,4; \
-  vmsa va5, a5; \
-  addi a5,a5,4; \
-  la a4,dst; \
-  vmsa va6,a4; \
+  la a5, 3f; vmsa va3, a5; \
+  la a5, 4f; vmsa va4, a5; \
+  la a5, 5f; vmsa va5, a5; \
+  la a5, 6f; \
+  la a4, dst; vmsa va6,a4; \
   lui a0,%hi(vtcode ## testnum ); \
   vf %lo(vtcode ## testnum )(a0); \
   fence; \
-  lw  a1, 0(a5); \
+  load a1, 0(a5); \
   li a2, 0; \
   li TESTNUM, testnum; \
 test_loop ## testnum: \
-  lw a0,0(a4); \
+  load a0, 0(a4); \
   beq a0,a1,skip ## testnum; \
   j fail; \
 skip ## testnum : \
-  addi a4,a4,4; \
+  addi a4,a4,lskip; \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j 1f; \
 .align 8; \
 vtcode ## testnum : \
-  vlaw vs2, va3; \
-  vlaw vs3, va4; \
-  vlaw vs4, va5; \
+  vload vs2, va3; \
+  vload vs3, va4; \
+  vload vs4, va5; \
   vadd 1,0,0, vx2, vs2, vs0; \
   vadd 1,0,0, vx3, vs3, vs0; \
   vadd 1,0,0, vx4, vs4, vs0; \
   code; \
-  vsw vx1, va6; \
+  vstore vx1, va6; \
   vstop; \
-  .align 2; \
   test_ ## testnum ## _data: \
-  .float val1; \
-  .float val2; \
-  .float val3; \
-  .result; \
-1:
-
-#define TEST_FP_OP_D_INTERNAL_NREG( testnum, nxreg, npreg, result, val1, val2, val3, code... ) \
-test_ ## testnum: \
-  vsetcfg nxreg,npreg; \
-  li a3,2048; \
-  vsetvl a3,a3; \
-  la  a5, test_ ## testnum ## _data ;\
-  vmsa va3, a5; \
-  addi a5,a5,8; \
-  vmsa va4, a5; \
-  addi a5,a5,8; \
-  vmsa va5, a5; \
-  addi a5,a5,8; \
-  la a4,dst; \
-  vmsa va6, a4; \
-  lui a0,%hi(vtcode ## testnum ); \
-  vf %lo(vtcode ## testnum )(a0); \
-  fence; \
-  ld  a1, 0(a5); \
-  li a2, 0; \
-  li TESTNUM, testnum; \
-test_loop ## testnum: \
-  ld a0,0(a4); \
-  beq a0,a1,skip ## testnum; \
-  j fail; \
-skip ## testnum : \
-  addi a4,a4,8; \
-  addi a2,a2,1; \
-  bne a2,a3,test_loop ## testnum; \
-  j 1f; \
-.align 8; \
-vtcode ## testnum : \
-  vlad vs2, va3; \
-  vlad vs3, va4; \
-  vlad vs4, va5; \
-  vadd 1,0,0, vx2, vs2, vs0; \
-  vadd 1,0,0, vx3, vs3, vs0; \
-  vadd 1,0,0, vx4, vs4, vs0; \
-  code; \
-  vsd vx1, va6; \
-  vstop; \
   .align 3; \
-  test_ ## testnum ## _data: \
-  .double val1; \
-  .double val2; \
-  .double val3; \
-  .result; \
+3:.val1; \
+4:.val2; \
+5:.val3; \
+  .align 3; \
+6:.result; \
 1:
 
 #define TEST_FCVT_S_D( testnum, result, val1 ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 1, double result, val1, 0.0, 0.0, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double 0.0, double 0.0, vlad, vsd, ld, 8, \
                     vfcvt.s.d 1,1, vx5, vx2; vfcvt.d.s 1,1, vx1, vx5)
 
 #define TEST_FCVT_D_S( testnum, result, val1 ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 1, float result, val1, 0.0, 0.0, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, float val1, float 0.0, float 0.0, vlaw, vsw, lw, 4, \
                     vfcvt.d.s 1,1, vx5, vx2; vfcvt.s.d 1,1, vx1, vx5)
 
+#define TEST_FP_OP1_S( testnum, inst, flags, result, val1 ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, float val1, float 0.0, float 0.0, vlaw, vsw, lw, 4, \
+                    v ## inst 1,1, vx1, vx2)
+
+#define TEST_FP_OP1_D( testnum, inst, flags, result, val1 ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double 0.0, double 0.0, vlad, vsd, ld, 8, \
+                    v ## inst 1,1, vx1, vx2)
+
 #define TEST_FP_OP2_S( testnum, inst, flags, result, val1, val2 ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 1, float result, val1, val2, 0.0, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, float val1, float val2, float 0.0, vlaw, vsw, lw, 4, \
                     v ## inst 1,1,1, vx1, vx2, vx3)
 
 #define TEST_FP_OP2_D( testnum, inst, flags, result, val1, val2 ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 1, double result, val1, val2, 0.0, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double val2, double 0.0, vlad, vsd, ld, 8, \
                     v ## inst 1,1,1, vx1, vx2, vx3)
 
 #define TEST_FP_OP3_S( testnum, inst, flags, result, val1, val2, val3 ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 1, float result, val1, val2, val3, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, float val1, float val2, float val3, vlaw, vsw, lw, 4, \
                     v ## inst 1,1,1,1, vx1, vx2, vx3, vx4)
 
 #define TEST_FP_OP3_D( testnum, inst, flags, result, val1, val2, val3 ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 1, double result, val1, val2, val3, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double val2, double val3, vlad, vsd, ld, 8, \
                     v ## inst 1,1,1,1, vx1, vx2, vx3, vx4)
 
 #define TEST_FP_INT_OP_S( testnum, inst, flags, result, val1, rm ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 1, word result, val1, 0.0, 0.0, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, word result, float val1, float 0.0, float 0.0, vlaw, vsw, lw, 4, \
                     v ## inst 1,1, vx1, vx2, rm)
 
 #define TEST_FP_INT_OP_D( testnum, inst, flags, result, val1, rm ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 1, dword result, val1, 0.0, 0.0, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, double val1, double 0.0, double 0.0, vlad, vsd, ld, 8, \
+                    v ## inst 1,1, vx1, vx2, rm)
+
+#define TEST_FP_INT_OP_S_HEX( testnum, inst, flags, result, val1, rm ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, word val1, word 0, word 0, vlaw, vsd, ld, 8, \
+                    v ## inst 1,1, vx1, vx2, rm)
+
+#define TEST_FP_INT_OP_D_HEX( testnum, inst, flags, result, val1, rm ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
                     v ## inst 1,1, vx1, vx2, rm)
 
 #define TEST_FP_CMP_OP_S( testnum, inst, result, val1, val2 ) \
-  TEST_FP_OP_S_INTERNAL_NREG( testnum, 6, 2, word result, val1, val2, 0.0, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 2, word result, float val1, float val2, float 0.0, vlaw, vsw, lw, 4, \
                     vcmp ## inst 1,1, vp1, vx2, vx3;\
                     vaddi vs1,vs0,1; @vp1 vadd 1,0,0, vx1,vs0,vs1;\
                     @!vp1 vadd 1,0,0, vx1,vs0,vs0 )
 
 #define TEST_FP_CMP_OP_D( testnum, inst, result, val1, val2 ) \
-  TEST_FP_OP_D_INTERNAL_NREG( testnum, 6, 2, dword result, val1, val2, 0.0, \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 2, dword result, double val1, double val2, double 0.0, vlad, vsd, ld, 8, \
                     vcmp ## inst 1,1, vp1, vx2, vx3;\
                     vaddi vs1,vs0,1; @vp1 vadd 1,0,0, vx1,vs0,vs1;\
                     @!vp1 vadd 1,0,0, vx1,vs0,vs0 )

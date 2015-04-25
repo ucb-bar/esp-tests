@@ -89,45 +89,45 @@ RVTEST_CODE_BEGIN
   TEST_FP_INT_OP_D(79, fcvt.lu.d, 0x00, 3000000000,  3e9, rtz);
 
   # test negative NaN, negative infinity conversion
-  TEST_CASE( 80, x1, 0xffffffff80000000, la x1, tdat  ; flw f1,  0(x1); fcvt.w.s x1, f1)
-  TEST_CASE( 81, x1, 0x8000000000000000, la x1, tdat  ; flw f1,  0(x1); fcvt.l.s x1, f1)
-  TEST_CASE( 82, x1, 0xffffffff80000000, la x1, tdat  ; flw f1,  8(x1); fcvt.w.s x1, f1)
-  TEST_CASE( 83, x1, 0x8000000000000000, la x1, tdat  ; flw f1,  8(x1); fcvt.l.s x1, f1)
+  TEST_FP_INT_OP_S_HEX( 80, fcvt.w.s,  0x10, 0xffffffff80000000, 0xffffffff, rtz);
+  TEST_FP_INT_OP_S_HEX( 81, fcvt.l.s,  0x10, 0x8000000000000000, 0xffffffff, rtz);
+  TEST_FP_INT_OP_S_HEX( 82, fcvt.w.s,  0x10, 0xffffffff80000000, 0xff800000, rtz);
+  TEST_FP_INT_OP_S_HEX( 83, fcvt.l.s,  0x10, 0x8000000000000000, 0xff800000, rtz);
 
-  TEST_CASE( 84, x1, 0xffffffff80000000, la x1, tdat_d; fld f1,  0(x1); fcvt.w.d x1, f1)
-  TEST_CASE( 85, x1, 0x8000000000000000, la x1, tdat_d; fld f1,  0(x1); fcvt.l.d x1, f1)
-  TEST_CASE( 86, x1, 0xffffffff80000000, la x1, tdat_d; fld f1, 16(x1); fcvt.w.d x1, f1)
-  TEST_CASE( 87, x1, 0x8000000000000000, la x1, tdat_d; fld f1, 16(x1); fcvt.l.d x1, f1)
+  TEST_FP_INT_OP_D_HEX( 84, fcvt.w.d,  0x10, 0xffffffff80000000, 0xffffffffffffffff, rtz);
+  TEST_FP_INT_OP_D_HEX( 85, fcvt.l.d,  0x10, 0x8000000000000000, 0xffffffffffffffff, rtz);
+  TEST_FP_INT_OP_D_HEX( 86, fcvt.w.d,  0x10, 0xffffffff80000000, 0xfff0000000000000, rtz);
+  TEST_FP_INT_OP_D_HEX( 87, fcvt.l.d,  0x10, 0x8000000000000000, 0xfff0000000000000, rtz);
 
   # test positive NaN, positive infinity conversion
-  TEST_CASE( 88, x1, 0x000000007fffffff, la x1, tdat  ; flw f1,  4(x1); fcvt.w.s x1, f1)
-  TEST_CASE( 89, x1, 0x7fffffffffffffff, la x1, tdat  ; flw f1,  4(x1); fcvt.l.s x1, f1)
-  TEST_CASE( 90, x1, 0x000000007fffffff, la x1, tdat  ; flw f1, 12(x1); fcvt.w.s x1, f1)
-  TEST_CASE( 91, x1, 0x7fffffffffffffff, la x1, tdat  ; flw f1, 12(x1); fcvt.l.s x1, f1)
+  TEST_FP_INT_OP_S_HEX( 88, fcvt.w.s,  0x10, 0x000000007fffffff, 0x7fffffff, rtz);
+  TEST_FP_INT_OP_S_HEX( 89, fcvt.l.s,  0x10, 0x7fffffffffffffff, 0x7fffffff, rtz);
+  TEST_FP_INT_OP_S_HEX( 90, fcvt.w.s,  0x10, 0x000000007fffffff, 0x7f800000, rtz);
+  TEST_FP_INT_OP_S_HEX( 91, fcvt.l.s,  0x10, 0x7fffffffffffffff, 0x7f800000, rtz);
 
-  TEST_CASE( 92, x1, 0x000000007fffffff, la x1, tdat_d; fld f1,  8(x1); fcvt.w.d x1, f1)
-  TEST_CASE( 93, x1, 0x7fffffffffffffff, la x1, tdat_d; fld f1,  8(x1); fcvt.l.d x1, f1)
-  TEST_CASE( 94, x1, 0x000000007fffffff, la x1, tdat_d; fld f1, 24(x1); fcvt.w.d x1, f1)
-  TEST_CASE( 95, x1, 0x7fffffffffffffff, la x1, tdat_d; fld f1, 24(x1); fcvt.l.d x1, f1)
+  TEST_FP_INT_OP_D_HEX( 92, fcvt.w.d,  0x10, 0x000000007fffffff, 0x7fffffffffffffff, rtz);
+  TEST_FP_INT_OP_D_HEX( 93, fcvt.l.d,  0x10, 0x7fffffffffffffff, 0x7fffffffffffffff, rtz);
+  TEST_FP_INT_OP_D_HEX( 94, fcvt.w.d,  0x10, 0x000000007fffffff, 0x7ff0000000000000, rtz);
+  TEST_FP_INT_OP_D_HEX( 95, fcvt.l.d,  0x10, 0x7fffffffffffffff, 0x7ff0000000000000, rtz);
 
   # test NaN, infinity conversions to unsigned integer (always return MaxUInt)
-  TEST_CASE( 96, x1, 0xffffffffffffffff, la x1, tdat  ; flw f1,  0(x1); fcvt.wu.s x1, f1)
-  TEST_CASE( 97, x1, 0xffffffffffffffff, la x1, tdat  ; flw f1,  4(x1); fcvt.wu.s x1, f1)
-  TEST_CASE( 98, x1, 0xffffffffffffffff, la x1, tdat  ; flw f1,  8(x1); fcvt.wu.s x1, f1)
-  TEST_CASE( 99, x1, 0xffffffffffffffff, la x1, tdat  ; flw f1, 12(x1); fcvt.wu.s x1, f1)
-  TEST_CASE(100, x1, 0xffffffffffffffff, la x1, tdat  ; flw f1,  0(x1); fcvt.lu.s x1, f1)
-  TEST_CASE(101, x1, 0xffffffffffffffff, la x1, tdat  ; flw f1,  4(x1); fcvt.lu.s x1, f1)
-  TEST_CASE(102, x1, 0xffffffffffffffff, la x1, tdat  ; flw f1,  8(x1); fcvt.lu.s x1, f1)
-  TEST_CASE(103, x1, 0xffffffffffffffff, la x1, tdat  ; flw f1, 12(x1); fcvt.lu.s x1, f1)
-   
-  TEST_CASE(104, x1, 0xffffffffffffffff, la x1, tdat_d; fld f1,  0(x1); fcvt.wu.d x1, f1)
-  TEST_CASE(105, x1, 0xffffffffffffffff, la x1, tdat_d; fld f1,  8(x1); fcvt.wu.d x1, f1)
-  TEST_CASE(106, x1, 0xffffffffffffffff, la x1, tdat_d; fld f1, 16(x1); fcvt.wu.d x1, f1)
-  TEST_CASE(107, x1, 0xffffffffffffffff, la x1, tdat_d; fld f1, 24(x1); fcvt.wu.d x1, f1)
-  TEST_CASE(108, x1, 0xffffffffffffffff, la x1, tdat_d; fld f1,  0(x1); fcvt.lu.d x1, f1)
-  TEST_CASE(109, x1, 0xffffffffffffffff, la x1, tdat_d; fld f1,  8(x1); fcvt.lu.d x1, f1)
-  TEST_CASE(110, x1, 0xffffffffffffffff, la x1, tdat_d; fld f1, 16(x1); fcvt.lu.d x1, f1)
-  TEST_CASE(111, x1, 0xffffffffffffffff, la x1, tdat_d; fld f1, 24(x1); fcvt.lu.d x1, f1)
+  TEST_FP_INT_OP_S_HEX( 96, fcvt.wu.s, 0x10, 0xffffffffffffffff, 0xffffffff, rtz);
+  TEST_FP_INT_OP_S_HEX( 97, fcvt.wu.s, 0x10, 0xffffffffffffffff, 0x7fffffff, rtz);
+  TEST_FP_INT_OP_S_HEX( 98, fcvt.wu.s, 0x10, 0xffffffffffffffff, 0xff800000, rtz);
+  TEST_FP_INT_OP_S_HEX( 99, fcvt.wu.s, 0x10, 0xffffffffffffffff, 0x7f800000, rtz);
+  TEST_FP_INT_OP_S_HEX(100, fcvt.lu.s, 0x10, 0xffffffffffffffff, 0xffffffff, rtz);
+  TEST_FP_INT_OP_S_HEX(101, fcvt.lu.s, 0x10, 0xffffffffffffffff, 0x7fffffff, rtz);
+  TEST_FP_INT_OP_S_HEX(102, fcvt.lu.s, 0x10, 0xffffffffffffffff, 0xff800000, rtz);
+  TEST_FP_INT_OP_S_HEX(103, fcvt.lu.s, 0x10, 0xffffffffffffffff, 0x7f800000, rtz);
+
+  TEST_FP_INT_OP_D_HEX(104, fcvt.wu.d, 0x10, 0xffffffffffffffff, 0xffffffffffffffff, rtz);
+  TEST_FP_INT_OP_D_HEX(105, fcvt.wu.d, 0x10, 0xffffffffffffffff, 0x7fffffffffffffff, rtz);
+  TEST_FP_INT_OP_D_HEX(106, fcvt.wu.d, 0x10, 0xffffffffffffffff, 0xfff0000000000000, rtz);
+  TEST_FP_INT_OP_D_HEX(107, fcvt.wu.d, 0x10, 0xffffffffffffffff, 0x7ff0000000000000, rtz);
+  TEST_FP_INT_OP_D_HEX(108, fcvt.lu.d, 0x10, 0xffffffffffffffff, 0xffffffffffffffff, rtz);
+  TEST_FP_INT_OP_D_HEX(109, fcvt.lu.d, 0x10, 0xffffffffffffffff, 0x7fffffffffffffff, rtz);
+  TEST_FP_INT_OP_D_HEX(110, fcvt.lu.d, 0x10, 0xffffffffffffffff, 0xfff0000000000000, rtz);
+  TEST_FP_INT_OP_D_HEX(111, fcvt.lu.d, 0x10, 0xffffffffffffffff, 0x7ff0000000000000, rtz);
 
   TEST_PASSFAIL
 
