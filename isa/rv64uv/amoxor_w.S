@@ -19,7 +19,7 @@ RVTEST_CODE_BEGIN
 
   la a5,amodest
   vmss vs2,a5
-  li a6,0xaaaaaaaaaaaaaaaa
+  li a6,0xcafe
   vmss vs3, a6
   la a6,dest
   vmsa va1,a6
