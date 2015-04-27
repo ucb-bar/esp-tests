@@ -335,6 +335,14 @@ vtcode ## testnum : \
                     vaddi vs1,vs0,1; @vp1 vadd 1,0,0, vx1,vs0,vs1;\
                     @!vp1 vadd 1,0,0, vx1,vs0,vs0 )
 
+#define TEST_FP_CLASS_S( testnum, result, val1 ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, word val1, word 0, word 0, vlaw, vsd, ld, 8, \
+                    vfclass.s 1,1, vx1, vx2)
+
+#define TEST_FP_CLASS_D( testnum, result, val1 ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
+                    vfclass.d 1,1, vx1, vx2)
+
 #define TEST_INT_FP_OP_S( testnum, inst, result, val1 ) \
 test_ ## testnum: \
   vsetcfg 2,0; \

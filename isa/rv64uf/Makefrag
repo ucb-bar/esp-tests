@@ -7,7 +7,7 @@ rv64uf_sc_tests = \
 	ldst move structural \
 
 rv64uf_sc_vec_tests = \
-	fadd fdiv fcmp fcvt fcvt_w fmadd fmin fsgnj \
+	fadd fdiv fclass fcmp fcvt fcvt_w fmadd fmin fsgnj \
 
 rv64uf_p_tests = $(addprefix rv64uf-p-, $(rv64uf_sc_tests))
 rv64uf_pt_tests = $(addprefix rv64uf-pt-, $(rv64uf_sc_tests))
