@@ -19,6 +19,7 @@ RVTEST_CODE_BEGIN
   li a3,4
   vsetvl a3,a3
 
+.align 3
 vtcode1:
   vlxw vx2, vs0, vx1
   vstop

@@ -21,8 +21,12 @@ RVTEST_CODE_BEGIN
   vf %lo(vtcode1+2)(a0)
 1:      j 1b
 
+.align 3
 vtcode1:
+  vld vx2, va2
+  vld vx3, va3
   vadd 1,1,1, vx2,vx2,vx3
+  vsd vx2, va1
   vstop
 
 stvec_handler:

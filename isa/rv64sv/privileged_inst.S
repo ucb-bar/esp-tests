@@ -23,6 +23,7 @@ RVTEST_CODE_BEGIN
 privileged_inst:
   vxcptcause a3 # privileged inst
 
+.align 3
 vtcode2:
   vld vx2,va2
   vld vx3,va3

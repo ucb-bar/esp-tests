@@ -24,12 +24,14 @@ RVTEST_CODE_BEGIN
   vf %lo(vtcode1)(a0)
   fence
 
+.align 3
 vtcode1:
   vadd 1,0,0, vx1,vs1,vs0
   vsxw vx2,vs0,vx1
   vsd vx1, va1
   vstop
 
+.align 3
 vtcode2:
   vld vx2,va2
   vld vx3,va3

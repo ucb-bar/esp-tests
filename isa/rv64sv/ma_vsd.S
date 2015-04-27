@@ -27,6 +27,7 @@ RVTEST_CODE_BEGIN
   vf %lo(vtcode1)(a0)
   fence
 
+.align 3
 vtcode1:
   vld vx2,va2
   vld vx3,va3
@@ -34,6 +35,7 @@ vtcode1:
   vsd vx2, va1
   vstop
 
+.align 3
 vtcode2:
   vld vx2,va2
   vld vx3,va3
