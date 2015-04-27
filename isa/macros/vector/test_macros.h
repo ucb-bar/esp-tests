@@ -343,77 +343,13 @@ vtcode ## testnum : \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
                     vfclass.d 1,1, vx1, vx2)
 
-#define TEST_INT_FP_OP_S( testnum, inst, result, val1 ) \
-test_ ## testnum: \
-  vsetcfg 2,0; \
-  li a3,2048; \
-  vsetvl a3,a3; \
-  li a5, val1; \
-  vmss vs1, a5; \
-  la a4,dst; \
-  vmsa va4, a4; \
-  lui a0,%hi(vtcode ## testnum ); \
-  vf %lo(vtcode ## testnum )(a0); \
-  fence; \
-  la  a5, test_ ## testnum ## _data ;\
-  lw  a1, 0(a5); \
-  li a2, 0; \
-  li TESTNUM, testnum; \
-test_loop ## testnum: \
-  lw a0,0(a4); \
-  beq a0,a1,skip ## testnum; \
-  j fail; \
-skip ## testnum : \
-  addi a4,a4,4; \
-  addi a2,a2,1; \
-  bne a2,a3,test_loop ## testnum; \
-  j 1f; \
-.align 8; \
-vtcode ## testnum : \
-  vadd 1,0,0, vx1, vs1, vs0; \
-  v ## inst 1,1, vx1, vx1; \
-  vsw vx1, va4; \
-  vstop; \
-  .align 2; \
-  test_ ## testnum ## _data: \
-  .float result; \
-1:
+#define TEST_INT_FP_OP_S( testnum, inst, flags, result, val1 ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, word val1, word 0, word 0, vlaw, vsd, lw, 8, \
+                    v ## inst 1,1, vx1, vx2, rm)
 
-#define TEST_INT_FP_OP_D( testnum, inst, result, val1 ) \
-test_ ## testnum: \
-  vsetcfg 2,0; \
-  li a3,2048; \
-  vsetvl a3,a3; \
-  li a5, val1; \
-  vmss vs1, a5; \
-  la a4,dst; \
-  vmsa va4, a4; \
-  lui a0,%hi(vtcode ## testnum ); \
-  vf %lo(vtcode ## testnum )(a0); \
-  fence; \
-  la  a5, test_ ## testnum ## _data ;\
-  ld  a1, 0(a5); \
-  li a2, 0; \
-  li TESTNUM, testnum; \
-test_loop ## testnum: \
-  ld a0,0(a4); \
-  beq a0,a1,skip ## testnum; \
-  j fail; \
-skip ## testnum : \
-  addi a4,a4,8; \
-  addi a2,a2,1; \
-  bne a2,a3,test_loop ## testnum; \
-  j 1f; \
-.align 8; \
-vtcode ## testnum : \
-  vadd 1,0,0, vx1, vs1, vs0; \
-  v ## inst 1,1, vx1, vx1; \
-  vsd vx1, va4; \
-  vstop; \
-  .align 3; \
-  test_ ## testnum ## _data: \
-  .double result; \
-1:
+#define TEST_INT_FP_OP_D( testnum, inst, flags, result, val1 ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
+                    v ## inst 1,1, vx1, vx2, rm)
 
 
 #-----------------------------------------------------------------------

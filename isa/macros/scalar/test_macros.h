@@ -524,37 +524,13 @@ test_ ## testnum: \
   TEST_FP_OP_INTERNAL( testnum, 0, dword result, dword val1, dword 0, dword 0, fld, ld, \
                        fclass.d a0, f0)
 
-#define TEST_INT_FP_OP_S( testnum, inst, result, val1 ) \
-test_ ## testnum: \
-  li  TESTNUM, testnum; \
-  la  a0, test_ ## testnum ## _data ;\
-  lw  a3, 0(a0); \
-  li  a0, val1; \
-  inst f0, a0; \
-  fsflags x0; \
-  fmv.x.s a0, f0; \
-  bne a0, a3, fail; \
-  j 1f; \
-  .align 2; \
-  test_ ## testnum ## _data: \
-  .float result; \
-1:
+#define TEST_INT_FP_OP_S( testnum, inst, flags, result, val1 ) \
+  TEST_FP_OP_INTERNAL( testnum, flags, float result, word val1, word 0, word 0, flw, lw, \
+                       fmv.x.s a0, f0; inst f0, a0; fmv.x.s a0, f0)
 
-#define TEST_INT_FP_OP_D( testnum, inst, result, val1 ) \
-test_ ## testnum: \
-  li  TESTNUM, testnum; \
-  la  a0, test_ ## testnum ## _data ;\
-  ld  a3, 0(a0); \
-  li  a0, val1; \
-  inst f0, a0; \
-  fsflags x0; \
-  fmv.x.d a0, f0; \
-  bne a0, a3, fail; \
-  j 1f; \
-  .align 3; \
-  test_ ## testnum ## _data: \
-  .double result; \
-1:
+#define TEST_INT_FP_OP_D( testnum, inst, flags, result, val1 ) \
+  TEST_FP_OP_INTERNAL( testnum, flags, double result, dword val1, dword 0, dword 0, fld, ld, \
+                       fmv.x.d a0, f0; inst f0, a0; fmv.x.d a0, f0)
 
 
 #-----------------------------------------------------------------------
