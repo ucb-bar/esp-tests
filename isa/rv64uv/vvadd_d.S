@@ -95,24 +95,24 @@ RVTEST_CODE_BEGIN
 
 .align 3
 vtcode1:
-  vld vx2,va2
-  vld vx3,va3
-  vadd 1,1,1, vx2,vx2,vx3
-  vsd vx2,va1
+  vld vv2,va2
+  vld vv3,va3
+  vadd 1,1,1, vv2,vv2,vv3
+  vsd vv2,va1
   vstop
 
 .align 3
 vtcode2:
-  vld vx2,va2
-  vadd 1,0,1, vx1,vs0,vx2
-  vsd vx1,va1
+  vld vv2,va2
+  vadd 1,0,1, vv1,vs0,vv2
+  vsd vv1,va1
   vstop
 
 .align 3
 vtcode3:
-  vld vx2,va2
-  vadd 1,1,0, vx1,vx2,vs0
-  vsd vx1,va1
+  vld vv2,va2
+  vadd 1,1,0, vv1,vv2,vs0
+  vsd vv1,va1
   vstop
 
   TEST_PASSFAIL

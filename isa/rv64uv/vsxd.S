@@ -39,12 +39,12 @@ loop:
 
 .align 3
 vtcode:
-  vld vx1,va1
-  veidx vx3
+  vld vv1,va1
+  veidx vv3
   vaddi vs3,vs0,3
-  vsll  1,1,0, vx3,vx3,vs3
-  vadd 1,0,1, vx2,vs2,vx3
-  vsxd vx1,vs0,vx2
+  vsll  1,1,0, vv3,vv3,vs3
+  vadd 1,0,1, vv2,vs2,vv3
+  vsxd vv1,vs0,vv2
   vstop
 
   TEST_PASSFAIL

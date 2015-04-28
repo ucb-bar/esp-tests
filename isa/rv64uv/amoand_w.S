@@ -40,9 +40,9 @@ loop:
 
 .align 3
 vtcode:
-  vadd 1,0,0, vx2,vs2,vs0
-  vamoand.w 1,0,1, vx1,vs3,vx2
-  vsw vx1, va1
+  vadd 1,0,0, vv2,vs2,vs0
+  vamoand.w 1,0,1, vv1,vs3,0(vv2)
+  vsw vv1, va1
   vstop
 
   TEST_PASSFAIL

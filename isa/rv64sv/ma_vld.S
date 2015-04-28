@@ -27,17 +27,17 @@ RVTEST_CODE_BEGIN
 
 .align 3
 vtcode1:
-  vld vx2,va2
-  vld vx3,va3
-  vadd 1,1,1, vx2,vx2,vx3
+  vld vv2,va2
+  vld vv3,va3
+  vadd 1,1,1, vv2,vv2,vv3
   vstop
 
 .align 3
 vtcode2:
-  vld vx2,va2
-  vld vx3,va3
-  vadd 1,1,1, vx2,vx2,vx3
-  vsd vx2, va1
+  vld vv2,va2
+  vld vv3,va3
+  vadd 1,1,1, vv2,vv2,vv3
+  vsd vv2, va1
   vstop
 
 stvec_handler:

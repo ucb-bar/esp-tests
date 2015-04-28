@@ -19,12 +19,12 @@ RVTEST_CODE_BEGIN
 
   la a3,src1
   la a4,src2
-  vld vx2,a3
-  vld vx3,a4
+  vld vv2,a3
+  vld vv3,a4
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
   la a5,dest
-  vsd vx2,a5
+  vsd vv2,a5
   fence
 
   ld a1,0(a5)
@@ -45,13 +45,13 @@ RVTEST_CODE_BEGIN
   bne a1,a2,fail
 
   la a3,src1
-  vld vx4,a3
+  vld vv4,a3
   li a4, 3
-  vmsv vx5,a4
+  vmsv vv5,a4
   lui a0,%hi(vtcode2)
   vf %lo(vtcode2)(a0)
   la a5,dest
-  vsd vx4,a5
+  vsd vv4,a5
   fence
 
   ld a1,0(a5)
@@ -72,11 +72,11 @@ RVTEST_CODE_BEGIN
   bne a1,a2,fail
 
   la a3,src2
-  vld vx5,a3
+  vld vv5,a3
   lui a0,%hi(vtcode3)
   vf %lo(vtcode3)(a0)
   la a5,dest
-  vsd vx5,a5
+  vsd vv5,a5
   fence
 
   ld a1,0(a5)

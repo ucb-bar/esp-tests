@@ -39,8 +39,8 @@ loop:
 
 .align 3
 vtcode:
-  vlwu vx1, va1
-  vsw vx1, va2
+  vlwu vv1, va1
+  vsw vv1, va2
   vstop
 
   TEST_PASSFAIL

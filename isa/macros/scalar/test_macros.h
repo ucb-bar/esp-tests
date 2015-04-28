@@ -552,19 +552,19 @@ test_ ## testnum: \
   fence; \
 .align 3; \
 vtcode1 ## testnum: \
-  vld vx2,va0; \
-  vld vx3,va1; \
-  vadd 1,1,1, vx2, vx2, vx3; \
-  vsd vx2, va2; \
+  vld vv2,va0; \
+  vld vv3,va1; \
+  vadd 1,1,1, vv2, vv2, vv3; \
+  vsd vv2, va2; \
 illegal ## testnum: \
   v ## inst 1,1,1, v ## reg1, v ## reg2, v ## reg3; \
   vstop; \
 .align 3; \
 vtcode2 ## testnum: \
-  vld vx2,va0; \
-  vld vx3,va1; \
-  vadd 1,1,1, vx2, vx2, vx3; \
-  vsd vx2, va2; \
+  vld vv2,va0; \
+  vld vv3,va1; \
+  vadd 1,1,1, vv2, vv2, vv3; \
+  vsd vv2, va2; \
   vstop; \
 handler ## testnum: \
   vxcptkill; \

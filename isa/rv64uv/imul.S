@@ -67,9 +67,9 @@ loop:
 
 .align 3
 vtcode:
-  veidx vx2
-  vmul 1,1,0, vx1,vx2,vs1
-  vsd vx1,va1
+  veidx vv2
+  vmul 1,1,0, vv1,vv2,vs1
+  vsd vv1,va1
   vstop
 
   TEST_PASSFAIL

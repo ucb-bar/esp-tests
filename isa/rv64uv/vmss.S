@@ -37,11 +37,11 @@ loop:
 
 .align 3
 vtcode:
-  veidx vx1
+  veidx vv1
   vaddi vs1,vs0,1
-  vadd 1,1,0, vx1, vx1, vs1
-  vadd 1,1,0, vx2,vx1,vs2
-  vsd vx2,va2
+  vadd 1,1,0, vv1, vv1, vs1
+  vadd 1,1,0, vv2,vv1,vs2
+  vsd vv2,va2
   vstop
 
   TEST_PASSFAIL

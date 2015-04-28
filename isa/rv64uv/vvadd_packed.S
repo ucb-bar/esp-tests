@@ -50,14 +50,14 @@ enable_fp:
 
 .align 3
 test:
-  vlh vx1,va1
-	veidx vx2
+  vlh vv1,va1
+	veidx vv2
 	vslli vs2, vs2, 2
-  vadd 1,1,0, vx2,vx2,vs2
-	vadd 1,1,1, vx1, vx1, vx2
-	vlxh vx2, vs0, vx1
-	vfmul.h 1,1,1, vx2, vx2, vx2
-	vsxh vx2, vs0, vx1
+  vadd 1,1,0, vv2,vv2,vs2
+	vadd 1,1,1, vv1, vv1, vv2
+	vlxh vv2, vs0, vv1
+	vfmul.h 1,1,1, vv2, vv2, vv2
+	vsxh vv2, vs0, vv1
 	vstop
 
 check:

@@ -59,18 +59,18 @@ loop2:
 
 .align 3
 vtcode1:
-  veidx vx1
+  veidx vv1
   vaddi vs1,vs0,1
-  vadd 1,1,0, vx1,vx1,vs1
-  vsd vx1,va1
+  vadd 1,1,0, vv1,vv1,vs1
+  vsd vv1,va1
   vstop
 
 .align 3
 vtcode2:
-  veidx vx1
+  veidx vv1
   vaddi vs1,vs0,1024
-  vadd 1,1,0, vx1,vx1,vs1
-  vsd vx1,va1
+  vadd 1,1,0, vv1,vv1,vs1
+  vsd vv1,va1
   vstop
 
   TEST_PASSFAIL

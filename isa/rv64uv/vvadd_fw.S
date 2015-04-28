@@ -44,10 +44,10 @@ RVTEST_CODE_BEGIN
 
 .align 3
 vtcode:
-  vlw vx2,va2
-  vlw vx3,va3
-  vfadd.s 1,1,1, vx2,vx2,vx3
-  vsw vx2,va1
+  vlw vv2,va2
+  vlw vv3,va3
+  vfadd.s 1,1,1, vv2,vv2,vv3
+  vsw vv2,va1
   vstop
 
   TEST_PASSFAIL
