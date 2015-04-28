@@ -100,7 +100,7 @@ test_ ## testnum: \
 
 #define TEST_VVCFG( testnum, nxpr, nppr, vl, result ) \
     TEST_CASE( testnum, x1, result, \
-      li x1, ((nppr-1) << 9) | (nxpr-1); \
+      li x1, ((nppr-1) << 8) | (nxpr-1); \
       vsetcfg x1; \
       li x1, vl; \
       vsetvl x1,x1; \
