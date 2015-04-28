@@ -48,7 +48,7 @@ stvec_handler:
   bne a3,a5,fail
 
   # make sure vector unit has cleared out
-  vsetcfg 32,0
+  vsetcfg 32,1
   li a3,4
   vsetvl a3,a3
 

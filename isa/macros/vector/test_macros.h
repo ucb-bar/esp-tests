@@ -17,7 +17,7 @@
 
 #define TEST_CASE_NREG( testnum, nxreg, testreg, correctval, val1, val2, code... ) \
 test_ ## testnum: \
-  vsetcfg nxreg,0; \
+  vsetcfg nxreg,1; \
   li a3,2048; \
   vsetvl a3,a3; \
   li a4, val1; \
@@ -350,7 +350,6 @@ vtcode ## testnum : \
 #define TEST_INT_FP_OP_D( testnum, inst, flags, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
                     v ## inst 1,1, vx1, vx2, rm)
-
 
 #-----------------------------------------------------------------------
 # RV64UV MACROS

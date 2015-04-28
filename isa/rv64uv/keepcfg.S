@@ -13,7 +13,7 @@
 RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
-  vsetcfg 2,0
+  vsetcfg 2,1
   li s0,2048
   vsetvl s0,s0
 
@@ -22,7 +22,7 @@ RVTEST_CODE_BEGIN
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
 
-  vsetcfg 3,0
+  vsetcfg 3,1
   li s1,2048
   vsetvl s1,s1
 

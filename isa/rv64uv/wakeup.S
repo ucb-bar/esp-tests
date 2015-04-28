@@ -44,21 +44,21 @@ RVTEST_CODE_BEGIN
   bne a1,a2,fail
 
   # check default hw vector length, which is 32
-  li a3, 32
+  li a3, 8
   vsetvl a3, a3
-  li a0, 32
+  li a0, 8
   li TESTNUM, 6
   bne a3, a0, fail
 
-  li a3, 33
+  li a3, 9
   vsetvl a3, a3
-  li a0, 32
+  li a0, 8
   li TESTNUM, 7
   bne a3, a0, fail
 
-  li a3, 31
+  li a3, 7
   vsetvl a3, a3
-  li a0, 31
+  li a0, 7
   li TESTNUM, 8
   bne a3, a0, fail
 

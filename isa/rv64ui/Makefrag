@@ -33,7 +33,6 @@ rv64ui_sc_vec_tests = \
 	add addi addiw addw \
 	and andi \
 	div divu divuw divw \
-	lui \
 	mul mulh mulhsu mulhu mulw \
 	or ori \
 	rem remu remuw remw \

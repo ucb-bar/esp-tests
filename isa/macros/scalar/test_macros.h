@@ -91,26 +91,24 @@ test_ ## testnum: \
 # Tests for vector config instructions
 #-----------------------------------------------------------------------
 
-#define TEST_VSETCFGIVL( testnum, nxpr, nppr, bank, vl, result ) \
+#define TEST_VSETCFGIVL( testnum, nxpr, nppr, vl, result ) \
     TEST_CASE( testnum, x1, result, \
-      li x1, (bank << 12); \
-      vsetcfg x1,nxpr,nppr; \
+      vsetcfg nxpr,nppr; \
       li x1, vl; \
       vsetvl x1,x1; \
     )
 
-#define TEST_VVCFG( testnum, nxpr, nppr, bank, vl, result ) \
+#define TEST_VVCFG( testnum, nxpr, nppr, vl, result ) \
     TEST_CASE( testnum, x1, result, \
-      li x1, (bank << 12) | (nppr << 9) | nxpr; \
+      li x1, ((nppr-1) << 9) | (nxpr-1); \
       vsetcfg x1; \
       li x1, vl; \
       vsetvl x1,x1; \
     )
 
-#define TEST_VSETVL( testnum, nxpr, nppr, bank, vl, result ) \
+#define TEST_VSETVL( testnum, nxpr, nppr, vl, result ) \
     TEST_CASE( testnum, x1, result, \
-      li x1, (bank << 12); \
-      vsetcfg x1,nxpr,nppr; \
+      vsetcfg nxpr,nppr; \
       li x1, vl; \
       vsetvl x1, x1; \
     )
@@ -577,7 +575,7 @@ handler ## testnum: \
   csrr a0, sbadaddr; \
   la a1,illegal ## testnum; \
   bne a0,a1,fail; \
-  vsetcfg 32,0; \
+  vsetcfg 32,1; \
   li a0,4; \
   vsetvl a0,a0; \
   la a0, src1; \
