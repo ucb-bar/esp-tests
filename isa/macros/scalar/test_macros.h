@@ -530,6 +530,56 @@ test_ ## testnum: \
   TEST_FP_OP_INTERNAL( testnum, flags, double result, dword val1, dword 0, dword 0, fld, ld, \
                        fmv.x.d a0, f0; inst f0, a0; fmv.x.d a0, f0)
 
+#-----------------------------------------------------------------------
+# RV64UV MACROS
+#-----------------------------------------------------------------------
+
+#-----------------------------------------------------------------------
+# Test memory instructions
+#-----------------------------------------------------------------------
+#define TEST_CASE_NREG_SCALAR( testnum, nxreg, npreg, input, output, code... ) \
+test_ ## testnum: \
+  vsetcfg nxreg,npreg; \
+  li a3,2048; \
+  vsetvl a3,a3; \
+  li a1,input; \
+  vmss vs3, a1; \
+  la a4,src1; \
+  vmsa va2, a4; \
+  vmss vs2, a4; \
+  la a4,dst; \
+  vmsa va1, a4; \
+  vmss vs1, a4; \
+  lui a0,%hi(vtcode ## testnum ); \
+  vf %lo(vtcode ## testnum )(a0); \
+  fence; \
+  li a1, output; \
+  li TESTNUM, testnum; \
+  ld a0,0(a4); \
+  beq a0,a1,skip ## testnum; \
+  j fail; \
+skip ## testnum : \
+  j next ## testnum; \
+.align 3; \
+vtcode ## testnum : \
+  code; \
+  vstop; \
+next ## testnum :
+
+#define TEST_VST_OP( testnum, store_inst, areg, result ) \
+    TEST_CASE_NREG_SCALAR( testnum, 1, 1, result, result, \
+      store_inst areg, vs3; \
+    )
+
+#define TEST_VLD_OP( testnum, load_inst, store_inst, sreg, dreg, input, output ) \
+    TEST_CASE_NREG_SCALAR( testnum, 1, 1, input, output, \
+      store_inst sreg, vs3; \
+      load_inst vs4, sreg; \
+      store_inst dreg, vs4; \
+    )
+
+#define TEST_VLDU_OP( testnum, load_inst, store_inst, sreg, dreg, result ) \
+    TEST_VLD_OP( testnum, load_inst, store_inst, sreg, dreg, result, result )
 
 #-----------------------------------------------------------------------
 # RV64SV MACROS

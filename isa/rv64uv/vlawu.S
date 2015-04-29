@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# vssd.S
+# vlawu.S
 #-----------------------------------------------------------------------------
 #
-# Test vssd instruction.
+# Test vlawu instruction.
 #
 
 #include "riscv_test.h"
@@ -13,10 +13,10 @@
 RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
-  TEST_VST_OP( 2, vssd, vs1, 0x00aa00aa00aa00aa );
-  TEST_VST_OP( 3, vssd, vs1, 0xaa00aa00aa00aa00 );
-  TEST_VST_OP( 4, vssd, vs1, 0x0aa00aa00aa00aa0 );
-  TEST_VST_OP( 5, vssd, vs1, 0xa00aa00aa00aa00a );
+  TEST_VLDU_OP( 2, vlawu, vsad, va2, va1, 0x0000000000aa00aa );
+  TEST_VLDU_OP( 3, vlawu, vsad, va2, va1, 0x00000000aa00aa00 );
+  TEST_VLDU_OP( 4, vlawu, vsad, va2, va1, 0x000000000aa00aa0 );
+  TEST_VLDU_OP( 5, vlawu, vsad, va2, va1, 0x00000000a00aa00a );
 
   TEST_PASSFAIL
 

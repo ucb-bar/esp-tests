@@ -6,7 +6,8 @@ rv64uv_sc_tests = \
 	wakeup fence \
 	vsetcfgi vsetcfg vsetvl keepcfg \
 	vmsa vmss \
-	vssd \
+	vssd vssw vssh vssb vlsd vlsw vlsh vlsb vlswu vlshu vlsbu \
+	vsad vsaw vsah vsab vlad vlaw vlah vlab vlawu vlahu vlabu \
 	eidx \
 	vlb vlbu vlh vlhu vlw vlwu vld \
 	vsb vsh vsw vsd \
