@@ -344,11 +344,11 @@ vtcode ## testnum : \
 
 #define TEST_INT_FP_OP_S( testnum, inst, flags, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, word val1, word 0, word 0, vlaw, vsd, lw, 8, \
-                    v ## inst.v vv1, vv2, rm)
+                    v ## inst.v vv1, vv2)
 
 #define TEST_INT_FP_OP_D( testnum, inst, flags, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
-                    v ## inst.v vv1, vv2, rm)
+                    v ## inst.v vv1, vv2)
 
 #-----------------------------------------------------------------------
 # RV64UV MACROS
