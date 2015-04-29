@@ -54,8 +54,8 @@ vtcode:
   vld vv1,va1
   veidx vv3
   vaddi vs3,vs0,3
-  vsll  1,1,0, vv3,vv3,vs3
-  vadd 1,0,1, vv2,vs2,vv3
+  vsll.vs vv3,vv3,vs3
+  vadd.sv vv2,vs2,vv3
   vsxw vv1,vs0,vv2
   vstop
 

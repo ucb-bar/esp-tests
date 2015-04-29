@@ -554,16 +554,16 @@ test_ ## testnum: \
 vtcode1 ## testnum: \
   vld vv2,va0; \
   vld vv3,va1; \
-  vadd 1,1,1, vv2, vv2, vv3; \
+  vadd.vv vv2, vv2, vv3; \
   vsd vv2, va2; \
 illegal ## testnum: \
-  v ## inst 1,1,1, v ## reg1, v ## reg2, v ## reg3; \
+  v ## inst.vv v ## reg1, v ## reg2, v ## reg3; \
   vstop; \
 .align 3; \
 vtcode2 ## testnum: \
   vld vv2,va0; \
   vld vv3,va1; \
-  vadd 1,1,1, vv2, vv2, vv3; \
+  vadd.vv vv2, vv2, vv3; \
   vsd vv2, va2; \
   vstop; \
 handler ## testnum: \

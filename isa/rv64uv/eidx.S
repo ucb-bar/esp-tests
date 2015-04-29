@@ -37,7 +37,7 @@ loop:
 vtcode:
   veidx vv1
   vaddi vs1,vs0,1
-  vadd 1,1,0, vv1,vv1,vs1
+  vadd.vs vv1,vv1,vs1
   vsd vv1,va1
   vstop
 

@@ -42,9 +42,9 @@ loop:
 
 .align 3
 vtcode:
-  vadd 1,0,0, vv3,vs3,vs0
-  vadd 1,0,0, vv2,vs2,vs0
-  vamoxor.d 1,1,1, vv1,vv3,0(vv2)
+  vadd.ss vv3,vs3,vs0
+  vadd.ss vv2,vs2,vs0
+  vamoxor.d.vv vv1,0(vv2),vv3
   vsd vv1,va1
   vstop
 

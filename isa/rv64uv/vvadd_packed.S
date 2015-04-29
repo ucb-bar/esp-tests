@@ -53,10 +53,10 @@ test:
   vlh vv1,va1
 	veidx vv2
 	vslli vs2, vs2, 2
-  vadd 1,1,0, vv2,vv2,vs2
-	vadd 1,1,1, vv1, vv1, vv2
+  vadd.vs vv2,vv2,vs2
+	vadd.vv vv1, vv1, vv2
 	vlxh vv2, vs0, vv1
-	vfmul.h 1,1,1, vv2, vv2, vv2
+	vfmul.h.vv vv2, vv2, vv2
 	vsxh vv2, vs0, vv1
 	vstop
 

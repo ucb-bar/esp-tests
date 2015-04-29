@@ -25,7 +25,7 @@ RVTEST_CODE_BEGIN
 
 .align 3
 vtcode1:
-  vadd 1,0,0, vv1,vs1,vs0
+  vadd.ss vv1,vs1,vs0
   vlxw vv2, vs0, vv1
   vstop
 
@@ -33,7 +33,7 @@ vtcode1:
 vtcode2:
   vld vv2,va2
   vld vv3,va3
-  vadd 1,1,1, vv2,vv2,vv3
+  vadd.vv vv2,vv2,vv3
   vsd vv2, va1
   vstop
 

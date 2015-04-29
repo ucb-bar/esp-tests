@@ -46,7 +46,7 @@ RVTEST_CODE_BEGIN
 vtcode:
   vld vv2,va2
   vld vv3,va3
-  vfadd.d 1,1,1, vv2,vv2,vv3
+  vfadd.d.vv vv2,vv2,vv3
   vsd vv2,va1
   vstop
 

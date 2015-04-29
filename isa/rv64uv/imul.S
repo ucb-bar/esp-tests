@@ -68,7 +68,7 @@ loop:
 .align 3
 vtcode:
   veidx vv2
-  vmul 1,1,0, vv1,vv2,vs1
+  vmul.vs vv1,vv2,vs1
   vsd vv1,va1
   vstop
 

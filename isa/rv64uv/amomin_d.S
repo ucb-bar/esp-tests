@@ -43,14 +43,14 @@ loop:
 vtcode:
   veidx vv3
   vaddi vs3, vs0, 3
-  vsll 1,1,0, vv3, vv3, vs3
-  vadd 1,0,1, vv2, vs2, vv3
+  vsll.vs vv3, vv3, vs3
+  vadd.sv vv2, vs2, vv3
   veidx vv3
   vaddi vs3,vs0,1
-  vadd 1,1,0, vv3,vv3,vs3
-  vmul 1,1,0, vv3,vv3,vs1
-  vadd 1,0,0, vv1,vs0,vs1
-  vamomin.d 1,1,1, vv1,vv3,0(vv2)
+  vadd.vs vv3,vv3,vs3
+  vmul.vs vv3,vv3,vs1
+  vadd.ss vv1,vs0,vs1
+  vamomin.d.vv vv1,0(vv2),vv3
   vsd vv1,va1
   vstop
 

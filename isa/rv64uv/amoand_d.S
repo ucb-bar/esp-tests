@@ -40,8 +40,8 @@ loop:
 
 .align 3
 vtcode:
-  vadd 1,0,0, vv2,vs2,vs0
-  vamoand.d 1,0,1, vv1,vs3,0(vv2)
+  vadd.ss vv2,vs2,vs0
+  vamoand.d.vs vv1,0(vv2),vs3
   vsd vv1, va1
   vstop
 

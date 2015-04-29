@@ -78,40 +78,39 @@ next ## testnum :
 #define TEST_IMM_OP( testnum, inst, result, val1, imm ) \
     TEST_CASE_NREG( testnum, 4, v3, result, val1, 0, \
       v ## inst vs3, vs1, SEXT_IMM(imm); \
-      vadd 1,0,0,  vv3, vs3, vs0; \
+      vadd.ss  vv3, vs3, vs0; \
     )
 
 #define TEST_IMM_SRC1_EQ_DEST( testnum, inst, result, val1, imm ) \
     TEST_CASE_NREG( testnum, 2, v1, result, val1, 0, \
       v ## inst vs1, vs1, SEXT_IMM(imm); \
-      vadd 1,0,0,  vv1, vs1, vs0; \
+      vadd.ss  vv1, vs1, vs0; \
     )
 
 #define TEST_IMM_DEST_BYPASS( testnum, nop_cycles, inst, result, val1, imm ) \
     TEST_CASE_NREG( testnum, 5, v4, result, val1, 0, \
       v ## inst vs3, vs1, SEXT_IMM(imm); \
       TEST_INSERT_NOPS_ ## nop_cycles \
-      vadd 1,0,0,  vv4, vs3, vs0; \
+      vadd.ss  vv4, vs3, vs0; \
     )
 
 #define TEST_IMM_SRC1_BYPASS( testnum, nop_cycles, inst, result, val1, imm ) \
     TEST_CASE_NREG( testnum, 4, v3, result, val1, 0, \
-      vadd 0,0,0,  vs1, vs1, vs0; \
       TEST_INSERT_NOPS_ ## nop_cycles \
       v ## inst vs3, vs1, SEXT_IMM(imm); \
-      vadd 1,0,0,  vv3, vs3, vs0; \
+      vadd.ss  vv3, vs3, vs0; \
     )
 
 #define TEST_IMM_ZEROSRC1( testnum, inst, result, imm ) \
     TEST_CASE_NREG( testnum, 2, v1, result, 0, 0, \
       v ## inst vs1, vs0, SEXT_IMM(imm); \
-      vadd 1,0,0,  vv1, vs1, vs0; \
+      vadd.ss  vv1, vs1, vs0; \
     )
 
 #define TEST_IMM_ZERODEST( testnum, inst, val1, imm ) \
     TEST_CASE_NREG( testnum, 2, v0, 0, val1, 0, \
       v ## inst vs0, vs1, SEXT_IMM(imm); \
-      vadd 1,0,0,  vv0, vs0, vs0; \
+      vadd.ss  vv0, vs0, vs0; \
     )
 
 #-----------------------------------------------------------------------
@@ -120,22 +119,22 @@ next ## testnum :
 
 #define TEST_R_OP( testnum, inst, result, val1 ) \
     TEST_CASE_NREG( testnum, 4, v3, result, val1, 0, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      v ## inst 1,1, vv3, vv1; \
+      vadd.ss  vv1, vs1, vs0; \
+      v ## inst.v vv3, vv1; \
     )
 
 #define TEST_R_SRC1_EQ_DEST( testnum, inst, result, val1 ) \
     TEST_CASE_NREG( testnum, 2, v1, result, val1, 0, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      v ## inst 1,1, vv1, vv1; \
+      vadd.ss  vv1, vs1, vs0; \
+      v ## inst.v vv1, vv1; \
     )
 
 #define TEST_R_DEST_BYPASS( testnum, nop_cycles, inst, result, val1 ) \
     TEST_CASE_NREG( testnum, 5, v4, result, val1, 0, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      v ## inst 1,1, vv3, vv1; \
+      vadd.ss  vv1, vs1, vs0; \
+      v ## inst.v vv3, vv1; \
       TEST_INSERT_NOPS_ ## nop_cycles \
-      vadd 1,1,0, vv4, vv3, vs0; \
+      vadd.vs vv4, vv3, vs0; \
     )
 
 #-----------------------------------------------------------------------
@@ -144,81 +143,81 @@ next ## testnum :
 
 #define TEST_RR_OP( testnum, inst, result, val1, val2 ) \
     TEST_CASE_NREG( testnum, 4, v3, result, val1, val2, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      vadd 1,0,0,  vv2, vs2, vs0; \
-      v ## inst 1,1,1, vv3, vv1, vv2; \
+      vadd.ss  vv1, vs1, vs0; \
+      vadd.ss  vv2, vs2, vs0; \
+      v ## inst.vv vv3, vv1, vv2; \
     )
 
 #define TEST_RR_SRC1_EQ_DEST( testnum, inst, result, val1, val2 ) \
     TEST_CASE_NREG( testnum, 3, v1, result, val1, val2, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      vadd 1,0,0,  vv2, vs2, vs0; \
-      v ## inst 1,1,1, vv1, vv1, vv2; \
+      vadd.ss  vv1, vs1, vs0; \
+      vadd.ss  vv2, vs2, vs0; \
+      v ## inst.vv vv1, vv1, vv2; \
     )
 
 #define TEST_RR_SRC2_EQ_DEST( testnum, inst, result, val1, val2 ) \
     TEST_CASE_NREG( testnum, 3, v2, result, val1, val2, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      vadd 1,0,0,  vv2, vs2, vs0; \
-      v ## inst 1,1,1, vv2, vv1, vv2; \
+      vadd.ss  vv1, vs1, vs0; \
+      vadd.ss  vv2, vs2, vs0; \
+      v ## inst.vv vv2, vv1, vv2; \
     )
 
 #define TEST_RR_SRC12_EQ_DEST( testnum, inst, result, val1 ) \
     TEST_CASE_NREG( testnum, 2, v1, result, val1, 0, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      v ## inst 1,1,1, vv1, vv1, vv1; \
+      vadd.ss  vv1, vs1, vs0; \
+      v ## inst.vv vv1, vv1, vv1; \
     )
 
 #define TEST_RR_DEST_BYPASS( testnum, nop_cycles, inst, result, val1, val2 ) \
     TEST_CASE_NREG( testnum, 5, v4, result, val1, val2, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      vadd 1,0,0,  vv2, vs2, vs0; \
-      v ## inst 1,1,1, vv3, vv1, vv2; \
+      vadd.ss  vv1, vs1, vs0; \
+      vadd.ss  vv2, vs2, vs0; \
+      v ## inst.vv vv3, vv1, vv2; \
       TEST_INSERT_NOPS_ ## nop_cycles \
-      vadd 1,1,0, vv4, vv3, vs0; \
+      vadd.vs vv4, vv3, vs0; \
     )
 
 #define TEST_RR_SRC12_BYPASS( testnum, src1_nops, src2_nops, inst, result, val1, val2 ) \
     TEST_CASE_NREG( testnum, 4, v3, result, val1, val2, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
+      vadd.ss  vv1, vs1, vs0; \
       TEST_INSERT_NOPS_ ## src1_nops \
-      vadd 1,0,0,  vv2, vs2, vs0; \
+      vadd.ss  vv2, vs2, vs0; \
       TEST_INSERT_NOPS_ ## src2_nops \
-      v ## inst 1,1,1, vv3, vv1, vv2; \
+      v ## inst.vv vv3, vv1, vv2; \
     )
 
 #define TEST_RR_SRC21_BYPASS( testnum, src1_nops, src2_nops, inst, result, val1, val2 ) \
     TEST_CASE_NREG( testnum, 4, v3, result, val1, val2, \
-      vadd 1,0,0,  vv2, vs2, vs0; \
+      vadd.ss  vv2, vs2, vs0; \
       TEST_INSERT_NOPS_ ## src1_nops \
-      vadd 1,0,0,  vv1, vs1, vs0; \
+      vadd.ss  vv1, vs1, vs0; \
       TEST_INSERT_NOPS_ ## src2_nops \
-      v ## inst 1,1,1, vv3, vv1, vv2; \
+      v ## inst.vv vv3, vv1, vv2; \
     )
 
 #define TEST_RR_ZEROSRC1( testnum, inst, result, val ) \
     TEST_CASE_NREG( testnum, 3, v2, result, val, 0, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      v ## inst 1,0,1, vv2, vs0, vv1; \
+      vadd.ss  vv1, vs1, vs0; \
+      v ## inst.sv vv2, vs0, vv1; \
     )
 
 #define TEST_RR_ZEROSRC2( testnum, inst, result, val ) \
     TEST_CASE_NREG( testnum, 3, v2, result, val, 0, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      v ## inst 1,1,0, vv2, vv1, vs0; \
+      vadd.ss  vv1, vs1, vs0; \
+      v ## inst.vs vv2, vv1, vs0; \
     )
 
 #define TEST_RR_ZEROSRC12( testnum, inst, result ) \
     TEST_CASE_NREG( testnum, 2, v1, result, 0, 0, \
-      v ## inst 1,0,0, vv1, vs0, vs0; \
+      v ## inst.ss vv1, vs0, vs0; \
     )
 
 #define TEST_RR_ZERODEST( testnum, inst, val1, val2 ) \
     TEST_CASE_NREG( testnum, 3, v0, 0, val1, val2, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      vadd 1,0,0,  vv2, vs2, vs0; \
-      v ## inst 1,1,1, vv0, vv1, vv2; \
-      v ## inst 1,0,0, vv0, vs0, vs0; \
+      vadd.ss  vv1, vs1, vs0; \
+      vadd.ss  vv2, vs2, vs0; \
+      v ## inst.vv vv0, vv1, vv2; \
+      v ## inst.ss vv0, vs0, vs0; \
     )
 
 
@@ -260,9 +259,9 @@ vtcode ## testnum : \
   vload vs2, va3; \
   vload vs3, va4; \
   vload vs4, va5; \
-  vadd 1,0,0, vv2, vs2, vs0; \
-  vadd 1,0,0, vv3, vs3, vs0; \
-  vadd 1,0,0, vv4, vs4, vs0; \
+  vadd.ss vv2, vs2, vs0; \
+  vadd.ss vv3, vs3, vs0; \
+  vadd.ss vv4, vs4, vs0; \
   code; \
   vstore vv1, va6; \
   vstop; \
@@ -277,79 +276,79 @@ vtcode ## testnum : \
 
 #define TEST_FCVT_S_D( testnum, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double 0.0, double 0.0, vlad, vsd, ld, 8, \
-                    vfcvt.s.d 1,1, vv5, vv2; vfcvt.d.s 1,1, vv1, vv5)
+                    vfcvt.s.d.v vv5, vv2; vfcvt.d.s.v vv1, vv5)
 
 #define TEST_FCVT_D_S( testnum, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, float val1, float 0.0, float 0.0, vlaw, vsw, lw, 4, \
-                    vfcvt.d.s 1,1, vv5, vv2; vfcvt.s.d 1,1, vv1, vv5)
+                    vfcvt.d.s.v vv5, vv2; vfcvt.s.d.v vv1, vv5)
 
 #define TEST_FP_OP1_S( testnum, inst, flags, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, float val1, float 0.0, float 0.0, vlaw, vsw, lw, 4, \
-                    v ## inst 1,1, vv1, vv2)
+                    v ## inst.v vv1, vv2)
 
 #define TEST_FP_OP1_D( testnum, inst, flags, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double 0.0, double 0.0, vlad, vsd, ld, 8, \
-                    v ## inst 1,1, vv1, vv2)
+                    v ## inst.v vv1, vv2)
 
 #define TEST_FP_OP2_S( testnum, inst, flags, result, val1, val2 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, float val1, float val2, float 0.0, vlaw, vsw, lw, 4, \
-                    v ## inst 1,1,1, vv1, vv2, vv3)
+                    v ## inst.vv vv1, vv2, vv3)
 
 #define TEST_FP_OP2_D( testnum, inst, flags, result, val1, val2 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double val2, double 0.0, vlad, vsd, ld, 8, \
-                    v ## inst 1,1,1, vv1, vv2, vv3)
+                    v ## inst.vv vv1, vv2, vv3)
 
 #define TEST_FP_OP3_S( testnum, inst, flags, result, val1, val2, val3 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, float val1, float val2, float val3, vlaw, vsw, lw, 4, \
-                    v ## inst 1,1,1,1, vv1, vv2, vv3, vv4)
+                    v ## inst.vvv vv1, vv2, vv3, vv4)
 
 #define TEST_FP_OP3_D( testnum, inst, flags, result, val1, val2, val3 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double val2, double val3, vlad, vsd, ld, 8, \
-                    v ## inst 1,1,1,1, vv1, vv2, vv3, vv4)
+                    v ## inst.vvv vv1, vv2, vv3, vv4)
 
 #define TEST_FP_INT_OP_S( testnum, inst, flags, result, val1, rm ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, word result, float val1, float 0.0, float 0.0, vlaw, vsw, lw, 4, \
-                    v ## inst 1,1, vv1, vv2, rm)
+                    v ## inst.v vv1, vv2, rm)
 
 #define TEST_FP_INT_OP_D( testnum, inst, flags, result, val1, rm ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, double val1, double 0.0, double 0.0, vlad, vsd, ld, 8, \
-                    v ## inst 1,1, vv1, vv2, rm)
+                    v ## inst.v vv1, vv2, rm)
 
 #define TEST_FP_INT_OP_S_HEX( testnum, inst, flags, result, val1, rm ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, word val1, word 0, word 0, vlaw, vsd, ld, 8, \
-                    v ## inst 1,1, vv1, vv2, rm)
+                    v ## inst.v vv1, vv2, rm)
 
 #define TEST_FP_INT_OP_D_HEX( testnum, inst, flags, result, val1, rm ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
-                    v ## inst 1,1, vv1, vv2, rm)
+                    v ## inst.v vv1, vv2, rm)
 
 #define TEST_FP_CMP_OP_S( testnum, inst, result, val1, val2 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 2, word result, float val1, float val2, float 0.0, vlaw, vsw, lw, 4, \
-                    vcmp ## inst 1,1, vp1, vv2, vv3;\
-                    vaddi vs1,vs0,1; @vp1 vadd 1,0,0, vv1,vs0,vs1;\
-                    @!vp1 vadd 1,0,0, vv1,vs0,vs0 )
+                    vcmp ## inst.vv vp1, vv2, vv3;\
+                    vaddi vs1,vs0,1; @vp1 vadd.ss vv1,vs0,vs1;\
+                    @!vp1 vadd.ss vv1,vs0,vs0 )
 
 #define TEST_FP_CMP_OP_D( testnum, inst, result, val1, val2 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 2, dword result, double val1, double val2, double 0.0, vlad, vsd, ld, 8, \
-                    vcmp ## inst 1,1, vp1, vv2, vv3;\
-                    vaddi vs1,vs0,1; @vp1 vadd 1,0,0, vv1,vs0,vs1;\
-                    @!vp1 vadd 1,0,0, vv1,vs0,vs0 )
+                    vcmp ## inst.vv vp1, vv2, vv3;\
+                    vaddi vs1,vs0,1; @vp1 vadd.ss vv1,vs0,vs1;\
+                    @!vp1 vadd.ss vv1,vs0,vs0 )
 
 #define TEST_FP_CLASS_S( testnum, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, word val1, word 0, word 0, vlaw, vsd, ld, 8, \
-                    vfclass.s 1,1, vv1, vv2)
+                    vfclass.s.v vv1, vv2)
 
 #define TEST_FP_CLASS_D( testnum, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
-                    vfclass.d 1,1, vv1, vv2)
+                    vfclass.d.v vv1, vv2)
 
 #define TEST_INT_FP_OP_S( testnum, inst, flags, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, word val1, word 0, word 0, vlaw, vsd, lw, 8, \
-                    v ## inst 1,1, vv1, vv2, rm)
+                    v ## inst.v vv1, vv2, rm)
 
 #define TEST_INT_FP_OP_D( testnum, inst, flags, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
-                    v ## inst 1,1, vv1, vv2, rm)
+                    v ## inst.v vv1, vv2, rm)
 
 #-----------------------------------------------------------------------
 # RV64UV MACROS
@@ -361,8 +360,8 @@ vtcode ## testnum : \
 
 #define TEST_BR2_OP_TAKEN( testnum, inst, val1, val2) \
     TEST_CASE_NREG( testnum, 4, v3, 0, val1, val2, \
-      vadd 1,0,0,  vv1, vs1, vs0; \
-      vadd 1,0,0,  vv2, vs2, vs0; \
+      vadd.ss  vv1, vs1, vs0; \
+      vadd.ss  vv2, vs2, vs0; \
       vadd vv3, vv0, vv0; \
       v ## inst vv1, vv2, 2f; \
       addi vv3, vv3, 1; \
@@ -375,8 +374,8 @@ vtcode ## testnum : \
 
 #define TEST_BR2_OP_NOTTAKEN( testnum, inst, val1, val2 ) \
   TEST_CASE_NREG( testnum, 4, v3, 0, val1, val2, \
-    vadd 1,0,0,  vv1, vs1, vs0; \
-    vadd 1,0,0,  vv2, vs2, vs0; \
+    vadd.ss  vv1, vs1, vs0; \
+    vadd.ss  vv2, vs2, vs0; \
     add vv3, vv0, vv0; \
     v ## inst vv1, vv2, 1f; \
     j 2f; \
@@ -390,9 +389,9 @@ vtcode ## testnum : \
   TEST_CASE_NREG( testnum, 6, v3, 0, val1, val2, \
     add vv3, vv0, vv0; \
     li  vv4, 0; \
-1:  vadd 1,0,0,  vv1, vs1, vs0; \
+1:  vadd.ss  vv1, vs1, vs0; \
     TEST_INSERT_NOPS_ ## src1_nops \
-    vadd 1,0,0,  vv2, vs2, vs0; \
+    vadd.ss  vv2, vs2, vs0; \
     TEST_INSERT_NOPS_ ## src2_nops \
     v ## inst vv1, vv2, 2f; \
     addi  vv4, vv4, 1; \
@@ -407,9 +406,9 @@ vtcode ## testnum : \
   TEST_CASE_NREG( testnum, 6, v3, 0, val1, val2, \
     add vv3, vv0, vv0; \
     li  vv4, 0; \
-1:  vadd 1,0,0,  vv2, vs2, vs0; \
+1:  vadd.ss  vv2, vs2, vs0; \
     TEST_INSERT_NOPS_ ## src1_nops \
-    vadd 1,0,0,  vv1, vs1, vs0; \
+    vadd.ss  vv1, vs1, vs0; \
     TEST_INSERT_NOPS_ ## src2_nops \
     v ## inst vv1, vv2, 2f; \
     addi  vv4, vv4, 1; \

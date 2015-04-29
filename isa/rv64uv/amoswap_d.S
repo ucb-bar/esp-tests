@@ -39,9 +39,9 @@ loop:
 vtcode:
   veidx vv3
   vaddi vs3,vs3,1
-  vadd 1,1,0, vv3,vv3,vs3
-  vadd 1,0,0, vv2,vs2,vs0
-  vamoswap.d 1,1,1, vv1,vv3,0(vv2)
+  vadd.vs vv3,vv3,vs3
+  vadd.ss vv2,vs2,vs0
+  vamoswap.d.vv vv1,0(vv2),vv3
   vsd vv1,va1
   vstop
 

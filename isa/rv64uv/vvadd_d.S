@@ -97,21 +97,21 @@ RVTEST_CODE_BEGIN
 vtcode1:
   vld vv2,va2
   vld vv3,va3
-  vadd 1,1,1, vv2,vv2,vv3
+  vadd.vv vv2,vv2,vv3
   vsd vv2,va1
   vstop
 
 .align 3
 vtcode2:
   vld vv2,va2
-  vadd 1,0,1, vv1,vs0,vv2
+  vadd.sv vv1,vs0,vv2
   vsd vv1,va1
   vstop
 
 .align 3
 vtcode3:
   vld vv2,va2
-  vadd 1,1,0, vv1,vv2,vs0
+  vadd.vs vv1,vv2,vs0
   vsd vv1,va1
   vstop
 
