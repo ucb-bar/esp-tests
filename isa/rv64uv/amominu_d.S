@@ -41,7 +41,7 @@ loop:
 .align 3
 vtcode:
   veidx vv3
-  vaddi vs3,vs3,1
+  vaddi vs3,vs0,1
   vadd.vs vv3,vv3,vs3
   vmul.vs vv3,vv3,vs1
   vadd.ss vv2,vs2,vs0
