@@ -73,6 +73,18 @@ $$($(1)_v_vec_tests): $(1)-v-vec-%: $(1)/%.S
 	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -std=gnu99 -O2 -I$(isa_src_dir)/../env/v -I$(isa_src_dir)/macros/vector -T$(isa_src_dir)/../env/v/link.ld $(isa_src_dir)/../env/v/entry.S $(isa_src_dir)/../env/v/vm.c $$< -lc -o $$@
 $(1)_tests += $$($(1)_v_vec_tests)
 
+$$($(1)_p_svec_tests): $(1)-p-svec-%: $(1)/%.S
+	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -I$(isa_src_dir)/../env/p -I$(isa_src_dir)/macros/svector -T$(isa_src_dir)/../env/p/link.ld $$< -o $$@
+$(1)_tests += $$($(1)_p_svec_tests)
+
+$$($(1)_pt_svec_tests): $(1)-pt-svec-%: $(1)/%.S
+	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -I$(isa_src_dir)/../env/pt -I$(isa_src_dir)/macros/svector -T$(isa_src_dir)/../env/pt/link.ld $$< -o $$@
+$(1)_tests += $$($(1)_pt_svec_tests)
+
+$$($(1)_v_svec_tests): $(1)-v-svec-%: $(1)/%.S
+	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -std=gnu99 -O2 -I$(isa_src_dir)/../env/v -I$(isa_src_dir)/macros/svector -T$(isa_src_dir)/../env/v/link.ld $(isa_src_dir)/../env/v/entry.S $(isa_src_dir)/../env/v/vm.c $$< -lc -o $$@
+$(1)_tests += $$($(1)_v_svec_tests)
+
 $(1)_tests_dump = $$(addsuffix .dump, $$($(1)_tests))
 $(1)_tests_hex = $$(addsuffix .hex, $$($(1)_tests))
 
