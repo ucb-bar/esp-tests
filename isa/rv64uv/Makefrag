@@ -19,6 +19,7 @@ rv64uv_sc_tests = \
 	fcvt \
 	vvadd_d vvadd_w vvadd_fd vvadd_fw \
 	vvmul_d \
+	sched_sreg_xbar sched_fadd \
 
 rv64uv_sc_vec_tests = \
 	 \
