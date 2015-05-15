@@ -1,0 +1,231 @@
+# See LICENSE for license details.
+
+#*****************************************************************************
+# vvadd_d.S
+#-----------------------------------------------------------------------------
+#
+# Test vvadd d.
+#
+
+#include "riscv_test.h"
+#include "test_macros.h"
+
+RVTEST_RV64UV
+RVTEST_CODE_BEGIN
+
+  vsetcfg 32,1
+  li a3,4
+  vsetvl a3,a3
+
+  la a3,src1
+  ld a3, 0(a3)
+  vmss vs2,a3
+  la a4,src2
+  ld a4, 0(a4)
+  vmss vs3,a4
+  la a5,dest1
+  vmsa va1,a5
+  lui a0,%hi(vtcode1)
+  vf %lo(vtcode1)(a0)
+
+  la a5,dest1
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  vmsa va1,a5
+  lui a0,%hi(vtcode1_save)
+  vf %lo(vtcode1_save)(a0)
+  fence
+
+  la a5,dest1
+  ld a1,0(a5)
+  li a2,5
+  li TESTNUM,2
+  bne a1,a2,fail
+
+  vmss vs2,a3
+  vmss vs3,a4
+  la a5,dest2
+  vmsa va1,a5
+  lui a0,%hi(vtcode1)
+  vf %lo(vtcode1)(a0)
+
+  li a6,1337
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  vmss vs6,a6
+  lui a0,%hi(vtcode1_save)
+  vf %lo(vtcode1_save)(a0)
+  fence
+
+  la a5,dest2
+  ld a1,0(a5)
+  li a2,5
+  li TESTNUM,3
+  bne a1,a2,fail
+
+  la a5,dest3
+  vmsa va1,a5
+  vmss vs3,a4
+  lui a0,%hi(vtcode3)
+  vf %lo(vtcode3)(a0)
+  fence
+
+  ld a1,0(a5)
+  li a2,4
+  li TESTNUM,4
+  bne a1,a2,fail
+
+  j pass
+
+.align 3
+vtcode1:
+  vadd vs4,vs2,vs3
+  vadd vs5,vs2,vs3
+  vadd vs6,vs2,vs3
+  vadd vs7,vs2,vs3
+  vadd vs8,vs2,vs3
+  vadd vs9,vs2,vs3
+  vadd vs2,vs2,vs3
+  vstop
+vtcode1_save:
+  vsad va1,vs2
+  vstop
+
+.align 3
+vtcode3:
+  vadd vs1,vs3,vs0
+  vsad va1,vs1
+  vstop
+
+  TEST_PASSFAIL
+
+RVTEST_CODE_END
+
+  .data
+RVTEST_DATA_BEGIN
+
+  TEST_DATA
+
+src1:
+  .dword 1
+  .dword 2
+  .dword 3
+  .dword 4
+src2:
+  .dword 4
+  .dword 3
+  .dword 2
+  .dword 1
+dest1:
+  .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+dest2:
+  .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+dest3:
+  .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+
+RVTEST_DATA_END
