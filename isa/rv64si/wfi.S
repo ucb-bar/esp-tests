@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# scall.S
+# wfi.S
 #-----------------------------------------------------------------------------
 #
-# Test syscall trap.
+# Test wait-for-interrupt instruction.
 #
 
 #include "riscv_test.h"
@@ -14,31 +14,22 @@ RVTEST_RV64S
 RVTEST_CODE_BEGIN
 
 #ifdef __MACHINE_MODE
-  #define sscratch mscratch
   #define sstatus mstatus
-  #define scause mcause
-  #define sepc mepc
-  #define stvec_handler mtvec_handler
-  #undef CAUSE_SUPERVISOR_ECALL
-  #define CAUSE_SUPERVISOR_ECALL CAUSE_MACHINE_ECALL
+  #define sie mie
+  #define sip mip
+  #undef MIP_SSIP
+  #define MIP_SSIP MIP_MSIP
 #endif
 
-  li TESTNUM, 2
-  scall
-  j fail
+  # Make sure wfi doesn't stall if an interrupt is pending
+  csrc sstatus, SSTATUS_IE
+  csrs sie, MIP_SSIP
+  csrs sip, MIP_SSIP
+  wfi
 
-  j pass
+  RVTEST_PASS
 
   TEST_PASSFAIL
-
-stvec_handler:
-  li t1, CAUSE_SUPERVISOR_ECALL
-  csrr t0, scause
-  bne t0, t1, fail
-  csrr t0, sepc
-  addi t0, t0, 8
-  csrw sepc, t0
-  sret
 
 RVTEST_CODE_END
 

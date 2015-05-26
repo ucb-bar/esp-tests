@@ -22,8 +22,8 @@ static long handle_frontend_syscall(long which, long arg0, long arg1, long arg2)
   magic_mem[2] = arg1;
   magic_mem[3] = arg2;
   __sync_synchronize();
-  write_csr(tohost, (long)magic_mem);
-  while (swap_csr(fromhost, 0) == 0);
+  write_csr(mtohost, (long)magic_mem);
+  while (swap_csr(mfromhost, 0) == 0);
   return magic_mem[0];
 }
 
@@ -60,13 +60,13 @@ static int handle_stats(int enable)
   return 0;
 }
 
-static void tohost_exit(int code)
+void tohost_exit(long code)
 {
-  write_csr(tohost, (code << 1) | 1);
+  write_csr(mtohost, (code << 1) | 1);
   while (1);
 }
 
-long handle_trap(long cause, long epc, long regs[32])
+long handle_trap(long cause, long epc, long long regs[32])
 {
   int* csr_insn;
   asm ("jal %0, 1f; csrr a0, stats; 1:" : "=r"(csr_insn));
@@ -75,7 +75,7 @@ long handle_trap(long cause, long epc, long regs[32])
   if (cause == CAUSE_ILLEGAL_INSTRUCTION &&
       (*(int*)epc & *csr_insn) == *csr_insn)
     ;
-  else if (cause != CAUSE_ECALL)
+  else if (cause != CAUSE_USER_ECALL)
     tohost_exit(1337);
   else if (regs[17] == SYS_exit)
     tohost_exit(regs[10]);

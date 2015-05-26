@@ -67,8 +67,13 @@ _start:
   li t0, MSTATUS_FS;   csrs mstatus, t0    # enable FPU
   li t0, MSTATUS_XS;   csrs mstatus, t0    # enable accelerator
 
-#ifndef __riscv64
-  li t0, MSTATUS_UA;   csrc mstatus, t0    # disable RV64 for user mode
+#ifdef __riscv64
+  csrr t0, mcpuid
+  # make sure processor supports RV64 if this was compiled for RV64
+  bltz t0, 1f
+  li a0, 1234
+  j tohost_exit
+1:
 #endif
 
   csrr t0, mstatus
@@ -116,11 +121,14 @@ _start:
   fmv.s.x f31,x0
 1:
 
+  # initialize global pointer
+  la gp, _gp
+
   la  tp, _end + 63
   and tp, tp, -64
 
   # get core id
-  csrr a0, hartid
+  csrr a0, mhartid
   # for now, assume only 1 core
   li a1, 1
 1:bgeu a0, a1, 1b
