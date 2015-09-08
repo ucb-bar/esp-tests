@@ -22,11 +22,11 @@ bmarks = \
 	towers \
 	vvadd \
 	multiply \
-	mm \
 	dhrystone \
 	spmv \
 	mt-vvadd \
 	mt-matmul \
+	#mm \
 	#vec-fft \
 	#vec-vvadd \
 	#vec-cmplxmult \
