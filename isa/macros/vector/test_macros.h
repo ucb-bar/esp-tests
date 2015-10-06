@@ -43,6 +43,7 @@ skip ## testnum : \
   j next ## testnum; \
 .align 8; \
 vtcode ## testnum : \
+  vpset vp0; \
   code; \
   vsd v ## testreg, va4; \
   vstop; \
@@ -255,6 +256,7 @@ skip ## testnum : \
   j 1f; \
 .align 8; \
 vtcode ## testnum : \
+  vpset vp0; \
   vload vs2, va3; \
   vload vs3, va4; \
   vload vs4, va5; \
@@ -488,6 +490,7 @@ skip ## testnum : \
   j next ## testnum; \
 .align 8; \
 vtcode ## testnum : \
+  vpset vp0; \
   code; \
   stop; \
 next ## testnum :
