@@ -64,11 +64,13 @@ loop:
 
 .align 3
 vtcode1:
+  vpset vp0
   vadd vv0, vs0, vs1
   vadd vv1, vs0, vs2
   vadd vv2, vs0, vs3
   vstop
 vtcode2:
+  vpset vp0
   vfmadd.d vv3, vv0, vv1, vv2
   vadd vv2, vs4, vs4
   vsd vv3, va0

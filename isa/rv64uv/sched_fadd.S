@@ -46,6 +46,7 @@ loop2:
 
 .align 3
 vtcode1:
+  vpset vp0
   vfadd.d vv0, vs2, vs3
   vsd vv0,va0
   vstop

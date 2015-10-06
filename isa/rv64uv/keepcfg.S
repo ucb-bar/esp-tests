@@ -59,6 +59,7 @@ loop2:
 
 .align 3
 vtcode1:
+  vpset vp0
   veidx vv1
   vaddi vs1,vs0,1
   vadd.vs vv1,vv1,vs1
@@ -67,6 +68,7 @@ vtcode1:
 
 .align 3
 vtcode2:
+  vpset vp0
   veidx vv1
   vaddi vs1,vs0,1024
   vadd.vs vv1,vv1,vs1

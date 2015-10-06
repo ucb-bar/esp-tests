@@ -175,6 +175,7 @@ RVTEST_CODE_BEGIN
 
 .align 3
 vtcode1:
+  vpset vp0
   vadd vs4,vs2,vs3
   vadd vs5,vs2,vs3
   vadd vs6,vs2,vs3
@@ -184,11 +185,13 @@ vtcode1:
   vadd vs2,vs2,vs3
   vstop
 vtcode1_save:
+  vpset vp0
   vsad va1,vs2
   vstop
 
 .align 3
 vtcode3:
+  vpset vp0
   vadd vs1,vs3,vs0
   vsad va1,vs1
   vstop

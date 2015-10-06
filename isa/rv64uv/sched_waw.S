@@ -39,6 +39,7 @@ loop:
 
 .align 3
 vtcode1:
+  vpset vp0
   vmul vv0, vs1, vs1
   veidx vv0
   vsd vv0, va0

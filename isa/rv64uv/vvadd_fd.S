@@ -44,6 +44,7 @@ RVTEST_CODE_BEGIN
 
 .align 3
 vtcode:
+  vpset vp0
   vld vv2,va2
   vld vv3,va3
   vfadd.d.vv vv2,vv2,vv3

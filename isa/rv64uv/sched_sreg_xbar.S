@@ -60,6 +60,7 @@ loop2:
 
 .align 3
 vtcode1:
+  vpset vp0
   vaddi vs4, vs0, 3
   veidx vv0
   vadd vv1, vs0, vs4

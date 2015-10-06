@@ -50,6 +50,7 @@ enable_fp:
 
 .align 3
 test:
+  vpset vp0
   vlh vv1,va1
 	veidx vv2
 	vslli vs2, vs2, 2

@@ -130,6 +130,7 @@ RVTEST_CODE_BEGIN
 
 .align 3
 vtcode1:
+  vpset vp0
   vld vv2,va2
   vld vv3,va3
   vadd.vv vv2,vv2,vv3

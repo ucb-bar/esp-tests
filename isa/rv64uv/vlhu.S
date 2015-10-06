@@ -39,6 +39,7 @@ loop:
 
 .align 3
 vtcode:
+  vpset vp0
   vlhu vv1, va1
   vsh vv1, va2
   vstop

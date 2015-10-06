@@ -95,6 +95,7 @@ RVTEST_CODE_BEGIN
 
 .align 3
 vtcode1:
+  vpset vp0
   vld vv2,va2
   vld vv3,va3
   vadd.vv vv2,vv2,vv3
@@ -103,6 +104,7 @@ vtcode1:
 
 .align 3
 vtcode2:
+  vpset vp0
   vld vv2,va2
   vadd.sv vv1,vs0,vv2
   vsd vv1,va1
@@ -110,6 +112,7 @@ vtcode2:
 
 .align 3
 vtcode3:
+  vpset vp0
   vld vv2,va2
   vadd.vs vv1,vv2,vs0
   vsd vv1,va1

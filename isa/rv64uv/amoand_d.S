@@ -40,6 +40,7 @@ loop:
 
 .align 3
 vtcode:
+  vpset vp0
   vadd.ss vv2,vs2,vs0
   vamoand.d.vs vv1,0(vv2),vs3
   vsd vv1, va1
