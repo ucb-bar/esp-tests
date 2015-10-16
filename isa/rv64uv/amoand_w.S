@@ -55,6 +55,7 @@ RVTEST_DATA_BEGIN
 
   TEST_DATA
 
+  .skip 4
 amodest:
   .word 0
 dest:
