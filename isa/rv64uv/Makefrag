@@ -12,7 +12,7 @@ rv64uv_sc_tests = \
 	eidx_pred \
 	vlb vlbu vlh vlhu vlw vlwu vld \
 	vsb vsh vsw vsd \
-	vld_pred vsd_pred vlx_empty \
+	vld_pred vsd_pred vlx_empty vsx_empty vamo_empty \
 	vlxb vlxbu vlxh vlxhu vlxw vlxwu vlxd \
 	vsxb vsxh vsxw vsxd \
 	amoadd_d amoand_d amomax_d amomaxu_d amomin_d amominu_d amoor_d amoswap_d amoxor_d \

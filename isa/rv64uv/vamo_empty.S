@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# vlx_empty.S
+# vamo_empty.S
 #-----------------------------------------------------------------------------
 #
-# Test empty vlx* instructions in a vf block.
+# Test empty vamo instructions in a vf block.
 #
 
 #include "riscv_test.h"
@@ -47,13 +47,24 @@ vtcode:
      vadd.sv vv2,vs2,vv3
      vpclear vp1
      vlxd vv1, vs0, vv2
-@vp1 vlxd vv1, vs2, vv3
-@vp1 vlxw vv1, vs2, vv3
-@vp1 vlxwu vv1, vs2, vv3
-@vp1 vlxh vv1, vs2, vv3
-@vp1 vlxhu vv1, vs2, vv3
-@vp1 vlxb vv1, vs2, vv3
-@vp1 vlxbu vv1, vs2, vv3
+@vp1 vamoswap.d vv1,0(vv2),vs3
+@vp1 vamoadd.d vv1,0(vv2),vs3
+@vp1 vamoxor.d vv1,0(vv2),vs3
+@vp1 vamoand.d vv1,0(vv2),vs3
+@vp1 vamoor.d vv1,0(vv2),vs3
+@vp1 vamomin.d vv1,0(vv2),vs3
+@vp1 vamomax.d vv1,0(vv2),vs3
+@vp1 vamominu.d vv1,0(vv2),vs3
+@vp1 vamomaxu.d vv1,0(vv2),vs3
+@vp1 vamoswap.w vv1,0(vv2),vs3
+@vp1 vamoadd.w vv1,0(vv2),vs3
+@vp1 vamoxor.w vv1,0(vv2),vs3
+@vp1 vamoand.w vv1,0(vv2),vs3
+@vp1 vamoor.w vv1,0(vv2),vs3
+@vp1 vamomin.w vv1,0(vv2),vs3
+@vp1 vamomax.w vv1,0(vv2),vs3
+@vp1 vamominu.w vv1,0(vv2),vs3
+@vp1 vamomaxu.w vv1,0(vv2),vs3
      vsd vv1,va1
      vstop
 

@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# vlx_empty.S
+# vsx_empty.S
 #-----------------------------------------------------------------------------
 #
-# Test empty vlx* instructions in a vf block.
+# Test empty vsx* instructions in a vf block.
 #
 
 #include "riscv_test.h"
@@ -13,15 +13,15 @@
 RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
-  vsetcfg 16,2
+  vsetcfg 5,3
   li a4,512
   vsetvl a4,a4
 
   la a5,src
   la a6,dest
-  vmss vs2, a5
-  vmss vs3, a6
-  vmsa va1, a6
+  vmsa va1, a5
+  vmsa va2, a6
+  vmss vs1, a6
   lui a0,%hi(vtcode)
   vf %lo(vtcode)(a0)
   fence
@@ -41,20 +41,17 @@ loop:
 .align 3
 vtcode:
      vpset vp0
+     vadd.ss vv2,vs0,vs0
+     vld vv1, va1
+     vsd vv1, va2
+     vpclear vp1
      veidx vv3
      vaddi vs3,vs0,3
      vsll.vs vv3,vv3,vs3
-     vadd.sv vv2,vs2,vv3
-     vpclear vp1
-     vlxd vv1, vs0, vv2
-@vp1 vlxd vv1, vs2, vv3
-@vp1 vlxw vv1, vs2, vv3
-@vp1 vlxwu vv1, vs2, vv3
-@vp1 vlxh vv1, vs2, vv3
-@vp1 vlxhu vv1, vs2, vv3
-@vp1 vlxb vv1, vs2, vv3
-@vp1 vlxbu vv1, vs2, vv3
-     vsd vv1,va1
+@vp1 vsxd vv2, vs1, vv3
+@vp1 vsxw vv2, vs1, vv3
+@vp1 vsxh vv2, vs1, vv3
+@vp1 vsxb vv2, vs1, vv3
      vstop
 
   TEST_PASSFAIL
