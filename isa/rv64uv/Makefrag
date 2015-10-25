@@ -30,7 +30,7 @@ rv64uv_sc_vec_tests = \
 
 rv64uv_p_tests = $(addprefix rv64uv-p-, $(rv64uv_sc_tests))
 rv64uv_pt_tests = $(addprefix rv64uv-pt-, $(rv64uv_sc_tests))
-rv64uv_v_tests = $(addprefix rv64uv-v-, $(rv64uv_sc_tests))
+rv64uv_v_tests = $(addprefix rv64uv-v-, $(filter-out vsetcfgi vsetcfg vsetvl,$(rv64uv_sc_tests))) #FIXME: fix long tests in v env
 rv64uv_p_vec_tests = $(addprefix rv64uv-p-vec-, $(rv64uv_sc_vec_tests))
 rv64uv_pt_vec_tests = $(addprefix rv64uv-pt-vec-, $(rv64uv_sc_vec_tests))
 rv64uv_v_vec_tests = $(addprefix rv64uv-v-vec-, $(rv64uv_sc_vec_tests))
