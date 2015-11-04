@@ -24,6 +24,7 @@ rv64uv_sc_tests = \
 	overlap \
 	sched_sreg_xbar sched_fadd sched_waw sched_war \
 	pointer \
+	vcjal \
 
 rv64uv_sc_vec_tests = \
 	 \
