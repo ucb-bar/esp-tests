@@ -26,6 +26,8 @@ bmarks = \
 	spmv \
 	mt-vvadd \
 	mt-matmul \
+	pb-sgemm \
+	pb-spmv \
 	#mm \
 	#vec-fft \
 	#vec-vvadd \
