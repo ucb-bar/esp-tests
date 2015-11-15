@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# vsd_pred.S
+# vl_empty.S
 #-----------------------------------------------------------------------------
 #
-# Test predicated vsd instruction in a vf block.
+# Test empty vl* instructions in a vf block.
 #
 
 #include "riscv_test.h"
@@ -39,13 +39,18 @@ loop:
 
 .align 3
 vtcode:
-  vpset vp0
-  vadd.ss vv2,vs0,vs0
-  vld vv1, va1
-  vsd vv1, va2
-  vpclear vp1
-  @vp1 vsd vv2, va2
-  vstop
+     vpset vp0
+     vpclear vp1
+     vld vv1, va1
+@vp1 vld vv1, va2
+@vp1 vlw vv1, va2
+@vp1 vlwu vv1, va2
+@vp1 vlh vv1, va2
+@vp1 vlhu vv1, va2
+@vp1 vlb vv1, va2
+@vp1 vlbu vv1, va2
+     vsd vv1, va2
+     vstop
 
   TEST_PASSFAIL
 

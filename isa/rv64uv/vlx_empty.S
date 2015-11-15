@@ -44,9 +44,8 @@ vtcode:
      veidx vv3
      vaddi vs3,vs0,3
      vsll.vs vv3,vv3,vs3
-     vadd.sv vv2,vs2,vv3
      vpclear vp1
-     vlxd vv1, vs0, vv2
+     vlxd vv1, vs2, vv3
 @vp1 vlxd vv1, vs2, vv3
 @vp1 vlxw vv1, vs2, vv3
 @vp1 vlxwu vv1, vs2, vv3

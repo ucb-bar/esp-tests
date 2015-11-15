@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# eidx_pred.S
+# eidx_empty.S
 #-----------------------------------------------------------------------------
 #
-# Test predicated eidx instruction in a vf block.
+# Test empty eidx instruction in a vf block.
 #
 
 #include "riscv_test.h"
