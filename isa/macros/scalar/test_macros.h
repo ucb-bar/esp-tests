@@ -91,24 +91,31 @@ test_ ## testnum: \
 # Tests for vector config instructions
 #-----------------------------------------------------------------------
 
-#define TEST_VSETCFGIVL( testnum, nxpr, nppr, vl, result ) \
+#define VCFG(nvvd, nvvw, nvvh, nvp) \
+  (((nvvd) & 0x1ff) | \
+  (((nvp) & 0x1f) << 9) | \
+  (((nvvw) & 0x1ff) << 14) | \
+  (((nvvh) & 0x1ff) << 23))
+
+#define TEST_VSETCFGIVL( testnum, nvvd, nvp, vl, result ) \
     TEST_CASE( testnum, x1, result, \
-      vsetcfg nxpr,nppr; \
+      vsetcfg (nvvd),(nvp); \
       li x1, vl; \
       vsetvl x1,x1; \
     )
 
-#define TEST_VVCFG( testnum, nxpr, nppr, vl, result ) \
+#define TEST_VVCFG( testnum, nvvd, nvp, vl, result ) \
     TEST_CASE( testnum, x1, result, \
-      li x1, ((nppr-1) << 8) | (nxpr-1); \
+      li x1, VCFG(nvvd,0,0,nvp); \
       vsetcfg x1; \
       li x1, vl; \
       vsetvl x1,x1; \
     )
 
-#define TEST_VSETVL( testnum, nxpr, nppr, vl, result ) \
+#define TEST_VSETVL( testnum, nvvd, nvp, vl, result ) \
     TEST_CASE( testnum, x1, result, \
-      vsetcfg nxpr,nppr; \
+      li x1, VCFG(nvvd,0,0,nvp); \
+      vsetcfg x1; \
       li x1, vl; \
       vsetvl x1, x1; \
     )

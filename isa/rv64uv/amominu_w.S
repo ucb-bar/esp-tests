@@ -13,7 +13,8 @@
 RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
-  vsetcfg 4,1
+  li a4, VCFG(0,4,0,1)
+  vsetcfg a4
   li a4,2048
   vsetvl a4,a4
 

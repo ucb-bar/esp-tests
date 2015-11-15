@@ -13,7 +13,8 @@
 RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
-  vsetcfg 16,1
+  li a4, VCFG(3,2,0,1)
+  vsetcfg a4
   li a4,512
   vsetvl a4,a4
 
@@ -42,12 +43,11 @@ loop:
 .align 3
 vtcode:
   vpset vp0
-  veidx vv3
+  veidx vv1
   vaddi vs3,vs0,3
-  vsll.vs vv3,vv3,vs3
-  vadd.sv vv2,vs2,vv3
-  vlxwu vv1, vs0, vv2
-  vsd vv1,va1
+  vsll.vs vv1,vv1,vs3
+  vlxwu vv2,vs2,vv1
+  vsd vv2,va1
   vstop
 
   TEST_PASSFAIL
