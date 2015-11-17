@@ -50,6 +50,18 @@ static void printArray(const char name[], int n, const int arr[])
 #endif
 }
 
+static void printFloatArray(const char name[], int n, const float arr[])
+{
+#if HOST_DEBUG
+  int i;
+  printf( " %10s :", name );
+  for ( i = 0; i < n; i++ )
+    printf( " %g ", arr[i] );
+  printf( "\n" );
+#endif
+}
+
+
 static void printDoubleArray(const char name[], int n, const double arr[])
 {
 #if HOST_DEBUG
@@ -92,6 +104,23 @@ static int verifyDouble(int n, const volatile double* test, const double* verify
     return n;
   return 0;
 }
+
+static int verifyFloat(int n, const volatile float* test, const float* verify)
+{
+  int i;
+  // Unrolled for faster verification
+  for (i = 0; i < n/2*2; i+=2)
+  {
+    float t0 = test[i], t1 = test[i+1];
+    float v0 = verify[i], v1 = verify[i+1];
+    int eq1 = t0 == v0, eq2 = t1 == v1;
+    if (!(eq1 & eq2)) return i+1+eq1;
+  }
+  if (n % 2 != 0 && test[n-1] != verify[n-1])
+    return n;
+  return 0;
+}
+
 
 static void __attribute__((noinline)) barrier(int ncores)
 {

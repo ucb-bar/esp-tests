@@ -28,6 +28,7 @@ bmarks = \
 	mt-matmul \
 	pb-sgemm \
 	pb-spmv \
+	vec-saxpy \
 	#mm \
 	#vec-fft \
 	#vec-vvadd \
