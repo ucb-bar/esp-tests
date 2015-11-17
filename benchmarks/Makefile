@@ -29,9 +29,9 @@ bmarks = \
 	pb-sgemm \
 	pb-spmv \
 	vec-saxpy \
+	vec-vvadd \
 	#mm \
 	#vec-fft \
-	#vec-vvadd \
 	#vec-cmplxmult \
 	#vec-matmul \
 

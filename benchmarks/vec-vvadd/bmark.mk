@@ -10,6 +10,8 @@
 
 vec_vvadd_c_src = \
 	vec_vvadd_main.c \
+	vec_vvadd.c \
+	syscalls.c \
 
 vec_vvadd_riscv_src = \
 	crt.S \
@@ -19,12 +21,12 @@ vec_vvadd_c_objs     = $(patsubst %.c, %.o, $(vec_vvadd_c_src))
 vec_vvadd_riscv_objs = $(patsubst %.S, %.o, $(vec_vvadd_riscv_src))
 
 vec_vvadd_host_bin = vec-vvadd.host
-$(vec_vvadd_host_bin) : $(vec_vvadd_c_src)
+$(vec_vvadd_host_bin): $(vec_vvadd_c_src)
 	$(HOST_COMP) $^ -o $(vec_vvadd_host_bin)
 
 vec_vvadd_riscv_bin = vec-vvadd.riscv
-$(vec_vvadd_riscv_bin) : $(vec_vvadd_c_objs) $(vec_vvadd_riscv_objs)
-	$(RISCV_LINK) $(RISCV_LINK_SYSCALL) $(vec_vvadd_c_objs) $(vec_vvadd_riscv_objs) -o $(vec_vvadd_riscv_bin)
+$(vec_vvadd_riscv_bin): $(vec_vvadd_c_objs) $(vec_vvadd_riscv_objs)
+	$(RISCV_LINK) $(vec_vvadd_c_objs) $(vec_vvadd_riscv_objs) -o $(vec_vvadd_riscv_bin) $(RISCV_LINK_OPTS)
 
 junk += $(vec_vvadd_c_objs) $(vec_vvadd_riscv_objs) \
         $(vec_vvadd_host_bin) $(vec_vvadd_riscv_bin)
