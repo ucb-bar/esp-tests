@@ -9,7 +9,10 @@
 void vec_mm_naive_c(int n, float * result, float * A, float * B) {
 
     asm volatile ("vsetcfg 2, 1");
-    asm volatile ("vsetvl t0, a0");
+    asm volatile ("vsetvl t0, a0"
+            :
+            :
+            : "t0");
 
 
     // small example, with no k loop
