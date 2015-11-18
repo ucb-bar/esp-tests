@@ -83,7 +83,7 @@ bmarks_defs   = -DPREALLOCATE=1 -DHOST_DEBUG=0
 bmarks_cycles = 80000
 
 %.hex: %
-	elf2hex 16 32768 $< > $@
+	elf2hex 16 2097152 $< > $@
 
 $(bmarks_riscv_dump): %.riscv.dump: %.riscv
 	$(RISCV_OBJDUMP) $< > $@

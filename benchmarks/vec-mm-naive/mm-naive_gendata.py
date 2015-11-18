@@ -1,12 +1,18 @@
 import random
 
-data_size = 20
+data_size = 100
 
 X = [int(random.random()*1000.00) for x in range(data_size*data_size)]
 Y = [int(random.random()*1000.00) for x in range(data_size*data_size)]
 
 
+X = [1 for x in range(data_size*data_size)]
+Y = [1 for x in range(data_size*data_size)]
+
+
 result = [0 for x in range(data_size*data_size)]
+
+result_holder = [0 for x in range(data_size*data_size)]
 
 for i in range(data_size):
     for j in range(data_size):
@@ -33,4 +39,6 @@ print_arr("float", "input_data_X", "MAT_WIDTH*MAT_WIDTH", X)
 print_arr("float", "input_data_Y", "MAT_WIDTH*MAT_WIDTH", Y)
 
 print_arr("float", "verify_data", "MAT_WIDTH*MAT_WIDTH", result)
+
+print_arr("float", "result_holder", "MAT_WIDTH*MAT_WIDTH", result_holder)
 

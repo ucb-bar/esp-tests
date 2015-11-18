@@ -8,7 +8,7 @@
 
 void vec_mm_naive_c(int n, float * result, float * A, float * B) {
 
-    asm volatile ("vsetcfg 3, 1");
+    asm volatile ("vsetcfg 2, 1");
     asm volatile ("vsetvl t0, a0");
 
 
