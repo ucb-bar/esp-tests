@@ -22,7 +22,6 @@ mm_naive_v:
     vpset vp0
     vlw vv0, va1  # B
     vlw vv1, va2  # C
-    vfmul.s vv0, vv0, vs1 
-    vfadd.s vv1, vv0, vv1
-    vsw vv1, va2  # store back to C
+    vfmadd.s vv2, vv0, vs1, vv1 
+    vsw vv2, va2  # store back to C
     vstop
