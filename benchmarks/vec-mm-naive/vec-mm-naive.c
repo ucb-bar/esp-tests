@@ -1,10 +1,8 @@
 // See LICENSE for license details.
 
-//**************************************************************************
-// Median filter (c version)
-//--------------------------------------------------------------------------
-
-#define ARTIFICAL_LIMIT 7
+// artificial limit for testing without having to set a huge matrix size
+// "fakes" a short max vector length
+// #define ARTIFICAL_LIMIT 7
 
 
 void vec_mm_naive_c(int n, float * result, float * A, float * B) {
@@ -18,9 +16,12 @@ void vec_mm_naive_c(int n, float * result, float * A, float * B) {
                     : "r" (A[j+i*n]));
 
             for (int k = 0; k < n; ) {
-                /* artificially limit the vector length for testing */
                 int consumed;
+#ifdef ARTIFICAL_LIMIT
                 int artificial = n-k < ARTIFICAL_LIMIT ? n-k : ARTIFICAL_LIMIT;
+#else
+                int artificial = n;
+#endif
                 asm volatile ("vsetvl %0, %1"
                         : "=r" (consumed)
                         : "r" (artificial));
