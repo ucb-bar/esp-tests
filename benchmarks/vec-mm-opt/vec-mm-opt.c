@@ -4,7 +4,8 @@
 // "fakes" a short max vector length
 // #define ARTIFICAL_LIMIT 7
 
-#define BLOCKSIZE
+
+#define unlikely(x)    __builtin_expect(!!(x), 0)
 
 void vec_mm_naive_c(int n, float * result, float * A, float * B) {
 
@@ -36,13 +37,6 @@ void vec_mm_naive_c(int n, float * result, float * A, float * B) {
             asm volatile ("vmsa va8, %0"
                     : 
                     : "r" (&result[(i+3)*n+k]));
-
-            asm volatile ("la t0, mm_opt_v_4_4_pre"
-                    :
-                    :
-                    : "t0");
-            asm volatile ("vf 0(t0)");
-
 
 
             for (int j = 0; j < n; j+=4) {
@@ -121,18 +115,34 @@ void vec_mm_naive_c(int n, float * result, float * A, float * B) {
 
 
 
-                asm volatile ("la t0, mm_opt_v_4_4"
-                        :
-                        :
-                        : "t0");
-                asm volatile ("vf 0(t0)");
+                if (unlikely(j == 0)) {
+                    asm volatile ("la t0, mm_opt_v_4_4_pre"
+                            :
+                            :
+                            : "t0");
+                    asm volatile ("vf 0(t0)");
+                } else if (unlikely(j == n-4)) {
+                    asm volatile ("la t0, mm_opt_v_4_4_post"
+                            :
+                            :
+                            : "t0");
+                    asm volatile ("vf 0(t0)");
+                } else {
+                    asm volatile ("la t0, mm_opt_v_4_4"
+                            :
+                            :
+                            : "t0");
+                    asm volatile ("vf 0(t0)");
+                }
+
+
+
             }
+
+
+
+
             k += consumed;
-            asm volatile ("la t0, mm_opt_v_4_4_post"
-                    :
-                    :
-                    : "t0");
-            asm volatile ("vf 0(t0)");
 
         }
     }
