@@ -46,44 +46,10 @@ mm_opt_v_2_2:
 mm_opt_v_4_4_pre:
     vpset vp0
     vlw vv2, va2  # C
-    vlw vv0, va1  # B
-    vlw vv6, va3  # B
-
-    vfmadd.s vv1, vv0, vs1, vv2
-    vfmadd.s vv3, vv0, vs5, vv1
-
     vlw vv5, va4  # C
-
-    vfmadd.s vv4, vv0, vs9, vv3
-    vfmadd.s vv2, vv0, vs13, vv4
-
-    vlw vv7, va5  # B
-
-    vfmadd.s vv1, vv6, vs2, vv5
-    vfmadd.s vv3, vv6, vs6, vv1
-
     vlw vv9, va6  # C
-
-    vfmadd.s vv4, vv6, vs10, vv3
-    vfmadd.s vv5, vv6, vs14, vv4
-
-    vlw vv8, va7  # B
-
-    vfmadd.s vv1, vv7, vs3, vv9
-    vfmadd.s vv3, vv7, vs7, vv1
-
     vlw vv10, va8  # C
-
-    vfmadd.s vv4, vv7, vs11, vv3
-    vfmadd.s vv9, vv7, vs15, vv4
-
-    vfmadd.s vv1, vv8, vs4, vv10
-    vfmadd.s vv3, vv8, vs8, vv1
-
-    vfmadd.s vv4, vv8, vs12, vv3
-    vfmadd.s vv10, vv8, vs16, vv4
     vstop
-
 
 # vector thread asm
 .align 3
@@ -99,20 +65,19 @@ mm_opt_v_4_4:
     vfmadd.s vv4, vv0, vs9, vv3
     vfmadd.s vv2, vv0, vs13, vv4
 
-    vlw vv7, va5  # B
 
     vfmadd.s vv1, vv6, vs2, vv5
     vfmadd.s vv3, vv6, vs6, vv1
 
+    vlw vv7, va5  # B
 
     vfmadd.s vv4, vv6, vs10, vv3
     vfmadd.s vv5, vv6, vs14, vv4
 
-    vlw vv8, va7  # B
-
     vfmadd.s vv1, vv7, vs3, vv9
     vfmadd.s vv3, vv7, vs7, vv1
 
+    vlw vv8, va7  # B
 
     vfmadd.s vv4, vv7, vs11, vv3
     vfmadd.s vv9, vv7, vs15, vv4
@@ -127,48 +92,9 @@ mm_opt_v_4_4:
 .align 3
 mm_opt_v_4_4_post:
     vpset vp0
-
-    vlw vv0, va1  # B
-
-    vfmadd.s vv1, vv0, vs1, vv2
-    vfmadd.s vv3, vv0, vs5, vv1
-
-    vlw vv6, va3  # B
-
-
-    vfmadd.s vv4, vv0, vs9, vv3
-    vfmadd.s vv2, vv0, vs13, vv4
-
-    vlw vv7, va5  # B
-
-    vfmadd.s vv1, vv6, vs2, vv5
-    vfmadd.s vv3, vv6, vs6, vv1
-
     vsw vv2, va2  # C
-
-
-    vfmadd.s vv4, vv6, vs10, vv3
-    vfmadd.s vv5, vv6, vs14, vv4
-
-    vlw vv8, va7  # B
-
-    vfmadd.s vv1, vv7, vs3, vv9
-    vfmadd.s vv3, vv7, vs7, vv1
-
     vsw vv5, va4  # C
-
-
-    vfmadd.s vv4, vv7, vs11, vv3
-    vfmadd.s vv9, vv7, vs15, vv4
-
     vsw vv9, va6  # C
-
-    vfmadd.s vv1, vv8, vs4, vv10
-    vfmadd.s vv3, vv8, vs8, vv1
-
-    vfmadd.s vv4, vv8, vs12, vv3
-    vfmadd.s vv10, vv8, vs16, vv4
-
     vsw vv10, va8  # C
     vstop
 
