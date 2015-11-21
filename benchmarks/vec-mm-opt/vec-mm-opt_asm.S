@@ -45,34 +45,48 @@ mm_opt_v_4_4:
     vpset vp0
     vlw vv1, va1  # B
     vlw vv2, va2  # C
-    vfmadd.s vv2, vv1, vs1, vv2
-    vfmadd.s vv2, vv1, vs5, vv2
-    vfmadd.s vv2, vv1, vs9, vv2
-    vfmadd.s vv2, vv1, vs13, vv2
-    vsw vv2, va2
+    vfmadd.s vv3, vv1, vs1, vv2
+    vfmadd.s vv4, vv1, vs5, vv3
 
-    vlw vv3, va3  # B
-    vlw vv4, va4  # C
-    vfmadd.s vv4, vv3, vs2, vv4
-    vfmadd.s vv4, vv3, vs6, vv4
-    vfmadd.s vv4, vv3, vs10, vv4
-    vfmadd.s vv4, vv3, vs14, vv4
-    vsw vv4, va4
-  
-    vlw vv5, va5  # B
-    vlw vv6, va6  # C
-    vfmadd.s vv6, vv5, vs3, vv6
-    vfmadd.s vv6, vv5, vs7, vv6
-    vfmadd.s vv6, vv5, vs11, vv6
-    vfmadd.s vv6, vv5, vs15, vv6
-    vsw vv6, va6
+    vlw vv7, va3  # B
 
-    vlw vv7, va7  # B
-    vlw vv8, va8  # C
-    vfmadd.s vv8, vv7, vs4, vv7
-    vfmadd.s vv8, vv7, vs8, vv7
-    vfmadd.s vv8, vv7, vs12, vv7
-    vfmadd.s vv8, vv7, vs16, vv7
-    vsw vv8, va8
+    vfmadd.s vv5, vv1, vs9, vv4
+    vfmadd.s vv6, vv1, vs13, vv5
+    vlw vv8, va4  # C
+
+
+    vfmadd.s vv9, vv7, vs2, vv8
+    vfmadd.s vv10, vv7, vs6, vv9
+
+    vlw vv13, va5  # B
+
+    vfmadd.s vv11, vv7, vs10, vv10
+    vfmadd.s vv12, vv7, vs14, vv11
+
+    vlw vv14, va6  # C
+
+    vfmadd.s vv15, vv13, vs3, vv14
+    vfmadd.s vv16, vv13, vs7, vv15
+
+    vlw vv19, va7  # B
+
+    vfmadd.s vv17, vv13, vs11, vv16
+    vfmadd.s vv18, vv13, vs15, vv17
+
+    vlw vv20, va8  # C
+
+
+    vfmadd.s vv21, vv19, vs4, vv20
+    vfmadd.s vv22, vv19, vs8, vv21
+
+    vsw vv6, va2
+
+    vfmadd.s vv23, vv19, vs12, vv22
+    vfmadd.s vv24, vv19, vs16, vv23
+
+    vsw vv12, va4
+    vsw vv18, va6
+
+    vsw vv24, va8
     vstop
 
