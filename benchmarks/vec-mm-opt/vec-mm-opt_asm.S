@@ -47,8 +47,8 @@ mm_opt_v_4_4_pre:
     vpset vp0
     vlw vv2, va2  # C
     vlw vv5, va4  # C
-    vlw vv11, va6  # C
-    vlw vv16, va8  # C
+    vlw vv9, va6  # C
+    vlw vv10, va8  # C
     vstop
 
 # vector thread asm
@@ -66,27 +66,27 @@ mm_opt_v_4_4:
     vfmadd.s vv2, vv0, vs13, vv4
 
 
-    vfmadd.s vv7, vv6, vs2, vv5
-    vfmadd.s vv8, vv6, vs6, vv7
+    vfmadd.s vv1, vv6, vs2, vv5
+    vfmadd.s vv3, vv6, vs6, vv1
 
-    vlw vv10, va5  # B
+    vlw vv7, va5  # B
 
-    vfmadd.s vv9, vv6, vs10, vv8
-    vfmadd.s vv5, vv6, vs14, vv9
+    vfmadd.s vv4, vv6, vs10, vv3
+    vfmadd.s vv5, vv6, vs14, vv4
 
-    vfmadd.s vv12, vv10, vs3, vv11
-    vfmadd.s vv13, vv10, vs7, vv12
+    vfmadd.s vv1, vv7, vs3, vv9
+    vfmadd.s vv3, vv7, vs7, vv1
 
-    vlw vv15, va7  # B
+    vlw vv8, va7  # B
 
-    vfmadd.s vv14, vv10, vs11, vv13
-    vfmadd.s vv11, vv10, vs15, vv14
+    vfmadd.s vv4, vv7, vs11, vv3
+    vfmadd.s vv9, vv7, vs15, vv4
 
-    vfmadd.s vv17, vv15, vs4, vv16
-    vfmadd.s vv18, vv15, vs8, vv17
+    vfmadd.s vv1, vv8, vs4, vv10
+    vfmadd.s vv3, vv8, vs8, vv1
 
-    vfmadd.s vv19, vv15, vs12, vv18
-    vfmadd.s vv16, vv15, vs16, vv19
+    vfmadd.s vv4, vv8, vs12, vv3
+    vfmadd.s vv10, vv8, vs16, vv4
     vstop
 
 .align 3
@@ -94,8 +94,8 @@ mm_opt_v_4_4_post:
     vpset vp0
     vsw vv2, va2  # C
     vsw vv5, va4  # C
-    vsw vv11, va6  # C
-    vsw vv16, va8  # C
+    vsw vv9, va6  # C
+    vsw vv10, va8  # C
     vstop
 
 
