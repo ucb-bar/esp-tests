@@ -36,7 +36,8 @@ bmarks = \
 	vec-sgemm-naive \
 	vec-sgemm-opt  \
 	vec-dgemm-opt  \
-	vec-sdgemm-opt 
+	vec-sdgemm-opt  \
+	vec-hsgemm-opt 
 
 	#mm \
 	#vec-fft \
