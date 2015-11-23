@@ -6,10 +6,6 @@ X = [int(random.random()*1000.00) for x in range(data_size*data_size)]
 Y = [int(random.random()*1000.00) for x in range(data_size*data_size)]
 
 
-X = [1 for x in range(data_size*data_size)]
-Y = [1 for x in range(data_size*data_size)]
-
-
 result = [0 for x in range(data_size*data_size)]
 
 result_holder = [0 for x in range(data_size*data_size)]

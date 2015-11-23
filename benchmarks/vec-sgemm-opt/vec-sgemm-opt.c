@@ -6,7 +6,7 @@
 
 #define BLOCKSIZE
 
-void vec_sgemm_naive_c(int n, float * result, float * A, float * B) {
+void vec_sgemm_opt_c(int n, float * result, float * A, float * B) {
 
     asm volatile ("vsetcfg 11, 1");
 
@@ -50,16 +50,16 @@ void vec_sgemm_naive_c(int n, float * result, float * A, float * B) {
                 // A row 1
                 asm volatile ("vmss vs1, %0"
                         : 
-                        : "r" (A[j+(i+1)*n+0]));
+                        : "r" (A[j+(i+0)*n+0]));
                 asm volatile ("vmss vs2, %0"
                         : 
-                        : "r" (A[j+(i+1)*n+1]));
+                        : "r" (A[j+(i+0)*n+1]));
                 asm volatile ("vmss vs3, %0"
                         : 
-                        : "r" (A[j+(i+1)*n+2]));
+                        : "r" (A[j+(i+0)*n+2]));
                 asm volatile ("vmss vs4, %0"
                         : 
-                        : "r" (A[j+(i+1)*n+3]));
+                        : "r" (A[j+(i+0)*n+3]));
 
                 // A row 2
                 asm volatile ("vmss vs5, %0"
