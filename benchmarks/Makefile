@@ -31,6 +31,7 @@ bmarks = \
 	vec-saxpy \
 	vec-daxpy \
 	vec-sdaxpy \
+	vec-hsaxpy \
 	vec-vvadd \
 	vec-mm-naive \
 	vec-mm-opt 
