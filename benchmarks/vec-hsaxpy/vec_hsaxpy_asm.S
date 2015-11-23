@@ -12,7 +12,8 @@
 # a2 has float* x
 # a3 has float* y
 vec_hsaxpy_asm:
-    vsetcfg 3, 1 # from TEST_CASE_NREG
+    li t0, 33587712
+    vsetcfg t0 # from TEST_CASE_NREG
     fmv.x.s a1, fa1
     vmss vs1, a1
 stripmine:
@@ -34,9 +35,9 @@ stripmine:
 .align 3
 hsaxpy_v:
     vpset vp0
-    vlh vv0, va0
-    vfcvt.s.h vv2, vv0
+    vlh vv2, va0
+    vfcvt.s.h vv0, vv2
     vlw vv1, va1
-    vfmadd.s vv1, vs1, vv2, vv1
+    vfmadd.s vv1, vs1, vv0, vv1
     vsw vv1, va1
     vstop
