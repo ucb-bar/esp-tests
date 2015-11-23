@@ -6,12 +6,13 @@
 
 #define BLOCKSIZE
 
+#include "vec-util.h"
+
 void vec_sgemm_opt_c(int n, float * result, float * A, float * B) {
 
-    asm volatile ("li t0, 328192\nvsetcfg t0"
+    asm volatile ("vsetcfg %0"
                     :
-                    :
-                    : "t0");
+                    : "r" (VCFG(0, 20, 0, 1)));
 
     for (int i = 0; i < n; i+=4) {
         for (int k = 0; k < n; ) {

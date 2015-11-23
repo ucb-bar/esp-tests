@@ -4,9 +4,13 @@
 // "fakes" a short max vector length
 // #define ARTIFICAL_LIMIT 7
 
+#include "vec-util.h"
+
 void vec_dgemm_opt_c(int n, double * result, double * A, double * B) {
 
-    asm volatile ("vsetcfg 20, 1");
+    asm volatile ("vsetcfg %0"
+                    :
+                    : "r" (VCFG(20, 0, 0, 1)));
 
     for (int i = 0; i < n; i+=4) {
         for (int k = 0; k < n; ) {

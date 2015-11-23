@@ -4,12 +4,16 @@
 // "fakes" a short max vector length
 // #define ARTIFICAL_LIMIT 7
 
+#include "vec-util.h"
 
 #include<stdint.h>
 
 void vec_hsgemm_opt_c(int n, uint16_t * result, uint16_t * A, uint16_t * B) {
 
-    asm volatile ("vsetcfg 20, 1");
+    asm volatile ("vsetcfg %0"
+                    :
+                    : "r" (VCFG(0, 20, 1, 1)));
+
 
     for (int i = 0; i < n; i+=4) {
         for (int k = 0; k < n; ) {

@@ -4,11 +4,15 @@
 // "fakes" a short max vector length
 // #define ARTIFICAL_LIMIT 7
 
+#include "vec-util.h"
+
 #define BLOCKSIZE
 
 void vec_sdgemm_opt_c(int n, float * result, float * A, float * B) {
 
-    asm volatile ("vsetcfg 20, 1");
+    asm volatile ("vsetcfg %0"
+                    :
+                    : "r" (VCFG(20, 1, 0, 1)));
 
     for (int i = 0; i < n; i+=4) {
         for (int k = 0; k < n; ) {
