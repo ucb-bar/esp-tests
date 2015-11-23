@@ -5,7 +5,7 @@
 // #define ARTIFICAL_LIMIT 7
 
 
-void vec_mm_naive_c(int n, float * result, float * A, float * B) {
+void vec_sgemm_naive_c(int n, float * result, float * A, float * B) {
 
     asm volatile ("vsetcfg 3, 1");
 
@@ -34,7 +34,7 @@ void vec_mm_naive_c(int n, float * result, float * A, float * B) {
                         : 
                         : "r" (&result[i*n+k]));
 
-                asm volatile ("la t0, mm_naive_v"
+                asm volatile ("la t0, sgemm_naive_v"
                         :
                         :
                         : "t0");

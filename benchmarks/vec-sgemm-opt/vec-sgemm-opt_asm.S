@@ -3,22 +3,22 @@
 .text
 .align 2
 
-.globl vec_mm_naive_asm
-.type  vec_mm_naive_asm,@function
+.globl vec_sgemm_naive_asm
+.type  vec_sgemm_naive_asm,@function
 
 # assumes calling convention:
 # a0 has int n
 # a1 has float* result  <---
 # a2 has float* x
 # a3 has float* y
-vec_mm_naive_asm:
+vec_sgemm_naive_asm:
     ret
 
-.globl mm_opt_v_2_2
+.globl sgemm_opt_v_2_2
 
 # vector thread asm
 .align 3
-mm_opt_v_2_2:
+sgemm_opt_v_2_2:
     vpset vp0
     
     vlw vv0, va1  # B
@@ -37,13 +37,13 @@ mm_opt_v_2_2:
 
     vstop
 
-.globl mm_opt_v_4_4
-.globl mm_opt_v_4_4_pre
-.globl mm_opt_v_4_4_post
+.globl sgemm_opt_v_4_4
+.globl sgemm_opt_v_4_4_pre
+.globl sgemm_opt_v_4_4_post
 
 
 .align 3
-mm_opt_v_4_4_pre:
+sgemm_opt_v_4_4_pre:
     vpset vp0
     vlw vv2, va2  # C
     vlw vv5, va4  # C
@@ -53,7 +53,7 @@ mm_opt_v_4_4_pre:
 
 # vector thread asm
 .align 3
-mm_opt_v_4_4:
+sgemm_opt_v_4_4:
     vpset vp0
     vlw vv0, va1  # B
 
@@ -90,7 +90,7 @@ mm_opt_v_4_4:
     vstop
 
 .align 3
-mm_opt_v_4_4_post:
+sgemm_opt_v_4_4_post:
     vpset vp0
     vsw vv2, va2  # C
     vsw vv5, va4  # C

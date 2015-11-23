@@ -6,7 +6,7 @@
 //
 
 #include "util.h"
-#include "vec-mm-naive.h"
+#include "vec-sgemm-naive.h"
 
 //--------------------------------------------------------------------------
 // Input/Reference Data
@@ -26,8 +26,8 @@ int main( int argc, char* argv[] )
 
   // Do the saxpy
   setStats(1);
-//  vec_mm_naive_asm(MAT_WIDTH, result, input_data_X, input_data_Y);
-  vec_mm_naive_c(MAT_WIDTH, result_holder, input_data_X, input_data_Y);
+//  vec_sgemm_naive_asm(MAT_WIDTH, result, input_data_X, input_data_Y);
+  vec_sgemm_naive_c(MAT_WIDTH, result_holder, input_data_X, input_data_Y);
   setStats(0);
 
   // Print out the result

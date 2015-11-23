@@ -6,7 +6,7 @@
 
 #define BLOCKSIZE
 
-void vec_mm_naive_c(int n, float * result, float * A, float * B) {
+void vec_sgemm_naive_c(int n, float * result, float * A, float * B) {
 
     asm volatile ("vsetcfg 11, 1");
 
@@ -37,7 +37,7 @@ void vec_mm_naive_c(int n, float * result, float * A, float * B) {
                     : 
                     : "r" (&result[(i+3)*n+k]));
 
-            asm volatile ("la t0, mm_opt_v_4_4_pre"
+            asm volatile ("la t0, sgemm_opt_v_4_4_pre"
                     :
                     :
                     : "t0");
@@ -121,14 +121,14 @@ void vec_mm_naive_c(int n, float * result, float * A, float * B) {
 
 
 
-                asm volatile ("la t0, mm_opt_v_4_4"
+                asm volatile ("la t0, sgemm_opt_v_4_4"
                         :
                         :
                         : "t0");
                 asm volatile ("vf 0(t0)");
             }
             k += consumed;
-            asm volatile ("la t0, mm_opt_v_4_4_post"
+            asm volatile ("la t0, sgemm_opt_v_4_4_post"
                     :
                     :
                     : "t0");
