@@ -12,7 +12,8 @@
 # a2 has float* x
 # a3 has float* y
 vec_saxpy_asm:
-    vsetcfg 2, 1 # from TEST_CASE_NREG
+    li t0, 33280
+    vsetcfg t0 # from TEST_CASE_NREG
     fmv.x.s a1, fa1
     vmss vs1, a1
 stripmine:

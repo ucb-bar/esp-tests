@@ -7,7 +7,10 @@
 
 void vec_sgemm_naive_c(int n, float * result, float * A, float * B) {
 
-    asm volatile ("vsetcfg 3, 1");
+    asm volatile ("li t0, 49664\nvsetcfg t0"
+            :
+            :
+            : "t0");
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {

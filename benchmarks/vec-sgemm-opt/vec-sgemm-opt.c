@@ -8,7 +8,10 @@
 
 void vec_sgemm_opt_c(int n, float * result, float * A, float * B) {
 
-    asm volatile ("vsetcfg 20, 1");
+    asm volatile ("li t0, 328192\nvsetcfg t0"
+                    :
+                    :
+                    : "t0");
 
     for (int i = 0; i < n; i+=4) {
         for (int k = 0; k < n; ) {
