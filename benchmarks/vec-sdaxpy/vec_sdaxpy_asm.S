@@ -1,5 +1,7 @@
 ## Hwacha v4 SAXPY ASM code
 
+#include "vec-util.h"
+
 .text
 .align 2
 
@@ -12,7 +14,8 @@
 # a2 has float* x
 # a3 has float* y
 vec_sdaxpy_asm:
-    vsetcfg 3, 1 # from TEST_CASE_NREG
+    li t0, VCFG(2, 1, 0, 1)
+    vsetcfg t0
     fmv.x.d a1, fa1
     vmss vs1, a1
 stripmine:
@@ -34,9 +37,9 @@ stripmine:
 .align 3
 sdaxpy_v:
     vpset vp0
-    vlw vv0, va0
-    vfcvt.d.s vv2, vv0
+    vlw vv2, va0
+    vfcvt.d.s vv0, vv2
     vld vv1, va1
-    vfmadd.d vv0, vs1, vv2, vv1
-    vsd vv0, va1
+    vfmadd.d vv1, vs1, vv0, vv1
+    vsd vv1, va1
     vstop
