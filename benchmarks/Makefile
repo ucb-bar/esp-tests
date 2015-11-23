@@ -29,6 +29,7 @@ bmarks = \
 	pb-sgemm \
 	pb-spmv \
 	vec-saxpy \
+	vec-daxpy \
 	vec-vvadd \
 	vec-mm-naive \
 	vec-mm-opt 

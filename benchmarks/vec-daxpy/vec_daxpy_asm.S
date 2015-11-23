@@ -1,0 +1,40 @@
+## Hwacha v4 SAXPY ASM code
+
+.text
+.align 2
+
+.globl vec_daxpy_asm
+.type  vec_daxpy_asm,@function
+
+# assumes calling convention:
+# a0 has int n
+# fa1 has float a  <---
+# a2 has float* x
+# a3 has float* y
+vec_daxpy_asm:
+    vsetcfg 2, 1 # from TEST_CASE_NREG
+    fmv.x.d a1, fa1
+    vmss vs1, a1
+stripmine:
+    vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
+    vmsa va0, a2
+    vmsa va1, a3
+    la t5, daxpy_v
+    vf 0(t5)
+    fence
+    slli t1, t0, 3
+    add a2, a2, t1
+    add a3, a3, t1
+    sub a0, a0, t0
+    bnez a0, stripmine
+    ret
+
+# vector thread asm
+.align 3
+daxpy_v:
+    vpset vp0
+    vld vv0, va0
+    vld vv1, va1
+    vfmadd.d vv1, vs1, vv0, vv1
+    vsd vv1, va1
+    vstop
