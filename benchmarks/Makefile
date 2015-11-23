@@ -34,7 +34,9 @@ bmarks = \
 	vec-hsaxpy \
 	vec-vvadd \
 	vec-sgemm-naive \
-	vec-sgemm-opt 
+	vec-sgemm-opt  \
+	vec-dgemm-opt 
+
 	#mm \
 	#vec-fft \
 	#vec-cmplxmult \
