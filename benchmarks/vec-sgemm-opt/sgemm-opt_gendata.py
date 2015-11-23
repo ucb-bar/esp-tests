@@ -2,8 +2,8 @@ import random
 
 data_size = 64
 
-X = [int(random.random()*3) for x in range(data_size*data_size)]
-Y = [int(random.random()*3) for x in range(data_size*data_size)]
+X = [int(random.random()*100) for x in range(data_size*data_size)]
+Y = [int(random.random()*100) for x in range(data_size*data_size)]
 
 
 result = [0 for x in range(data_size*data_size)]
