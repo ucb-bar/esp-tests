@@ -26,16 +26,16 @@ void vec_dgemm_opt_c(int n, double * result, double * A, double * B) {
                     : "r" (artificial));
 
             // C rows 1, 2, 3, 4
-            asm volatile ("vmsa va2, %0"
+            asm volatile ("vmca va2, %0"
                     : 
                     : "r" (&result[i*n+k]));
-            asm volatile ("vmsa va4, %0"
+            asm volatile ("vmca va4, %0"
                     : 
                     : "r" (&result[(i+1)*n+k]));
-            asm volatile ("vmsa va6, %0"
+            asm volatile ("vmca va6, %0"
                     : 
                     : "r" (&result[(i+2)*n+k]));
-            asm volatile ("vmsa va8, %0"
+            asm volatile ("vmca va8, %0"
                     : 
                     : "r" (&result[(i+3)*n+k]));
 
@@ -50,74 +50,74 @@ void vec_dgemm_opt_c(int n, double * result, double * A, double * B) {
             for (int j = 0; j < n; j+=4) {
 
                 // A row 1
-                asm volatile ("vmss vs1, %0"
+                asm volatile ("vmcs vs1, %0"
                         : 
                         : "r" (A[j+(i+0)*n+0]));
-                asm volatile ("vmss vs2, %0"
+                asm volatile ("vmcs vs2, %0"
                         : 
                         : "r" (A[j+(i+0)*n+1]));
-                asm volatile ("vmss vs3, %0"
+                asm volatile ("vmcs vs3, %0"
                         : 
                         : "r" (A[j+(i+0)*n+2]));
-                asm volatile ("vmss vs4, %0"
+                asm volatile ("vmcs vs4, %0"
                         : 
                         : "r" (A[j+(i+0)*n+3]));
 
                 // A row 2
-                asm volatile ("vmss vs5, %0"
+                asm volatile ("vmcs vs5, %0"
                         : 
                         : "r" (A[j+(i+1)*n+0]));
-                asm volatile ("vmss vs6, %0"
+                asm volatile ("vmcs vs6, %0"
                         : 
                         : "r" (A[j+(i+1)*n+1]));
-                asm volatile ("vmss vs7, %0"
+                asm volatile ("vmcs vs7, %0"
                         : 
                         : "r" (A[j+(i+1)*n+2]));
-                asm volatile ("vmss vs8, %0"
+                asm volatile ("vmcs vs8, %0"
                         : 
                         : "r" (A[j+(i+1)*n+3]));
 
                 // A row 3
-                asm volatile ("vmss vs9, %0"
+                asm volatile ("vmcs vs9, %0"
                         : 
                         : "r" (A[j+(i+2)*n+0]));
-                asm volatile ("vmss vs10, %0"
+                asm volatile ("vmcs vs10, %0"
                         : 
                         : "r" (A[j+(i+2)*n+1]));
-                asm volatile ("vmss vs11, %0"
+                asm volatile ("vmcs vs11, %0"
                         : 
                         : "r" (A[j+(i+2)*n+2]));
-                asm volatile ("vmss vs12, %0"
+                asm volatile ("vmcs vs12, %0"
                         : 
                         : "r" (A[j+(i+2)*n+3]));
 
                 // A row 4
-                asm volatile ("vmss vs13, %0"
+                asm volatile ("vmcs vs13, %0"
                         : 
                         : "r" (A[j+(i+3)*n+0]));
-                asm volatile ("vmss vs14, %0"
+                asm volatile ("vmcs vs14, %0"
                         : 
                         : "r" (A[j+(i+3)*n+1]));
-                asm volatile ("vmss vs15, %0"
+                asm volatile ("vmcs vs15, %0"
                         : 
                         : "r" (A[j+(i+3)*n+2]));
-                asm volatile ("vmss vs16, %0"
+                asm volatile ("vmcs vs16, %0"
                         : 
                         : "r" (A[j+(i+3)*n+3]));
 
 
 
                 // B row 1, 2, 3, 4
-                asm volatile ("vmsa va1, %0"
+                asm volatile ("vmca va1, %0"
                         : 
                         : "r" (&B[j*n+k]));
-                asm volatile ("vmsa va3, %0"
+                asm volatile ("vmca va3, %0"
                         : 
                         : "r" (&B[(j+1)*n+k]));
-                asm volatile ("vmsa va5, %0"
+                asm volatile ("vmca va5, %0"
                         : 
                         : "r" (&B[(j+2)*n+k]));
-                asm volatile ("vmsa va7, %0"
+                asm volatile ("vmca va7, %0"
                         : 
                         : "r" (&B[(j+3)*n+k]));
 

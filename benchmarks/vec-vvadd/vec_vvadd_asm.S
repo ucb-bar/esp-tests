@@ -15,9 +15,9 @@ vec_vvadd_asm:
     vsetcfg 3, 1 # from TEST_CASE_NREG
 stripmine:
     vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
-    vmsa va0, a2
-    vmsa va1, a3
-    vmsa va2, a1
+    vmca va0, a2
+    vmca va1, a3
+    vmca va2, a1
     la t5, vvadd_v
     vf 0(t5)
     fence

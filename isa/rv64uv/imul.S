@@ -19,9 +19,9 @@ RVTEST_CODE_BEGIN
 
   li a4,20
   li s0,2
-  vmss vs1,a4
+  vmcs vs1,a4
   la a5,dest
-  vmsa va1,a5
+  vmca va1,a5
   lui a0,%hi(vtcode)
   vf %lo(vtcode)(a0)
 

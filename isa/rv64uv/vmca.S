@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# vmss.S
+# vmca.S
 #-----------------------------------------------------------------------------
 #
-# Test vmss instruction.
+# Test vmca instruction.
 #
 
 #include "riscv_test.h"
@@ -14,13 +14,13 @@ RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
   vsetcfg 3,1
-  li a2,2048
+  li a2,4
   vsetvl a2,a2
 
-  li a3,-1
-  vmss vs2,a3
+  la a3,src1
+  vmca va1,a3
   la a4,dest
-  vmsa va2,a4
+  vmca va2,a4
   lui a0,%hi(vtcode)
   vf %lo(vtcode)(a0)
   fence
@@ -38,11 +38,8 @@ loop:
 .align 3
 vtcode:
   vpset vp0
-  veidx vv1
-  vaddi vs1,vs0,1
-  vadd.vs vv1, vv1, vs1
-  vadd.vs vv2,vv1,vs2
-  vsd vv2,va2
+  vld vv1,va1
+  vsd vv1,va2
   vstop
 
   TEST_PASSFAIL
@@ -53,6 +50,11 @@ RVTEST_CODE_END
 RVTEST_DATA_BEGIN
 
   TEST_DATA
+src1:
+  .dword 0
+  .dword 1
+  .dword 2
+  .dword 3
 
 dest:
   .skip 16384

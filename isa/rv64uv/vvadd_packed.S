@@ -20,7 +20,7 @@ RVTEST_CODE_BEGIN
 loop:
 	vsetvl x4, x1
 	la x2, addr
-  vmsa va1,x2
+  vmca va1,x2
 	la x3, test
 	vf 0(x3)
 	sub x1, x1, x4

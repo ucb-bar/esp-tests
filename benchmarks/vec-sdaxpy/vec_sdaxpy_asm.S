@@ -17,11 +17,11 @@ vec_sdaxpy_asm:
     li t0, VCFG(2, 1, 0, 1)
     vsetcfg t0
     fmv.x.d a1, fa1
-    vmss vs1, a1
+    vmcs vs1, a1
 stripmine:
     vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
-    vmsa va0, a2
-    vmsa va1, a3
+    vmca va0, a2
+    vmca va1, a3
     la t5, sdaxpy_v
     vf 0(t5)
     fence

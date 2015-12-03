@@ -21,10 +21,10 @@ RVTEST_CODE_BEGIN
   # this shouldn't go through since app vl is zero
   la a3,src1
   la a4,src2
-  vmsa va2, a3
-  vmsa va3, a4
+  vmca va2, a3
+  vmca va3, a4
   la a5,dest
-  vmsa va1, a5
+  vmca va1, a5
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
   fence
@@ -69,10 +69,10 @@ RVTEST_CODE_BEGIN
   la a4,src1
   la a5,src2
   vsetvl a3, a3
-  vmsa va2,a4
-  vmsa va3,a5
+  vmca va2,a4
+  vmca va3,a5
   la a5,dest
-  vmsa va1, a5
+  vmca va1, a5
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
   fence
@@ -104,10 +104,10 @@ RVTEST_CODE_BEGIN
 
   la a3,src1
   la a4,src2
-  vmsa va2,a3
-  vmsa va3,a4
+  vmca va2,a3
+  vmca va3,a4
   la a5,dest
-  vmsa va1, a5
+  vmca va1, a5
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
   fence

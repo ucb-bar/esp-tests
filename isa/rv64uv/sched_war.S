@@ -19,18 +19,18 @@ RVTEST_CODE_BEGIN
 
   la a5,src
   ld a6,0(a5)
-  vmss vs1,a6
+  vmcs vs1,a6
   ld a6,8(a5)
-  vmss vs2,a6
+  vmcs vs2,a6
   ld a6,16(a5)
-  vmss vs3,a6
+  vmcs vs3,a6
   li a6,24
-  vmss vs4,a6
+  vmcs vs4,a6
 
   la a5,dest1
-  vmsa va0,a5
+  vmca va0,a5
   la a6,dest2
-  vmsa va1,a6
+  vmca va1,a6
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
   lui a0,%hi(vtcode2)

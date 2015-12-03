@@ -550,13 +550,13 @@ test_ ## testnum: \
   li a3,2048; \
   vsetvl a3,a3; \
   li a1,input; \
-  vmss vs3, a1; \
+  vmcs vs3, a1; \
   la a4,src1; \
-  vmsa va2, a4; \
-  vmss vs2, a4; \
+  vmca va2, a4; \
+  vmcs vs2, a4; \
   la a4,dst; \
-  vmsa va1, a4; \
-  vmss vs1, a4; \
+  vmca va1, a4; \
+  vmcs vs1, a4; \
   lui a0,%hi(vtcode ## testnum ); \
   vf %lo(vtcode ## testnum )(a0); \
   fence; \
@@ -599,11 +599,11 @@ next ## testnum :
   li a0, 4; \
   vsetvl a0, a0; \
   la a0, src1; \
-  vmsa va0, a0; \
+  vmca va0, a0; \
   la a1, src2; \
-  vmsa va1, a1; \
+  vmca va1, a1; \
   la a3, dest; \
-  vmsa va2, a3; \
+  vmca va2, a3; \
   lui a0,%hi(vtcode1 ## testnum); \
   vf %lo(vtcode1 ## testnum)(a0); \
   fence; \
@@ -636,11 +636,11 @@ handler ## testnum: \
   li a0,4; \
   vsetvl a0,a0; \
   la a0, src1; \
-  vmsa va0, a0; \
+  vmca va0, a0; \
   la a1, src2; \
-  vmsa va1, a1; \
+  vmca va1, a1; \
   la a3, dest; \
-  vmsa va2, a3; \
+  vmca va2, a3; \
   lui a0,%hi(vtcode2 ## testnum); \
   vf %lo(vtcode2 ## testnum)(a0); \
   fence; \

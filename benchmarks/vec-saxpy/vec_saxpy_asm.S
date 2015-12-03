@@ -17,11 +17,11 @@ vec_saxpy_asm:
     li t0, VCFG(0, 2, 0, 1)
     vsetcfg t0
     fmv.x.s a1, fa1
-    vmss vs1, a1
+    vmcs vs1, a1
 stripmine:
     vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
-    vmsa va0, a2
-    vmsa va1, a3
+    vmca va0, a2
+    vmca va1, a3
     la t5, saxpy_v
     vf 0(t5)
     fence

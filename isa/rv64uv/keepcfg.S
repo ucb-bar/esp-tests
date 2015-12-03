@@ -18,7 +18,7 @@ RVTEST_CODE_BEGIN
   vsetvl s0,s0
 
   la a4,dest1
-  vmsa va1, a4
+  vmca va1, a4
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
 
@@ -27,7 +27,7 @@ RVTEST_CODE_BEGIN
   vsetvl s1,s1
 
   la a4,dest2
-  vmsa va1,a4
+  vmca va1,a4
   lui a0,%hi(vtcode2)
   vf %lo(vtcode2)(a0)
 

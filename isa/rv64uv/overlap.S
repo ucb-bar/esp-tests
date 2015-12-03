@@ -19,67 +19,67 @@ RVTEST_CODE_BEGIN
 
   la a3,src1
   ld a3, 0(a3)
-  vmss vs2,a3
+  vmcs vs2,a3
   la a4,src2
   ld a4, 0(a4)
-  vmss vs3,a4
+  vmcs vs3,a4
   la a5,dest1
-  vmsa va1,a5
+  vmca va1,a5
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
 
   la a5,dest1
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
-  vmsa va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
+  vmca va1,a5
   lui a0,%hi(vtcode1_save)
   vf %lo(vtcode1_save)(a0)
   fence
@@ -90,65 +90,65 @@ RVTEST_CODE_BEGIN
   li TESTNUM,2
   bne a1,a2,fail
 
-  vmss vs2,a3
-  vmss vs3,a4
+  vmcs vs2,a3
+  vmcs vs3,a4
   la a5,dest2
-  vmsa va1,a5
+  vmca va1,a5
   lui a0,%hi(vtcode1)
   vf %lo(vtcode1)(a0)
 
   li a6,1337
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
-  vmss vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
+  vmcs vs6,a6
   lui a0,%hi(vtcode1_save)
   vf %lo(vtcode1_save)(a0)
   fence
@@ -160,8 +160,8 @@ RVTEST_CODE_BEGIN
   bne a1,a2,fail
 
   la a5,dest3
-  vmsa va1,a5
-  vmss vs3,a4
+  vmca va1,a5
+  vmcs vs3,a4
   lui a0,%hi(vtcode3)
   vf %lo(vtcode3)(a0)
   fence

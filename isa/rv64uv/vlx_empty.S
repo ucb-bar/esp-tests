@@ -19,9 +19,9 @@ RVTEST_CODE_BEGIN
 
   la a5,src
   la a6,dest
-  vmss vs2, a5
-  vmss vs3, a6
-  vmsa va1, a6
+  vmcs vs2, a5
+  vmcs vs3, a6
+  vmca va1, a6
   lui a0,%hi(vtcode)
   vf %lo(vtcode)(a0)
   fence
