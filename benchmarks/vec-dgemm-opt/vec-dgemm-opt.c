@@ -10,7 +10,7 @@ void vec_dgemm_opt_c(int n, double * result, double * A, double * B) {
 
     asm volatile ("vsetcfg %0"
                     :
-                    : "r" (VCFG(20, 0, 0, 1)));
+                    : "r" (VCFG(16, 0, 0, 1)));
 
     void * pre_vfblockaddr;
     void * main_vfblockaddr;
@@ -56,6 +56,20 @@ void vec_dgemm_opt_c(int n, double * result, double * A, double * B) {
 
             for (int j = 0; j < n; j+=4) {
 
+                // B row 1, 2, 3, 4
+                asm volatile ("vmca va1, %0"
+                        : 
+                        : "r" (&B[j*n+k]));
+                asm volatile ("vmca va3, %0"
+                        : 
+                        : "r" (&B[(j+1)*n+k]));
+                asm volatile ("vmca va5, %0"
+                        : 
+                        : "r" (&B[(j+2)*n+k]));
+                asm volatile ("vmca va7, %0"
+                        : 
+                        : "r" (&B[(j+3)*n+k]));
+
                 // A row 1, 2, 3, 4
                 asm volatile ("vmcs vs1, %0\n"
                               "vmcs vs2, %1\n"
@@ -80,30 +94,14 @@ void vec_dgemm_opt_c(int n, double * result, double * A, double * B) {
                           "r" (A[j+(i+3)*n+0]), "r" (A[j+(i+3)*n+1]), "r" (A[j+(i+3)*n+2]), "r" (A[j+(i+3)*n+3])
                         );
 
-                // B row 1, 2, 3, 4
-                asm volatile ("vmca va1, %0"
-                        : 
-                        : "r" (&B[j*n+k]));
-                asm volatile ("vmca va3, %0"
-                        : 
-                        : "r" (&B[(j+1)*n+k]));
-                asm volatile ("vmca va5, %0"
-                        : 
-                        : "r" (&B[(j+2)*n+k]));
-                asm volatile ("vmca va7, %0"
-                        : 
-                        : "r" (&B[(j+3)*n+k]));
-
-
                 asm volatile ("vf 0(%0)"
                         :
                         : "r" (main_vfblockaddr));
             }
-            k += consumed;
             asm volatile ("vf 0(%0)"
                     :
                     : "r" (post_vfblockaddr));
-
+            k += consumed;
         }
     }
     asm volatile ("fence");
