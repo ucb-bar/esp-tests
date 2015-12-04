@@ -12,6 +12,17 @@ void vec_dgemm_opt_c(int n, double * result, double * A, double * B) {
                     :
                     : "r" (VCFG(20, 0, 0, 1)));
 
+    void * pre_vfblockaddr;
+    void * main_vfblockaddr;
+    void * post_vfblockaddr;
+    asm volatile ("la %0, dgemm_opt_v_4_4_pre"
+            : "=r" (pre_vfblockaddr));
+    asm volatile ("la %0, dgemm_opt_v_4_4"
+            : "=r" (main_vfblockaddr));
+    asm volatile ("la %0, dgemm_opt_v_4_4_post"
+            : "=r" (post_vfblockaddr));
+
+
     for (int i = 0; i < n; i+=4) {
         for (int k = 0; k < n; ) {
             int consumed;
@@ -39,73 +50,35 @@ void vec_dgemm_opt_c(int n, double * result, double * A, double * B) {
                     : 
                     : "r" (&result[(i+3)*n+k]));
 
-            asm volatile ("la t0, dgemm_opt_v_4_4_pre"
+            asm volatile ("vf 0(%0)"
                     :
-                    :
-                    : "t0");
-            asm volatile ("vf 0(t0)");
-
-
+                    : "r" (pre_vfblockaddr));
 
             for (int j = 0; j < n; j+=4) {
 
-                // A row 1
-                asm volatile ("vmcs vs1, %0"
+                // A row 1, 2, 3, 4
+                asm volatile ("vmcs vs1, %0\n"
+                              "vmcs vs2, %1\n"
+                              "vmcs vs3, %2\n"
+                              "vmcs vs4, %3\n"
+                              "vmcs vs5, %4\n"
+                              "vmcs vs6, %5\n"
+                              "vmcs vs7, %6\n"
+                              "vmcs vs8, %7\n"
+                              "vmcs vs8, %8\n"
+                              "vmcs vs9, %9\n"
+                              "vmcs vs10, %10\n"
+                              "vmcs vs11, %11\n"
+                              "vmcs vs12, %12\n"
+                              "vmcs vs13, %13\n"
+                              "vmcs vs14, %14\n"
+                              "vmcs vs15, %15"
                         : 
-                        : "r" (A[j+(i+0)*n+0]));
-                asm volatile ("vmcs vs2, %0"
-                        : 
-                        : "r" (A[j+(i+0)*n+1]));
-                asm volatile ("vmcs vs3, %0"
-                        : 
-                        : "r" (A[j+(i+0)*n+2]));
-                asm volatile ("vmcs vs4, %0"
-                        : 
-                        : "r" (A[j+(i+0)*n+3]));
-
-                // A row 2
-                asm volatile ("vmcs vs5, %0"
-                        : 
-                        : "r" (A[j+(i+1)*n+0]));
-                asm volatile ("vmcs vs6, %0"
-                        : 
-                        : "r" (A[j+(i+1)*n+1]));
-                asm volatile ("vmcs vs7, %0"
-                        : 
-                        : "r" (A[j+(i+1)*n+2]));
-                asm volatile ("vmcs vs8, %0"
-                        : 
-                        : "r" (A[j+(i+1)*n+3]));
-
-                // A row 3
-                asm volatile ("vmcs vs9, %0"
-                        : 
-                        : "r" (A[j+(i+2)*n+0]));
-                asm volatile ("vmcs vs10, %0"
-                        : 
-                        : "r" (A[j+(i+2)*n+1]));
-                asm volatile ("vmcs vs11, %0"
-                        : 
-                        : "r" (A[j+(i+2)*n+2]));
-                asm volatile ("vmcs vs12, %0"
-                        : 
-                        : "r" (A[j+(i+2)*n+3]));
-
-                // A row 4
-                asm volatile ("vmcs vs13, %0"
-                        : 
-                        : "r" (A[j+(i+3)*n+0]));
-                asm volatile ("vmcs vs14, %0"
-                        : 
-                        : "r" (A[j+(i+3)*n+1]));
-                asm volatile ("vmcs vs15, %0"
-                        : 
-                        : "r" (A[j+(i+3)*n+2]));
-                asm volatile ("vmcs vs16, %0"
-                        : 
-                        : "r" (A[j+(i+3)*n+3]));
-
-
+                        : "r" (A[j+(i+0)*n+0]), "r" (A[j+(i+0)*n+1]), "r" (A[j+(i+0)*n+2]), "r" (A[j+(i+0)*n+3]), 
+                          "r" (A[j+(i+1)*n+0]), "r" (A[j+(i+1)*n+1]), "r" (A[j+(i+1)*n+2]), "r" (A[j+(i+1)*n+3]),
+                          "r" (A[j+(i+2)*n+0]), "r" (A[j+(i+2)*n+1]), "r" (A[j+(i+2)*n+2]), "r" (A[j+(i+2)*n+3]),
+                          "r" (A[j+(i+3)*n+0]), "r" (A[j+(i+3)*n+1]), "r" (A[j+(i+3)*n+2]), "r" (A[j+(i+3)*n+3])
+                        );
 
                 // B row 1, 2, 3, 4
                 asm volatile ("vmca va1, %0"
@@ -122,19 +95,14 @@ void vec_dgemm_opt_c(int n, double * result, double * A, double * B) {
                         : "r" (&B[(j+3)*n+k]));
 
 
-
-                asm volatile ("la t0, dgemm_opt_v_4_4"
+                asm volatile ("vf 0(%0)"
                         :
-                        :
-                        : "t0");
-                asm volatile ("vf 0(t0)");
+                        : "r" (main_vfblockaddr));
             }
             k += consumed;
-            asm volatile ("la t0, dgemm_opt_v_4_4_post"
+            asm volatile ("vf 0(%0)"
                     :
-                    :
-                    : "t0");
-            asm volatile ("vf 0(t0)");
+                    : "r" (post_vfblockaddr));
 
         }
     }
