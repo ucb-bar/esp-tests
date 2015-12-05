@@ -35,6 +35,7 @@ bmarks = \
 	vec-vvadd \
 	vec-sgemm-naive \
 	vec-sgemm-opt  \
+	vec-hgemm-opt  \
 	vec-dgemm-opt  \
 	vec-sdgemm-opt  \
 	vec-hsgemm-opt 
