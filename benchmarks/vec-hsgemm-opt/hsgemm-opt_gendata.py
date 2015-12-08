@@ -20,7 +20,7 @@ fl16str = lambda x: hex(np.float16(x).view('H'))
 
 
 def print_arr(array_type, array_name, array_sz, pyarr):
-    print "{} {}[{}] = ".format(array_type, array_name, array_sz)
+    print "{} __attribute__((aligned(16))) {}[{}] = ".format(array_type, array_name, array_sz)
     print "{"
     print ", ".join(map(fl16str, pyarr))
     print "};"
