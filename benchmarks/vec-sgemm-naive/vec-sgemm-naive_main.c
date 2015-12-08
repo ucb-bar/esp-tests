@@ -31,8 +31,8 @@ int main( int argc, char* argv[] )
   setStats(0);
 
   // Print out the result
-  printFloatArray("results", MAT_WIDTH, result_holder);
+  printFloatArray("results", MAT_WIDTH*MAT_WIDTH, result_holder);
 
   // Check the results
-  return verifyFloat(MAT_WIDTH, result_holder, verify_data);
+  return verifyFloat(MAT_WIDTH*MAT_WIDTH, result_holder, verify_data);
 }

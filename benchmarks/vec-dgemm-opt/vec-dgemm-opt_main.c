@@ -30,8 +30,8 @@ int main( int argc, char* argv[] )
   setStats(0);
 
   // Print out the result
-  printDoubleArray("results", MAT_WIDTH, result_holder);
+  printDoubleArray("results", MAT_WIDTH*MAT_WIDTH, result_holder);
 
   // Check the results
-  return verifyDouble(MAT_WIDTH, result_holder, verify_data);
+  return verifyDouble(MAT_WIDTH*MAT_WIDTH, result_holder, verify_data);
 }

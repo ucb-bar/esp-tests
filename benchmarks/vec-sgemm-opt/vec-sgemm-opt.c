@@ -79,14 +79,14 @@ void vec_sgemm_opt_c(int n, float * result, float * A, float * B) {
                               "vmcs vs6, %5\n"
                               "vmcs vs7, %6\n"
                               "vmcs vs8, %7\n"
-                              "vmcs vs8, %8\n"
-                              "vmcs vs9, %9\n"
-                              "vmcs vs10, %10\n"
-                              "vmcs vs11, %11\n"
-                              "vmcs vs12, %12\n"
-                              "vmcs vs13, %13\n"
-                              "vmcs vs14, %14\n"
-                              "vmcs vs15, %15"
+                              "vmcs vs9, %8\n"
+                              "vmcs vs10, %9\n"
+                              "vmcs vs11, %10\n"
+                              "vmcs vs12, %11\n"
+                              "vmcs vs13, %12\n"
+                              "vmcs vs14, %13\n"
+                              "vmcs vs15, %14\n"
+                              "vmcs vs16, %15"
                         : 
                         : "r" (A[j+(i+0)*n+0]), "r" (A[j+(i+0)*n+1]), "r" (A[j+(i+0)*n+2]), "r" (A[j+(i+0)*n+3]), 
                           "r" (A[j+(i+1)*n+0]), "r" (A[j+(i+1)*n+1]), "r" (A[j+(i+1)*n+2]), "r" (A[j+(i+1)*n+3]),
