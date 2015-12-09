@@ -24,13 +24,13 @@ stripmine:
     vmca va1, a3
     la t5, hsaxpy_v
     vf 0(t5)
-    fence
     slli t1, t0, 1
     slli t2, t0, 2
     add a2, a2, t1
     add a3, a3, t2
     sub a0, a0, t0
     bnez a0, stripmine
+    fence
     ret
 
 # vector thread asm
