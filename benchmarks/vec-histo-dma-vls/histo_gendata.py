@@ -1,6 +1,6 @@
 import random
 
-data_size = 10000
+data_size = 100000
 data_max = 1000
 bin_size = 100
 scale = data_max / bin_size
