@@ -34,6 +34,9 @@ bmarks = \
 	vec-hsaxpy \
 	vec-vvadd \
 	vec-histo \
+	vec-histo-dma \
+	vec-histo-vls \
+	vec-histo-dma-vls \
 	vec-sgemm-naive \
 	vec-sgemm-opt  \
 	vec-hgemm-opt  \
