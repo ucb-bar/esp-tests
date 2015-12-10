@@ -44,7 +44,6 @@ static inline void do_saxpy_block(float *x, float *y, int n, int vl)
   asm volatile ("vmca va0, %[x]" :: [x] "r" (x));
   asm volatile ("vmca va1, %[y]" :: [y] "r" (y));
   asm volatile ("vf 0(%[start])" :: [start] "r" (saxpy_streamx_v));
-  asm volatile ("fence");
 }
 
 void vec_saxpy_streamx_c( int n, float a, float *input_X, float *inout_Y )
@@ -60,4 +59,5 @@ void vec_saxpy_streamx_c( int n, float a, float *input_X, float *inout_Y )
     inout_Y += vl;
     n -= vl;
   }
+  asm volatile ("fence");
 }
