@@ -29,6 +29,7 @@ bmarks = \
 	pb-sgemm \
 	pb-spmv \
 	vec-saxpy \
+	vec-stream \
 	vec-daxpy \
 	vec-sdaxpy \
 	vec-hsaxpy \
