@@ -7,6 +7,7 @@
 
 #include "util.h"
 #include "vec-hgemm-opt.h"
+#include<stdint.h>
 
 //--------------------------------------------------------------------------
 // Input/Reference Data
