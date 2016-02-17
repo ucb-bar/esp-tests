@@ -18,7 +18,7 @@
 
 int main( int argc, char* argv[] )
 {
-   
+
   float result[DATA_SIZE];
 
   // Print the input array

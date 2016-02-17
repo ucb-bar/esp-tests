@@ -88,46 +88,6 @@ RVTEST_CODE_BEGIN
   TEST_FP_INT_OP_D(78, fcvt.lu.d, 0x10,         -1, -3e9, rtz);
   TEST_FP_INT_OP_D(79, fcvt.lu.d, 0x00, 3000000000,  3e9, rtz);
 
-  # test negative NaN, negative infinity conversion
-  TEST_FP_INT_OP_S_HEX( 80, fcvt.w.s,  0x10, 0xffffffff80000000, 0xffffffff, rtz);
-  TEST_FP_INT_OP_S_HEX( 81, fcvt.l.s,  0x10, 0x8000000000000000, 0xffffffff, rtz);
-  TEST_FP_INT_OP_S_HEX( 82, fcvt.w.s,  0x10, 0xffffffff80000000, 0xff800000, rtz);
-  TEST_FP_INT_OP_S_HEX( 83, fcvt.l.s,  0x10, 0x8000000000000000, 0xff800000, rtz);
-
-  TEST_FP_INT_OP_D_HEX( 84, fcvt.w.d,  0x10, 0xffffffff80000000, 0xffffffffffffffff, rtz);
-  TEST_FP_INT_OP_D_HEX( 85, fcvt.l.d,  0x10, 0x8000000000000000, 0xffffffffffffffff, rtz);
-  TEST_FP_INT_OP_D_HEX( 86, fcvt.w.d,  0x10, 0xffffffff80000000, 0xfff0000000000000, rtz);
-  TEST_FP_INT_OP_D_HEX( 87, fcvt.l.d,  0x10, 0x8000000000000000, 0xfff0000000000000, rtz);
-
-  # test positive NaN, positive infinity conversion
-  TEST_FP_INT_OP_S_HEX( 88, fcvt.w.s,  0x10, 0x000000007fffffff, 0x7fffffff, rtz);
-  TEST_FP_INT_OP_S_HEX( 89, fcvt.l.s,  0x10, 0x7fffffffffffffff, 0x7fffffff, rtz);
-  TEST_FP_INT_OP_S_HEX( 90, fcvt.w.s,  0x10, 0x000000007fffffff, 0x7f800000, rtz);
-  TEST_FP_INT_OP_S_HEX( 91, fcvt.l.s,  0x10, 0x7fffffffffffffff, 0x7f800000, rtz);
-
-  TEST_FP_INT_OP_D_HEX( 92, fcvt.w.d,  0x10, 0x000000007fffffff, 0x7fffffffffffffff, rtz);
-  TEST_FP_INT_OP_D_HEX( 93, fcvt.l.d,  0x10, 0x7fffffffffffffff, 0x7fffffffffffffff, rtz);
-  TEST_FP_INT_OP_D_HEX( 94, fcvt.w.d,  0x10, 0x000000007fffffff, 0x7ff0000000000000, rtz);
-  TEST_FP_INT_OP_D_HEX( 95, fcvt.l.d,  0x10, 0x7fffffffffffffff, 0x7ff0000000000000, rtz);
-
-  # test NaN, infinity conversions to unsigned integer (always return MaxUInt)
-  TEST_FP_INT_OP_S_HEX( 96, fcvt.wu.s, 0x10, 0xffffffffffffffff, 0xffffffff, rtz);
-  TEST_FP_INT_OP_S_HEX( 97, fcvt.wu.s, 0x10, 0xffffffffffffffff, 0x7fffffff, rtz);
-  TEST_FP_INT_OP_S_HEX( 98, fcvt.wu.s, 0x10, 0xffffffffffffffff, 0xff800000, rtz);
-  TEST_FP_INT_OP_S_HEX( 99, fcvt.wu.s, 0x10, 0xffffffffffffffff, 0x7f800000, rtz);
-  TEST_FP_INT_OP_S_HEX(100, fcvt.lu.s, 0x10, 0xffffffffffffffff, 0xffffffff, rtz);
-  TEST_FP_INT_OP_S_HEX(101, fcvt.lu.s, 0x10, 0xffffffffffffffff, 0x7fffffff, rtz);
-  TEST_FP_INT_OP_S_HEX(102, fcvt.lu.s, 0x10, 0xffffffffffffffff, 0xff800000, rtz);
-  TEST_FP_INT_OP_S_HEX(103, fcvt.lu.s, 0x10, 0xffffffffffffffff, 0x7f800000, rtz);
-
-  TEST_FP_INT_OP_D_HEX(104, fcvt.wu.d, 0x10, 0xffffffffffffffff, 0xffffffffffffffff, rtz);
-  TEST_FP_INT_OP_D_HEX(105, fcvt.wu.d, 0x10, 0xffffffffffffffff, 0x7fffffffffffffff, rtz);
-  TEST_FP_INT_OP_D_HEX(106, fcvt.wu.d, 0x10, 0xffffffffffffffff, 0xfff0000000000000, rtz);
-  TEST_FP_INT_OP_D_HEX(107, fcvt.wu.d, 0x10, 0xffffffffffffffff, 0x7ff0000000000000, rtz);
-  TEST_FP_INT_OP_D_HEX(108, fcvt.lu.d, 0x10, 0xffffffffffffffff, 0xffffffffffffffff, rtz);
-  TEST_FP_INT_OP_D_HEX(109, fcvt.lu.d, 0x10, 0xffffffffffffffff, 0x7fffffffffffffff, rtz);
-  TEST_FP_INT_OP_D_HEX(110, fcvt.lu.d, 0x10, 0xffffffffffffffff, 0xfff0000000000000, rtz);
-  TEST_FP_INT_OP_D_HEX(111, fcvt.lu.d, 0x10, 0xffffffffffffffff, 0x7ff0000000000000, rtz);
 
   TEST_PASSFAIL
 

@@ -41,7 +41,7 @@ skip ## testnum : \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j next ## testnum; \
-.align 8; \
+.align 3; \
 vtcode ## testnum : \
   vpset vp0; \
   code; \
@@ -254,7 +254,7 @@ skip ## testnum : \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j 1f; \
-.align 8; \
+.align 3; \
 vtcode ## testnum : \
   vpset vp0; \
   vload vs2, va3; \
@@ -289,6 +289,14 @@ vtcode ## testnum : \
 
 #define TEST_FP_OP1_D( testnum, inst, flags, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double 0.0, double 0.0, vlad, vsd, ld, 8, \
+                    v ## inst.v vv1, vv2)
+
+#define TEST_FP_OP1_S_DWORD_RESULT( testnum, inst, flags, result, val1 ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, float val1, float 0.0, float 0.0, vlaw, vsw, lw, 4, \
+                    v ## inst.v vv1, vv2)
+
+#define TEST_FP_OP1_D_DWORD_RESULT( testnum, inst, flags, result, val1 ) \
+  TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, double val1, double 0.0, double 0.0, vlad, vsd, ld, 8, \
                     v ## inst.v vv1, vv2)
 
 #define TEST_FP_OP2_S( testnum, inst, flags, result, val1, val2 ) \
@@ -335,19 +343,19 @@ vtcode ## testnum : \
                     vaddi vs1,vs0,1; @vp1 vadd.ss vv1,vs0,vs1;\
                     @!vp1 vadd.ss vv1,vs0,vs0 )
 
-#define TEST_FP_CLASS_S( testnum, result, val1 ) \
+#define TEST_FCLASS_S( testnum, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, word val1, word 0, word 0, vlaw, vsd, ld, 8, \
                     vfclass.s.v vv1, vv2)
 
-#define TEST_FP_CLASS_D( testnum, result, val1 ) \
+#define TEST_FCLASS_D( testnum, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
                     vfclass.d.v vv1, vv2)
 
-#define TEST_INT_FP_OP_S( testnum, inst, flags, result, val1 ) \
+#define TEST_INT_FP_OP_S( testnum, inst, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, word val1, word 0, word 0, vlaw, vsd, lw, 8, \
                     v ## inst.v vv1, vv2)
 
-#define TEST_INT_FP_OP_D( testnum, inst, flags, result, val1 ) \
+#define TEST_INT_FP_OP_D( testnum, inst, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
                     v ## inst.v vv1, vv2)
 
@@ -488,7 +496,7 @@ skip ## testnum : \
   addi a2,a2,1; \
   bne a2,a3,test_loop ## testnum; \
   j next ## testnum; \
-.align 8; \
+.align 3; \
 vtcode ## testnum : \
   vpset vp0; \
   code; \

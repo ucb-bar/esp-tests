@@ -259,6 +259,14 @@ vtcode ## testnum : \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, double val1, double 0.0, double 0.0, vlad, vsad, ld, 8, \
                     v ## inst vs1, vs2)
 
+#define TEST_FP_OP1_S_DWORD_RESULT( testnum, inst, flags, result, val1 ) \
+    TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, float val1, float 0.0, float 0.0, vlaw, vsaw, lw, 4, \
+                            v ## inst vs1, vs2)
+
+#define TEST_FP_OP1_D_DWORD_RESULT( testnum, inst, flags, result, val1 ) \
+    TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, double val1, double 0.0, double 0.0, vlad, vsad, ld, 8,\
+                            v ## inst vs1, vs2)
+
 #define TEST_FP_OP2_S( testnum, inst, flags, result, val1, val2 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, float val1, float val2, float 0.0, vlaw, vsaw, lw, 4, \
                     v ## inst vs1, vs2, vs3)
@@ -291,19 +299,19 @@ vtcode ## testnum : \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, dword val1, dword 0, dword 0, vlad, vsad, ld, 8, \
                     v ## inst vs1, vs2, rm)
 
-#define TEST_FP_CLASS_S( testnum, result, val1 ) \
+#define TEST_FCLASS_S( testnum, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, word val1, word 0, word 0, vlaw, vsad, ld, 8, \
                     vfclass.s vs1, vs2)
 
-#define TEST_FP_CLASS_D( testnum, result, val1 ) \
+#define TEST_FCLASS_D( testnum, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, dword val1, dword 0, dword 0, vlad, vsad, ld, 8, \
                     vfclass.d vs1, vs2)
 
-#define TEST_INT_FP_OP_S( testnum, inst, flags, result, val1 ) \
+#define TEST_INT_FP_OP_S( testnum, inst, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, float result, word val1, word 0, word 0, vlaw, vsad, lw, 8, \
                     v ## inst vs1, vs2)
 
-#define TEST_INT_FP_OP_D( testnum, inst, flags, result, val1 ) \
+#define TEST_INT_FP_OP_D( testnum, inst, result, val1 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, double result, dword val1, dword 0, dword 0, vlad, vsad, ld, 8, \
                     v ## inst vs1, vs2)
 

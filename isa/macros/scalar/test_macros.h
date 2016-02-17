@@ -291,7 +291,7 @@ test_ ## testnum: \
 test_ ## testnum: \
     li  TESTNUM, testnum; \
     li  x4, 0; \
-1:  la  x1, result; \
+1:  li  x1, result; \
     TEST_INSERT_NOPS_ ## src1_nops \
     la  x2, base; \
     TEST_INSERT_NOPS_ ## src2_nops \
@@ -309,7 +309,7 @@ test_ ## testnum: \
     li  x4, 0; \
 1:  la  x2, base; \
     TEST_INSERT_NOPS_ ## src1_nops \
-    la  x1, result; \
+    li  x1, result; \
     TEST_INSERT_NOPS_ ## src2_nops \
     store_inst x1, offset(x2); \
     load_inst x3, offset(x2); \
@@ -441,13 +441,38 @@ test_ ## testnum: \
 # Tests floating-point instructions
 #-----------------------------------------------------------------------
 
-#define TEST_FP_OP_INTERNAL( testnum, flags, result, val1, val2, val3, fload, load, code... ) \
-test_ ## testnum: \
+#define TEST_FP_OP_S_INTERNAL( testnum, flags, result, val1, val2, val3, code... ) \
+  test_ ## testnum: \
   li  TESTNUM, testnum; \
-  la  a0, 3f; fload f0, 0(a0); \
-  la  a0, 4f; fload f1, 0(a0); \
-  la  a0, 5f; fload f2, 0(a0); \
-  la  a0, 6f; load a3, 0(a0); \
+  la  a0, test_ ## testnum ## _data ;\
+  flw f0, 0(a0); \
+  flw f1, 4(a0); \
+  flw f2, 8(a0); \
+  lw  a3, 12(a0); \
+  code; \
+  fsflags a1, x0; \
+  li a2, flags; \
+  bne a0, a3, fail; \
+  bne a1, a2, fail; \
+  j 2f; \
+  .align 2; \
+  .data; \
+  test_ ## testnum ## _data: \
+  .float val1; \
+  .float val2; \
+  .float val3; \
+  .result; \
+  .text; \
+2:
+
+#define TEST_FP_OP_D_INTERNAL( testnum, flags, result, val1, val2, val3, code... ) \
+  test_ ## testnum: \
+  li  TESTNUM, testnum; \
+  la  a0, test_ ## testnum ## _data ;\
+  fld f0, 0(a0); \
+  fld f1, 8(a0); \
+  fld f2, 16(a0); \
+  ld  a3, 24(a0); \
   code; \
   fsflags a1, x0; \
   li a2, flags; \
@@ -455,87 +480,110 @@ test_ ## testnum: \
   bne a1, a2, fail; \
   j 2f; \
   .data; \
+  .align 3; \
   test_ ## testnum ## _data: \
-  .align 3; \
-3:.val1; \
-4:.val2; \
-5:.val3; \
-  .align 3; \
-6:.result; \
+  .double val1; \
+  .double val2; \
+  .double val3; \
+  .result; \
   .text; \
 2:
 
 #define TEST_FCVT_S_D( testnum, result, val1 ) \
-  TEST_FP_OP_INTERNAL( testnum, 0, double result, double val1, double 0.0, double 0.0, fld, ld, \
-                       fcvt.s.d f3, f0; fcvt.d.s f3, f3; fmv.x.d a0, f3)
+    TEST_FP_OP_D_INTERNAL( testnum, 0, double result, val1, 0.0, 0.0, \
+                            fcvt.s.d f3, f0; fcvt.d.s f3, f3; fmv.x.d a0, f3)
 
 #define TEST_FCVT_D_S( testnum, result, val1 ) \
-  TEST_FP_OP_INTERNAL( testnum, 0, float result, float val1, float 0.0, float 0.0, flw, lw, \
-                       fcvt.d.s f3, f0; fcvt.s.d f3, f3; fmv.x.s a0, f3)
+    TEST_FP_OP_S_INTERNAL( testnum, 0, float result, val1, 0.0, 0.0, \
+                            fcvt.d.s f3, f0; fcvt.s.d f3, f3; fmv.x.s a0, f3)
 
 #define TEST_FP_OP1_S( testnum, inst, flags, result, val1 ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, float result, float val1, float 0.0, float 0.0, flw, lw, \
-                       inst f3, f0; fmv.x.s a0, f3)
+    TEST_FP_OP_S_INTERNAL( testnum, flags, float result, val1, 0.0, 0.0, \
+                            inst f3, f0; fmv.x.s a0, f3)
 
 #define TEST_FP_OP1_D( testnum, inst, flags, result, val1 ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, double result, double val1, double 0.0, double 0.0, fld, ld, \
-                       inst f3, f0; fmv.x.d a0, f3)
+    TEST_FP_OP_D_INTERNAL( testnum, flags, double result, val1, 0.0, 0.0, \
+                            inst f3, f0; fmv.x.d a0, f3)
+
+#define TEST_FP_OP1_S_DWORD_RESULT( testnum, inst, flags, result, val1 ) \
+    TEST_FP_OP_S_INTERNAL( testnum, flags, dword result, val1, 0.0, 0.0, \
+                            inst f3, f0; fmv.x.s a0, f3)
+
+#define TEST_FP_OP1_D_DWORD_RESULT( testnum, inst, flags, result, val1 ) \
+    TEST_FP_OP_D_INTERNAL( testnum, flags, dword result, val1, 0.0, 0.0, \
+                            inst f3, f0; fmv.x.d a0, f3)
 
 #define TEST_FP_OP2_S( testnum, inst, flags, result, val1, val2 ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, float result, float val1, float val2, float 0.0, flw, lw, \
-                       inst f3, f0, f1; fmv.x.s a0, f3)
+    TEST_FP_OP_S_INTERNAL( testnum, flags, float result, val1, val2, 0.0, \
+                            inst f3, f0, f1; fmv.x.s a0, f3)
 
 #define TEST_FP_OP2_D( testnum, inst, flags, result, val1, val2 ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, double result, double val1, double val2, double 0.0, fld, ld, \
-                       inst f3, f0, f1; fmv.x.d a0, f3)
+    TEST_FP_OP_D_INTERNAL( testnum, flags, double result, val1, val2, 0.0, \
+                            inst f3, f0, f1; fmv.x.d a0, f3)
 
 #define TEST_FP_OP3_S( testnum, inst, flags, result, val1, val2, val3 ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, float result, float val1, float val2, float val3, flw, lw, \
-                       inst f3, f0, f1, f2; fmv.x.s a0, f3)
+    TEST_FP_OP_S_INTERNAL( testnum, flags, float result, val1, val2, val3, \
+                            inst f3, f0, f1, f2; fmv.x.s a0, f3)
 
 #define TEST_FP_OP3_D( testnum, inst, flags, result, val1, val2, val3 ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, double result, double val1, double val2, double val3, fld, ld, \
-                       inst f3, f0, f1, f2; fmv.x.d a0, f3)
+    TEST_FP_OP_D_INTERNAL( testnum, flags, double result, val1, val2, val3, \
+                            inst f3, f0, f1, f2; fmv.x.d a0, f3)
 
 #define TEST_FP_INT_OP_S( testnum, inst, flags, result, val1, rm ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, word result, float val1, float 0.0, float 0.0, flw, lw, \
-                       inst a0, f0, rm)
+    TEST_FP_OP_S_INTERNAL( testnum, flags, word result, val1, 0.0, 0.0, \
+                            inst a0, f0, rm)
 
 #define TEST_FP_INT_OP_D( testnum, inst, flags, result, val1, rm ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, dword result, double val1, double 0.0, double 0.0, fld, ld, \
-                       inst a0, f0, rm)
-
-#define TEST_FP_INT_OP_S_HEX( testnum, inst, flags, result, val1, rm ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, dword result, word val1, word 0, word 0, flw, ld, \
-                       inst a0, f0, rm)
-
-#define TEST_FP_INT_OP_D_HEX( testnum, inst, flags, result, val1, rm ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, dword result, dword val1, dword 0, dword 0, fld, ld, \
-                       inst a0, f0, rm)
+    TEST_FP_OP_D_INTERNAL( testnum, flags, dword result, val1, 0.0, 0.0, \
+                            inst a0, f0, rm)
 
 #define TEST_FP_CMP_OP_S( testnum, inst, result, val1, val2 ) \
-  TEST_FP_OP_INTERNAL( testnum, 0, word result, float val1, float val2, float 0.0, flw, lw, \
-                       inst a0, f0, f1)
+    TEST_FP_OP_S_INTERNAL( testnum, 0, word result, val1, val2, 0.0, \
+                            inst a0, f0, f1)
 
 #define TEST_FP_CMP_OP_D( testnum, inst, result, val1, val2 ) \
-  TEST_FP_OP_INTERNAL( testnum, 0, dword result, double val1, double val2, double 0.0, fld, ld, \
-                       inst a0, f0, f1)
+    TEST_FP_OP_D_INTERNAL( testnum, 0, dword result, val1, val2, 0.0, \
+                            inst a0, f0, f1)
 
-#define TEST_FP_CLASS_S( testnum, result, val1 ) \
-  TEST_FP_OP_INTERNAL( testnum, 0, dword result, word val1, word 0, word 0, flw, ld, \
-                       fclass.s a0, f0)
+#define TEST_FCLASS_S(testnum, correct, input) \
+  TEST_CASE(testnum, a0, correct, li a0, input; fmv.s.x fa0, a0; \
+                                  fclass.s a0, fa0)
 
-#define TEST_FP_CLASS_D( testnum, result, val1 ) \
-  TEST_FP_OP_INTERNAL( testnum, 0, dword result, dword val1, dword 0, dword 0, fld, ld, \
-                       fclass.d a0, f0)
+#define TEST_FCLASS_D(testnum, correct, input) \
+  TEST_CASE(testnum, a0, correct, li a0, input; fmv.d.x fa0, a0; \
+                                  fclass.d a0, fa0)
 
-#define TEST_INT_FP_OP_S( testnum, inst, flags, result, val1 ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, float result, word val1, word 0, word 0, flw, lw, \
-                       fmv.x.s a0, f0; inst f0, a0; fmv.x.s a0, f0)
+#define TEST_INT_FP_OP_S( testnum, inst, result, val1 ) \
+  test_ ## testnum: \
+  li  TESTNUM, testnum; \
+  la  a0, test_ ## testnum ## _data ;\
+  lw  a3, 0(a0); \
+  li  a0, val1; \
+  inst f0, a0; \
+  fsflags x0; \
+  fmv.x.s a0, f0; \
+  bne a0, a3, fail; \
+  j 1f; \
+  .align 2; \
+  test_ ## testnum ## _data: \
+  .float result; \
+1:
 
-#define TEST_INT_FP_OP_D( testnum, inst, flags, result, val1 ) \
-  TEST_FP_OP_INTERNAL( testnum, flags, double result, dword val1, dword 0, dword 0, fld, ld, \
-                       fmv.x.d a0, f0; inst f0, a0; fmv.x.d a0, f0)
+#define TEST_INT_FP_OP_D( testnum, inst, result, val1 ) \
+  test_ ## testnum: \
+  li  TESTNUM, testnum; \
+  la  a0, test_ ## testnum ## _data ;\
+  ld  a3, 0(a0); \
+  li  a0, val1; \
+  inst f0, a0; \
+  fsflags x0; \
+  fmv.x.d a0, f0; \
+  bne a0, a3, fail; \
+  j 1f; \
+  .align 3; \
+  test_ ## testnum ## _data: \
+  .double result; \
+1:
 
 #-----------------------------------------------------------------------
 # RV64UV MACROS
