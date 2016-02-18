@@ -6,7 +6,9 @@ isa_src_dir := .
 
 include $(isa_src_dir)/rv64ui/Makefrag
 include $(isa_src_dir)/rv64uf/Makefrag
+include $(isa_src_dir)/rv64uv/Makefrag
 include $(isa_src_dir)/rv64si/Makefrag
+include $(isa_src_dir)/rv64sv/Makefrag
 include $(isa_src_dir)/rv64mi/Makefrag
 include $(isa_src_dir)/rv32ui/Makefrag
 include $(isa_src_dir)/rv32si/Makefrag
@@ -100,7 +102,9 @@ $(eval $(call compile_template,rv32si,-m32))
 $(eval $(call compile_template,rv32mi,-m32))
 $(eval $(call compile_template,rv64ui))
 $(eval $(call compile_template,rv64uf))
+$(eval $(call compile_template,rv64uv))
 $(eval $(call compile_template,rv64si))
+$(eval $(call compile_template,rv64sv))
 $(eval $(call compile_template,rv64mi))
 
 tests_dump = $(addsuffix .dump, $(tests))
