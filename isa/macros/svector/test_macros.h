@@ -3,6 +3,23 @@
 #ifndef __TEST_MACROS_SVECTOR_H
 #define __TEST_MACROS_SVECTOR_H
 
+// remove to disable VRU
+#define VRU_ENABLE
+
+#ifdef VRU_ENABLE
+// because gcc complains about shifting without L
+#define VRU_SWITCH 0x8000000000000000
+#else
+#define VRU_SWITCH 0x0
+#endif
+
+#define VCFG(nvvd, nvvw, nvvh, nvp) \
+  (((nvvd) & 0x1ff) | \
+  (((nvp) & 0x1f) << 9) | \
+  (((nvvw) & 0x1ff) << 14) | \
+  (((nvvh) & 0x1ff) << 23) | \
+  (VRU_SWITCH))
+
 #undef EXTRA_INIT
 #define EXTRA_INIT RVTEST_VEC_ENABLE
 
@@ -17,7 +34,8 @@
 
 #define TEST_CASE_NREG( testnum, nxreg, testreg, correctval, val1, val2, code... ) \
 test_ ## testnum: \
-  vsetcfg nxreg,1; \
+  li a3, VCFG(nxreg, 0, 0, 1); \
+  vsetcfg a3; \
   li a3,2048; \
   vsetvl a3,a3; \
   li a4, val1; \
@@ -206,7 +224,8 @@ next ## testnum :
 
 #define TEST_FP_OP_INTERNAL_NREG( testnum, nxreg, npreg, result, val1, val2, val3, vload, vstore, load, lskip, code... ) \
 test_ ## testnum: \
-  vsetcfg nxreg,npreg; \
+  li a3, VCFG(nxreg, 0, 0, npreg); \
+  vsetcfg a3; \
   li a3,2048; \
   vsetvl a3,a3; \
   la a5, 3f; vmca va3, a5; \

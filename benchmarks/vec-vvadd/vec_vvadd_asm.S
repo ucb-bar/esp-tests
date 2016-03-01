@@ -1,5 +1,7 @@
 ## Hwacha v4 VVADD ASM code
 
+#include "vec-util.h"
+
 .text
 .align 2
 
@@ -12,7 +14,8 @@
 # a2 has float* x
 # a3 has float* y
 vec_vvadd_asm:
-    vsetcfg 3, 1 # from TEST_CASE_NREG
+    li a4, VCFG(3, 0, 0, 1)
+    vsetcfg a4
 stripmine:
     vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
     vmca va0, a2
