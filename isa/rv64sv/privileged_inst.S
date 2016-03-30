@@ -13,7 +13,7 @@
 RVTEST_RV64SV
 RVTEST_CODE_BEGIN
 
-  li a3, SSTATUS_PS
+  li a3, SSTATUS_SPP
   csrc sstatus, a3
   la t0, 1f
   csrw sepc, t0
