@@ -67,10 +67,10 @@ HOST_COMP = gcc $(HOST_OPTS)
 
 RISCV_PREFIX ?= riscv64-unknown-elf-
 RISCV_GCC ?= $(RISCV_PREFIX)gcc
-RISCV_GCC_OPTS ?= -static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -march=RV64IMAFDXhwacha
+RISCV_GCC_OPTS ?= -fpie -static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -march=RV64IMAFDXhwacha
 RISCV_LINK ?= $(RISCV_GCC) -T $(src_dir)/common/test.ld $(incs)
 RISCV_LINK_MT ?= $(RISCV_GCC) -T $(src_dir)/common/test-mt.ld
-RISCV_LINK_OPTS ?= -nostdlib -nostartfiles -ffast-math -lc -lgcc
+RISCV_LINK_OPTS ?= -nostdlib -nostartfiles -ffast-math -lgcc
 RISCV_OBJDUMP ?= $(RISCV_PREFIX)objdump --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.data
 RISCV_SIM ?= spike --extension=hwacha
 
@@ -87,14 +87,10 @@ include $(patsubst %, $(src_dir)/%/bmark.mk, $(bmarks))
 
 bmarks_riscv_bin  = $(addsuffix .riscv,  $(bmarks))
 bmarks_riscv_dump = $(addsuffix .riscv.dump, $(bmarks))
-bmarks_riscv_hex = $(addsuffix .riscv.hex, $(bmarks))
 bmarks_riscv_out  = $(addsuffix .riscv.out,  $(bmarks))
 
 bmarks_defs   = -DPREALLOCATE=1 -DHOST_DEBUG=0
 bmarks_cycles = 80000
-
-%.hex: %
-	elf2hex 16 2097152 $< > $@
 
 $(bmarks_riscv_dump): %.riscv.dump: %.riscv
 	$(RISCV_OBJDUMP) $< > $@
@@ -110,7 +106,7 @@ $(bmarks_riscv_out): %.riscv.out: %.riscv
 	$(RISCV_GCC) $(RISCV_GCC_OPTS) $(bmarks_defs) -D__ASSEMBLY__=1 \
 	             -c $(incs) $< -o $@
 
-riscv: $(bmarks_riscv_dump) $(bmarks_riscv_hex)
+riscv: $(bmarks_riscv_dump)
 run-riscv: $(bmarks_riscv_out)
 	echo; perl -ne 'print "  [$$1] $$ARGV \t$$2\n" if /\*{3}(.{8})\*{3}(.*)/' \
 	       $(bmarks_riscv_out); echo;

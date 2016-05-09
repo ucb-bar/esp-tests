@@ -14,6 +14,9 @@
 // initialized in crt.S
 int have_vec;
 
+volatile uint64_t tohost __attribute__((aligned(64)));
+volatile uint64_t fromhost __attribute__((aligned(64)));
+
 static long handle_frontend_syscall(long which, long arg0, long arg1, long arg2)
 {
   volatile uint64_t magic_mem[8] __attribute__((aligned(64)));
@@ -22,8 +25,13 @@ static long handle_frontend_syscall(long which, long arg0, long arg1, long arg2)
   magic_mem[2] = arg1;
   magic_mem[3] = arg2;
   __sync_synchronize();
-  write_csr(mtohost, (long)magic_mem);
-  while (swap_csr(mfromhost, 0) == 0);
+
+  tohost = (uintptr_t)magic_mem;
+  while (fromhost == 0)
+    ;
+  fromhost = 0;
+
+  __sync_synchronize();
   return magic_mem[0];
 }
 
@@ -39,9 +47,6 @@ static long counters[NUM_COUNTERS];
 static char* counter_names[NUM_COUNTERS];
 static int handle_stats(int enable)
 {
-  //use csrs to set stats register
-  if (enable)
-    asm volatile ("csrrs a0, stats, 1" ::: "a0");
   int i = 0;
 #define READ_CTR(name) do { \
     while (i >= NUM_COUNTERS) ; \
@@ -50,26 +55,24 @@ static int handle_stats(int enable)
     counters[i++] = csr; \
   } while (0)
   READ_CTR(mcycle);  READ_CTR(minstret);
-  READ_CTR(uarch0);  READ_CTR(uarch1);  READ_CTR(uarch2);  READ_CTR(uarch3);
-  READ_CTR(uarch4);  READ_CTR(uarch5);  READ_CTR(uarch6);  READ_CTR(uarch7);
-  READ_CTR(uarch8);  READ_CTR(uarch9);  READ_CTR(uarch10); READ_CTR(uarch11);
-  READ_CTR(uarch12); READ_CTR(uarch13); READ_CTR(uarch14); READ_CTR(uarch15);
+  READ_CTR(0xcc0); READ_CTR(0xcc1); READ_CTR(0xcc2); READ_CTR(0xcc3);
+  READ_CTR(0xcc4); READ_CTR(0xcc5); READ_CTR(0xcc6); READ_CTR(0xcc7);
+  READ_CTR(0xcc8); READ_CTR(0xcc9); READ_CTR(0xcca); READ_CTR(0xccb);
+  READ_CTR(0xccc); READ_CTR(0xccd); READ_CTR(0xcce); READ_CTR(0xccf);
 #undef READ_CTR
-  if (!enable)
-    asm volatile ("csrrc a0, stats, 1" ::: "a0");
   return 0;
 }
 
 void tohost_exit(long code)
 {
-  write_csr(mtohost, (code << 1) | 1);
+  tohost = (code << 1) | 1;
   while (1);
 }
 
 long handle_trap(long cause, long epc, long regs[32])
 {
   int* csr_insn;
-  asm ("jal %0, 1f; csrr a0, 0x0; 1:" : "=r"(csr_insn));
+  asm ("jal %0, 1f; csrr a0, 0xcc0; 1:" : "=r"(csr_insn));
   long sys_ret = 0;
 
   if (cause == CAUSE_ILLEGAL_INSTRUCTION &&
@@ -410,4 +413,96 @@ int sprintf(char* str, const char* fmt, ...)
 
   va_end(ap);
   return str - str0;
+}
+
+void* memcpy(void* dest, const void* src, size_t len)
+{
+  if ((((uintptr_t)dest | (uintptr_t)src | len) & (sizeof(uintptr_t)-1)) == 0) {
+    const uintptr_t* s = src;
+    uintptr_t *d = dest;
+    while (d < (uintptr_t*)(dest + len))
+      *d++ = *s++;
+  } else {
+    const char* s = src;
+    char *d = dest;
+    while (d < (char*)(dest + len))
+      *d++ = *s++;
+  }
+  return dest;
+}
+
+void* memset(void* dest, int byte, size_t len)
+{
+  if ((((uintptr_t)dest | len) & (sizeof(uintptr_t)-1)) == 0) {
+    uintptr_t word = byte & 0xFF;
+    word |= word << 8;
+    word |= word << 16;
+    word |= word << 16 << 16;
+
+    uintptr_t *d = dest;
+    while (d < (uintptr_t*)(dest + len))
+      *d++ = word;
+  } else {
+    char *d = dest;
+    while (d < (char*)(dest + len))
+      *d++ = byte;
+  }
+  return dest;
+}
+
+size_t strlen(const char *s)
+{
+  const char *p = s;
+  while (*p)
+    p++;
+  return p - s;
+}
+
+size_t strnlen(const char *s, size_t n)
+{
+  const char *p = s;
+  while (n-- && *p)
+    p++;
+  return p - s;
+}
+
+int strcmp(const char* s1, const char* s2)
+{
+  unsigned char c1, c2;
+
+  do {
+    c1 = *s1++;
+    c2 = *s2++;
+  } while (c1 != 0 && c1 == c2);
+
+  return c1 - c2;
+}
+
+char* strcpy(char* dest, const char* src)
+{
+  char* d = dest;
+  while ((*d++ = *src++))
+    ;
+  return dest;
+}
+
+long atol(const char* str)
+{
+  long res = 0;
+  int sign = 0;
+
+  while (*str == ' ')
+    str++;
+
+  if (*str == '-' || *str == '+') {
+    sign = *str == '-';
+    str++;
+  }
+
+  while (*str) {
+    res *= 10;
+    res += *str++ - '0';
+  }
+
+  return sign ? -res : res;
 }

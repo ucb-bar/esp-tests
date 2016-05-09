@@ -44,8 +44,8 @@ test_ ## testnum: \
   vmcs vs2, a4; \
   la a4,dst; \
   vmca va4, a4; \
-  lui a0,%hi(vtcode ## testnum ); \
-  vf %lo(vtcode ## testnum )(a0); \
+1:auipc a0,%pcrel_hi(vtcode ## testnum); \
+  vf %pcrel_lo(1b)(a0); \
   fence; \
   li a1,correctval; \
   li a2,0; \
@@ -258,8 +258,8 @@ test_ ## testnum: \
   la a5, 5f; vmca va5, a5; \
   la a5, 6f; \
   la a4, dst; vmca va6,a4; \
-  lui a0,%hi(vtcode ## testnum ); \
-  vf %lo(vtcode ## testnum )(a0); \
+1:auipc a0,%pcrel_hi(vtcode ## testnum); \
+  vf %pcrel_lo(1b)(a0); \
   fence; \
   load a1, 0(a5); \
   li a2, 0; \
@@ -500,8 +500,8 @@ test_ ## testnum: \
   vsetcfg a3; \
   li a3,2048; \
   vsetvl a3,a3; \
-  lui a0,%hi(vtcode ## testnum ); \
-  vf %lo(vtcode ## testnum )(a0); \
+1:auipc a0,%pcrel_hi(vtcode ## testnum); \
+  vf %pcrel_lo(1b)(a0); \
   la a4,dst; \
   fence; \
   li a1,correctval; \
