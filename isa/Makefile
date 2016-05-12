@@ -60,10 +60,6 @@ $$($(1)_p_vec_tests): $(1)-p-vec-%: $(1)/%.S
 	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -I$(src_dir)/../env/p -I$(src_dir)/macros/vector -T$(src_dir)/../env/p/link.ld $$< -o $$@
 $(1)_tests += $$($(1)_p_vec_tests)
 
-$$($(1)_pt_vec_tests): $(1)-pt-vec-%: $(1)/%.S
-	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -I$(src_dir)/../env/pt -I$(src_dir)/macros/vector -T$(src_dir)/../env/pt/link.ld $$< -o $$@
-$(1)_tests += $$($(1)_pt_vec_tests)
-
 $$($(1)_v_vec_tests): $(1)-v-vec-%: $(1)/%.S
 	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -std=gnu99 -O2 -I$(src_dir)/../env/v -I$(src_dir)/macros/vector -T$(src_dir)/../env/v/link.ld $(src_dir)/../env/v/entry.S $(src_dir)/../env/v/vm.c $$< -lc -o $$@
 $(1)_tests += $$($(1)_v_vec_tests)
@@ -75,10 +71,6 @@ $(1)_tests += $$($(1)_vp_vec_tests)
 $$($(1)_p_svec_tests): $(1)-p-svec-%: $(1)/%.S
 	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -I$(src_dir)/../env/p -I$(src_dir)/macros/svector -T$(src_dir)/../env/p/link.ld $$< -o $$@
 $(1)_tests += $$($(1)_p_svec_tests)
-
-$$($(1)_pt_svec_tests): $(1)-pt-svec-%: $(1)/%.S
-	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -I$(src_dir)/../env/pt -I$(src_dir)/macros/svector -T$(src_dir)/../env/pt/link.ld $$< -o $$@
-$(1)_tests += $$($(1)_pt_svec_tests)
 
 $$($(1)_v_svec_tests): $(1)-v-svec-%: $(1)/%.S
 	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -std=gnu99 -O2 -I$(src_dir)/../env/v -I$(src_dir)/macros/svector -T$(src_dir)/../env/v/link.ld $(src_dir)/../env/v/entry.S $(src_dir)/../env/v/vm.c $$< -lc -o $$@

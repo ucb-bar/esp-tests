@@ -25,8 +25,8 @@ RVTEST_CODE_BEGIN
   vmcs vs3,a4
   la a5,dest1
   vmca va1,a5
-  lui a0,%hi(vtcode1)
-  vf %lo(vtcode1)(a0)
+1:auipc a0,%pcrel_hi(vtcode1)
+  vf %pcrel_lo(1b)(a0)
 
   la a5,dest1
   vmca va1,a5
@@ -80,8 +80,8 @@ RVTEST_CODE_BEGIN
   vmca va1,a5
   vmca va1,a5
   vmca va1,a5
-  lui a0,%hi(vtcode1_save)
-  vf %lo(vtcode1_save)(a0)
+1:auipc a0,%pcrel_hi(vtcode1_save)
+  vf %pcrel_lo(1b)(a0)
   fence
 
   la a5,dest1
@@ -94,8 +94,8 @@ RVTEST_CODE_BEGIN
   vmcs vs3,a4
   la a5,dest2
   vmca va1,a5
-  lui a0,%hi(vtcode1)
-  vf %lo(vtcode1)(a0)
+1:auipc a0,%pcrel_hi(vtcode1)
+  vf %pcrel_lo(1b)(a0)
 
   li a6,1337
   vmcs vs6,a6
@@ -149,8 +149,8 @@ RVTEST_CODE_BEGIN
   vmcs vs6,a6
   vmcs vs6,a6
   vmcs vs6,a6
-  lui a0,%hi(vtcode1_save)
-  vf %lo(vtcode1_save)(a0)
+1:auipc a0,%pcrel_hi(vtcode1_save)
+  vf %pcrel_lo(1b)(a0)
   fence
 
   la a5,dest2
@@ -162,8 +162,8 @@ RVTEST_CODE_BEGIN
   la a5,dest3
   vmca va1,a5
   vmcs vs3,a4
-  lui a0,%hi(vtcode3)
-  vf %lo(vtcode3)(a0)
+1:auipc a0,%pcrel_hi(vtcode3)
+  vf %pcrel_lo(1b)(a0)
   fence
 
   ld a1,0(a5)

@@ -605,8 +605,8 @@ test_ ## testnum: \
   la a4,dst; \
   vmca va1, a4; \
   vmcs vs1, a4; \
-  lui a0,%hi(vtcode ## testnum ); \
-  vf %lo(vtcode ## testnum )(a0); \
+1:auipc a0,%pcrel_hi(vtcode ## testnum ); \
+  vf %pcrel_lo(1b)(a0); \
   fence; \
   li a1, output; \
   li TESTNUM, testnum; \
@@ -652,8 +652,8 @@ next ## testnum :
   vmca va1, a1; \
   la a3, dest; \
   vmca va2, a3; \
-  lui a0,%hi(vtcode1 ## testnum); \
-  vf %lo(vtcode1 ## testnum)(a0); \
+1:auipc a0,%pcrel_hi(vtcode1 ## testnum); \
+  vf %pcrel_lo(1b)(a0); \
   fence; \
 .align 3; \
 vtcode1 ## testnum: \
@@ -689,8 +689,8 @@ handler ## testnum: \
   vmca va1, a1; \
   la a3, dest; \
   vmca va2, a3; \
-  lui a0,%hi(vtcode2 ## testnum); \
-  vf %lo(vtcode2 ## testnum)(a0); \
+1:auipc a0,%pcrel_hi(vtcode2 ## testnum); \
+  vf %pcrel_lo(1b)(a0); \
   fence; \
   ld a1,0(a3); \
   li a2,5; \

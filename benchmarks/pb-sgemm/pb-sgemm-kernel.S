@@ -89,8 +89,8 @@ _pocl_launcher_mysgemmNT:               # @_pocl_launcher_mysgemmNT
 	li	x8, 4200
 	add	x8, x2, x8
 	sd	x7, 0(x8)
-	lui	x10, %hi(pocl.barrier)
-	addi	x17, x10, %lo(pocl.barrier)
+1:auipc x10, %pcrel_hi(pocl.barrier)
+	addi	x17, x10, %pcrel_lo(1b)
 	jalr	x1, x17, 0
 	li	x8, 4224
 	add	x8, x2, x8
@@ -302,8 +302,8 @@ Ltmp1:
 	flw	f0, 0(x7)
 	sd	x11, 8(x2)
 	fsw	f0, 0(x2)
-	lui	x7, %hi(_pocl_launcher_mysgemmNT)
-	addi	x7, x7, %lo(_pocl_launcher_mysgemmNT)
+1:auipc x7, %pcrel_hi(_pocl_launcher_mysgemmNT)
+	addi	x7, x7, %pcrel_lo(1b)
 	addi	x10, x6, 0
 	addi	x11, x5, 0
 	jalr	x1, x7, 0
@@ -343,8 +343,8 @@ Ltmp3:
 	flw	f0, 0(x7)
 	sd	x11, 8(x2)
 	fsw	f0, 0(x2)
-	lui	x7, %hi(_pocl_launcher_mysgemmNT)
-	addi	x7, x7, %lo(_pocl_launcher_mysgemmNT)
+1:auipc x7, %pcrel_hi(_pocl_launcher_mysgemmNT)
+	addi	x7, x7, %pcrel_lo(1b)
 	addi	x10, x5, 0
 	addi	x11, x6, 0
 	jalr	x1, x7, 0

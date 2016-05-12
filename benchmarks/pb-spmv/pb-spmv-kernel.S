@@ -37,8 +37,8 @@ _pocl_launcher_spmv_jds_naive:          # @_pocl_launcher_spmv_jds_naive
 	sd	x0, 656(x2)
 	li	x7, 32
 	sd	x7, 648(x2)
-	lui	x10, %hi(pocl.barrier)
-	addi	x28, x10, %lo(pocl.barrier)
+1:auipc x10, %pcrel_hi(pocl.barrier)
+	addi	x28, x10, %pcrel_lo(1b)
 	jalr	x1, x28, 0
 	sd	x0, 672(x2)
 	addi	x10, x2, 448
@@ -174,8 +174,8 @@ Ltmp1:
 	ld	x6, 0(x10)
 	ld	x10, 0(x6)
 	sd	x11, 0(x2)
-	lui	x6, %hi(_pocl_launcher_spmv_jds_naive)
-	addi	x6, x6, %lo(_pocl_launcher_spmv_jds_naive)
+1:auipc x6, %pcrel_hi(_pocl_launcher_spmv_jds_naive)
+	addi	x6, x6, %pcrel_lo(1b)
 	addi	x11, x5, 0
 	jalr	x1, x6, 0
 	ld	x1, 8(x2)               # 8-byte Folded Reload
@@ -207,8 +207,8 @@ Ltmp3:
 	ld	x7, 40(x10)
 	lw	x15, 0(x7)
 	sd	x11, 0(x2)
-	lui	x7, %hi(_pocl_launcher_spmv_jds_naive)
-	addi	x7, x7, %lo(_pocl_launcher_spmv_jds_naive)
+1:auipc x7, %pcrel_hi(_pocl_launcher_spmv_jds_naive)
+	addi	x7, x7, %pcrel_lo(1b)
 	addi	x10, x6, 0
 	addi	x11, x5, 0
 	jalr	x1, x7, 0

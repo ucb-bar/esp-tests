@@ -26,8 +26,8 @@ RVTEST_CODE_BEGIN
   vmcs vs3,a6
   la a5,dest1
   vmca va0,a5
-  lui a0,%hi(vtcode1)
-  vf %lo(vtcode1)(a0)
+1:auipc a0,%pcrel_hi(vtcode1)
+  vf %pcrel_lo(1b)(a0)
   fence
 
   li a0, 0

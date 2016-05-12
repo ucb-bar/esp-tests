@@ -17,8 +17,8 @@ RVTEST_CODE_BEGIN
   li a3,4
   vsetvl a3,a3
 
-  lui a0,%hi(vtcode1+2)
-  vf %lo(vtcode1+2)(a0)
+1:auipc a0,%pcrel_hi(vtcode1+2)
+  vf %pcrel_lo(1b)(a0)
 1:      j 1b
 
 .align 3
@@ -57,8 +57,8 @@ stvec_handler:
   vmca va3,a4
   la a5,dest
   vmca va1,a5
-  lui a0,%hi(vtcode1)
-  vf %lo(vtcode1)(a0)
+1:auipc a0,%pcrel_hi(vtcode1)
+  vf %pcrel_lo(1b)(a0)
   fence
 
   ld a1,0(a5)

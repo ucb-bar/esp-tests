@@ -21,8 +21,8 @@ RVTEST_CODE_BEGIN
   la a4,src2
   vld vv2,a3
   vld vv3,a4
-  lui a0,%hi(vtcode1)
-  vf %lo(vtcode1)(a0)
+1:auipc a0,%pcrel_hi(vtcode1)
+  vf %pcrel_lo(1b)(a0)
   la a5,dest
   vsd vv2,a5
   fence
@@ -48,8 +48,8 @@ RVTEST_CODE_BEGIN
   vld vv4,a3
   li a4, 3
   vmsv vv5,a4
-  lui a0,%hi(vtcode2)
-  vf %lo(vtcode2)(a0)
+1:auipc a0,%pcrel_hi(vtcode2)
+  vf %pcrel_lo(1b)(a0)
   la a5,dest
   vsd vv4,a5
   fence
@@ -73,8 +73,8 @@ RVTEST_CODE_BEGIN
 
   la a3,src2
   vld vv5,a3
-  lui a0,%hi(vtcode3)
-  vf %lo(vtcode3)(a0)
+1:auipc a0,%pcrel_hi(vtcode3)
+  vf %pcrel_lo(1b)(a0)
   la a5,dest
   vsd vv5,a5
   fence

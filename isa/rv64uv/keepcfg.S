@@ -19,8 +19,8 @@ RVTEST_CODE_BEGIN
 
   la a4,dest1
   vmca va1, a4
-  lui a0,%hi(vtcode1)
-  vf %lo(vtcode1)(a0)
+1:auipc a0,%pcrel_hi(vtcode1)
+  vf %pcrel_lo(1b)(a0)
 
   vsetcfg 3,1
   li s1,2048
@@ -28,8 +28,8 @@ RVTEST_CODE_BEGIN
 
   la a4,dest2
   vmca va1,a4
-  lui a0,%hi(vtcode2)
-  vf %lo(vtcode2)(a0)
+1:auipc a0,%pcrel_hi(vtcode2)
+  vf %pcrel_lo(1b)(a0)
 
   fence
 

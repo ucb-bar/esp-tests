@@ -23,8 +23,8 @@ RVTEST_CODE_BEGIN
   vmca va3,a4
   la a5,dest
   vmca va1,a5
-  lui a0,%hi(vtcode1)
-  vf %lo(vtcode1)(a0)
+1:auipc a0,%pcrel_hi(vtcode1)
+  vf %pcrel_lo(1b)(a0)
   fence
 
   ld a1,0(a5)
@@ -45,8 +45,8 @@ RVTEST_CODE_BEGIN
   vmca va2,a3
   la a5,dest
   vmca va1,a5
-  lui a0,%hi(vtcode2)
-  vf %lo(vtcode2)(a0)
+1:auipc a0,%pcrel_hi(vtcode2)
+  vf %pcrel_lo(1b)(a0)
   fence
 
   ld a1,0(a5)
@@ -70,8 +70,8 @@ RVTEST_CODE_BEGIN
   vmca va2,a3
   la a5,dest
   vmca va1,a5
-  lui a0,%hi(vtcode3)
-  vf %lo(vtcode3)(a0)
+1:auipc a0,%pcrel_hi(vtcode3)
+  vf %pcrel_lo(1b)(a0)
   fence
 
   ld a1,0(a5)
