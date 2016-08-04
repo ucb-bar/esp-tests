@@ -13,8 +13,9 @@
 RVTEST_RV64M
 RVTEST_CODE_BEGIN
 
-  .align 3
-  auipc s0, 0
+  .option norvc
+
+  la s0, data
 
   # indicate it's a load test
   li s1, CAUSE_MISALIGNED_LOAD
@@ -78,6 +79,9 @@ RVTEST_CODE_END
 
   .data
 RVTEST_DATA_BEGIN
+
+data:
+  .dword 0
 
   TEST_DATA
 

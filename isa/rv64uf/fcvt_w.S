@@ -4,7 +4,7 @@
 # fcvt_w.S
 #-----------------------------------------------------------------------------
 #
-# Test fcvt{wu|w|lu|l}.{s|d} instructions.
+# Test fcvt{wu|w|lu|l}.s instructions.
 #
 
 #include "riscv_test.h"
@@ -49,45 +49,6 @@ RVTEST_CODE_BEGIN
   TEST_FP_INT_OP_S(36, fcvt.lu.s, 0x00,          1,  1.0, rtz);
   TEST_FP_INT_OP_S(37, fcvt.lu.s, 0x01,          1,  1.1, rtz);
   TEST_FP_INT_OP_S(38, fcvt.lu.s, 0x10,          0, -3e9, rtz);
-
-  TEST_FP_INT_OP_D(42,  fcvt.w.d, 0x01,         -1, -1.1, rtz);
-  TEST_FP_INT_OP_D(43,  fcvt.w.d, 0x00,         -1, -1.0, rtz);
-  TEST_FP_INT_OP_D(44,  fcvt.w.d, 0x01,          0, -0.9, rtz);
-  TEST_FP_INT_OP_D(45,  fcvt.w.d, 0x01,          0,  0.9, rtz);
-  TEST_FP_INT_OP_D(46,  fcvt.w.d, 0x00,          1,  1.0, rtz);
-  TEST_FP_INT_OP_D(47,  fcvt.w.d, 0x01,          1,  1.1, rtz);
-  TEST_FP_INT_OP_D(48,  fcvt.w.d, 0x10,     -1<<31, -3e9, rtz);
-  TEST_FP_INT_OP_D(49,  fcvt.w.d, 0x10,  (1<<31)-1,  3e9, rtz);
-
-  TEST_FP_INT_OP_D(52, fcvt.wu.d, 0x10,          0, -3.0, rtz);
-  TEST_FP_INT_OP_D(53, fcvt.wu.d, 0x10,          0, -1.0, rtz);
-  TEST_FP_INT_OP_D(54, fcvt.wu.d, 0x01,          0, -0.9, rtz);
-  TEST_FP_INT_OP_D(55, fcvt.wu.d, 0x01,          0,  0.9, rtz);
-  TEST_FP_INT_OP_D(56, fcvt.wu.d, 0x00,          1,  1.0, rtz);
-  TEST_FP_INT_OP_D(57, fcvt.wu.d, 0x01,          1,  1.1, rtz);
-  TEST_FP_INT_OP_D(58, fcvt.wu.d, 0x10,          0, -3e9, rtz);
-  TEST_FP_INT_OP_D(59, fcvt.wu.d, 0x00, 0xffffffffb2d05e00, 3e9, rtz);
-
-  TEST_FP_INT_OP_D(62,  fcvt.l.d, 0x01,         -1, -1.1, rtz);
-  TEST_FP_INT_OP_D(63,  fcvt.l.d, 0x00,         -1, -1.0, rtz);
-  TEST_FP_INT_OP_D(64,  fcvt.l.d, 0x01,          0, -0.9, rtz);
-  TEST_FP_INT_OP_D(65,  fcvt.l.d, 0x01,          0,  0.9, rtz);
-  TEST_FP_INT_OP_D(66,  fcvt.l.d, 0x00,          1,  1.0, rtz);
-  TEST_FP_INT_OP_D(67,  fcvt.l.d, 0x01,          1,  1.1, rtz);
-  TEST_FP_INT_OP_D(68,  fcvt.l.d, 0x00,-3000000000, -3e9, rtz);
-  TEST_FP_INT_OP_D(69,  fcvt.l.d, 0x00, 3000000000,  3e9, rtz);
-  TEST_FP_INT_OP_D(60,  fcvt.l.d, 0x10,     -1<<63,-3e19, rtz);
-  TEST_FP_INT_OP_D(61,  fcvt.l.d, 0x10,  (1<<63)-1, 3e19, rtz);
-
-  TEST_FP_INT_OP_D(72, fcvt.lu.d, 0x10,          0, -3.0, rtz);
-  TEST_FP_INT_OP_D(73, fcvt.lu.d, 0x10,          0, -1.0, rtz);
-  TEST_FP_INT_OP_D(74, fcvt.lu.d, 0x01,          0, -0.9, rtz);
-  TEST_FP_INT_OP_D(75, fcvt.lu.d, 0x01,          0,  0.9, rtz);
-  TEST_FP_INT_OP_D(76, fcvt.lu.d, 0x00,          1,  1.0, rtz);
-  TEST_FP_INT_OP_D(77, fcvt.lu.d, 0x01,          1,  1.1, rtz);
-  TEST_FP_INT_OP_D(78, fcvt.lu.d, 0x10,          0, -3e9, rtz);
-  TEST_FP_INT_OP_D(79, fcvt.lu.d, 0x00, 3000000000,  3e9, rtz);
-
 
   TEST_PASSFAIL
 

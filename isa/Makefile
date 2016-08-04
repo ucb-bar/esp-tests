@@ -2,15 +2,24 @@
 # Makefile for riscv-tests/isa
 #-----------------------------------------------------------------------
 
+XLEN ?= 64
+
 src_dir := .
 
 include $(src_dir)/rv64ui/Makefrag
+include $(src_dir)/rv64uc/Makefrag
+include $(src_dir)/rv64um/Makefrag
+include $(src_dir)/rv64ua/Makefrag
 include $(src_dir)/rv64uf/Makefrag
 include $(src_dir)/rv64uv/Makefrag
+include $(src_dir)/rv64ud/Makefrag
 include $(src_dir)/rv64si/Makefrag
 include $(src_dir)/rv64sv/Makefrag
 include $(src_dir)/rv64mi/Makefrag
 include $(src_dir)/rv32ui/Makefrag
+include $(src_dir)/rv32uc/Makefrag
+include $(src_dir)/rv32um/Makefrag
+include $(src_dir)/rv32ua/Makefrag
 include $(src_dir)/rv32si/Makefrag
 include $(src_dir)/rv32mi/Makefrag
 
@@ -20,13 +29,12 @@ default: all
 # Build rules
 #--------------------------------------------------------------------
 
-RISCV_PREFIX ?= riscv64-unknown-elf-
+RISCV_PREFIX ?= riscv$(XLEN)-unknown-elf-
 RISCV_GCC ?= $(RISCV_PREFIX)gcc
 ENTROPY ?= -DENTROPY=$(shell echo $$$$)
 RISCV_GCC_OPTS ?= $(ENTROPY) -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -Wa,-march=RVIMAFDXhwacha
 RISCV_OBJDUMP ?= $(RISCV_PREFIX)objdump --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data
 RISCV_SIM ?= spike
-XLEN ?= 64
 
 vpath %.S $(src_dir)
 
@@ -91,12 +99,19 @@ tests += $$($(1)_tests)
 endef
 
 $(eval $(call compile_template,rv32ui,-m32))
+$(eval $(call compile_template,rv32uc,-m32))
+$(eval $(call compile_template,rv32um,-m32))
+$(eval $(call compile_template,rv32ua,-m32))
 $(eval $(call compile_template,rv32si,-m32))
 $(eval $(call compile_template,rv32mi,-m32))
 ifeq ($(XLEN),64)
 $(eval $(call compile_template,rv64ui))
+$(eval $(call compile_template,rv64uc))
+$(eval $(call compile_template,rv64um))
+$(eval $(call compile_template,rv64ua))
 $(eval $(call compile_template,rv64uf))
 $(eval $(call compile_template,rv64uv))
+$(eval $(call compile_template,rv64ud))
 $(eval $(call compile_template,rv64si))
 $(eval $(call compile_template,rv64sv))
 $(eval $(call compile_template,rv64mi))

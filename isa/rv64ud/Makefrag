@@ -1,0 +1,26 @@
+#=======================================================================
+# Makefrag for rv64ud tests
+#-----------------------------------------------------------------------
+
+rv64ud_sc_tests = \
+	fadd fdiv fclass fcmp fcvt fcvt_w fmadd fmin fsgnj \
+	ldst move structural recoding \
+
+rv64ud_sc_vec_tests = \
+	fadd fdiv fclass fcmp fcvt fcvt_w fmadd fmin fsgnj \
+
+rv64ud_sc_svec_tests = \
+	fadd fdiv fclass fcvt fcvt_w fmadd fmin fsgnj \
+
+rv64ud_p_tests = $(addprefix rv64ud-p-, $(rv64ud_sc_tests))
+rv64ud_v_tests = $(addprefix rv64ud-v-, $(rv64ud_sc_tests))
+rv64ud_p_vec_tests = $(addprefix rv64ud-p-vec-, $(rv64ud_sc_vec_tests))
+rv64ud_pt_vec_tests = $(addprefix rv64ud-pt-vec-, $(rv64ud_sc_vec_tests))
+rv64ud_v_vec_tests = $(addprefix rv64ud-v-vec-, $(rv64ud_sc_vec_tests))
+rv64ud_vp_vec_tests = $(addprefix rv64ud-vp-vec-, $(rv64ud_sc_vec_tests))
+rv64ud_p_svec_tests = $(addprefix rv64ud-p-svec-, $(rv64ud_sc_svec_tests))
+rv64ud_pt_svec_tests = $(addprefix rv64ud-pt-svec-, $(rv64ud_sc_svec_tests))
+rv64ud_v_svec_tests = $(addprefix rv64ud-v-svec-, $(rv64ud_sc_svec_tests))
+rv64ud_vp_svec_tests = $(addprefix rv64ud-vp-svec-, $(rv64ud_sc_svec_tests))
+
+spike_tests += $(rv64ud_p_tests) $(rv64ud_v_tests) $(rv64ud_p_vec_tests) $(rv64ud_vp_vec_tests) $(rv64ud_v_vec_tests) $(rv64ud_p_svec_tests) $(rv64ud_vp_svec_tests) $(rv64ud_v_svec_tests)

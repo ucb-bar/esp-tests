@@ -4,6 +4,8 @@
 # Yunsup Lee (yunsup@cs.berkeley.edu)
 #
 
+XLEN ?= 64
+
 default: all
 
 src_dir = .
@@ -65,7 +67,7 @@ bmarks_host = \
 HOST_OPTS = -std=gnu99 -DPREALLOCATE=0 -DHOST_DEBUG=1
 HOST_COMP = gcc $(HOST_OPTS)
 
-RISCV_PREFIX ?= riscv64-unknown-elf-
+RISCV_PREFIX ?= riscv$(XLEN)-unknown-elf-
 RISCV_GCC ?= $(RISCV_PREFIX)gcc
 RISCV_GCC_OPTS ?= -mcmodel=medany -static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -march=RV64IMAFDXhwacha
 RISCV_LINK ?= $(RISCV_GCC) -T $(src_dir)/common/test.ld $(incs)

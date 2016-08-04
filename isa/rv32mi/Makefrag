@@ -3,16 +3,15 @@
 #-----------------------------------------------------------------------
 
 rv32mi_sc_tests = \
+	breakpoint \
 	csr \
-	dirty \
+	mcsr \
 	illegal \
 	ma_fetch \
 	ma_addr \
-	mcsr \
 	scall \
 	sbreak \
 	shamt \
-	wfi \
 
 rv32mi_mc_tests = \
 	ipi \
