@@ -26,6 +26,7 @@ bmarks = \
 	multiply \
 	dhrystone \
 	spmv \
+	mm \
 	mt-vvadd \
 	mt-matmul \
 	pb-sgemm \
@@ -44,7 +45,6 @@ bmarks = \
 	vec-hsgemm-opt \
 	vec-saxpy-streamx
 
-	#mm \
 	#vec-fft \
 	#vec-cmplxmult \
 	#vec-matmul \
