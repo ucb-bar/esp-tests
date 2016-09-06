@@ -517,6 +517,14 @@ test_ ## testnum: \
   TEST_CASE(testnum, a0, correct, li a0, input; fmv.d.x fa0, a0; \
                                   fclass.d a0, fa0)
 
+#define TEST_FCLASS_S(testnum, correct, input) \
+  TEST_CASE(testnum, a0, correct, li a0, input; fmv.s.x fa0, a0; \
+                    fclass.s a0, fa0)
+
+#define TEST_FCLASS_D(testnum, correct, input) \
+  TEST_CASE(testnum, a0, correct, li a0, input; fmv.d.x fa0, a0; \
+                    fclass.d a0, fa0)
+
 #define TEST_INT_FP_OP_S( testnum, inst, result, val1 ) \
   test_ ## testnum: \
   li  TESTNUM, testnum; \

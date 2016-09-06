@@ -1,14 +1,16 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import os
 import sys
 import argparse
-import testlib
 import unittest
 import tempfile
 import time
 import random
 import binascii
+
+import testlib
+
 
 MSTATUS_UIE = 0x00000001
 MSTATUS_SIE = 0x00000002
@@ -30,12 +32,31 @@ MSTATUS_VM = 0x1F000000
 MSTATUS32_SD = 0x80000000
 MSTATUS64_SD = 0x8000000000000000
 
-def gdb():
-    if parsed.gdb:
-        return testlib.Gdb(parsed.gdb)
-    else:
-        return testlib.Gdb()
+def gdb(
+        target=None,
+        port=None,
+        binary=None
+        ):
 
+    gdb = None
+    if parsed.gdb:
+        gdb = testlib.Gdb(parsed.gdb)
+    else:
+        gdb = testlib.Gdb()
+
+    if binary:
+        gdb.command("file %s" % binary)
+    if target:
+        gdb.command("set arch riscv:rv%d" % target.xlen)
+        gdb.command("set remotetimeout %d" % target.timeout_sec)
+    if port:
+        gdb.command("target extended-remote localhost:%d" % port)
+
+    gdb.p("$priv=3")
+
+    return gdb
+
+        
 def ihex_line(address, record_type, data):
     assert len(data) < 128
     line = ":%02X%04X%02X" % (len(data), address, record_type)
@@ -61,6 +82,9 @@ def ihex_parse(line):
         data += "%c" % int(line[8+2*i:10+2*i], 16)
     return record_type, address, data
 
+def readable_binary_string(s):
+    return "".join("%02x" % ord(c) for c in s)
+
 class DeleteServer(unittest.TestCase):
     def tearDown(self):
         del self.server
@@ -68,12 +92,7 @@ class DeleteServer(unittest.TestCase):
 class SimpleRegisterTest(DeleteServer):
     def setUp(self):
         self.server = target.server()
-        self.gdb = gdb()
-        # For now gdb has to be told what the architecture is when it's not
-        # given an ELF file.
-        self.gdb.command("set arch riscv:rv%d" % target.xlen)
-
-        self.gdb.command("target extended-remote localhost:%d" % self.server.port)
+        self.gdb = gdb(target, self.server.port)
 
         # 0x13 is nop
         self.gdb.command("p *((int*) 0x%x)=0x13" % target.ram)
@@ -110,9 +129,7 @@ class SimpleRegisterTest(DeleteServer):
 class SimpleMemoryTest(DeleteServer):
     def setUp(self):
         self.server = target.server()
-        self.gdb = gdb()
-        self.gdb.command("set arch riscv:rv%d" % target.xlen)
-        self.gdb.command("target extended-remote localhost:%d" % self.server.port)
+        self.gdb = gdb(target, self.server.port)
 
     def access_test(self, size, data_type):
         self.assertEqual(self.gdb.p("sizeof(%s)" % data_type),
@@ -162,15 +179,14 @@ class SimpleMemoryTest(DeleteServer):
         for line in b:
             record_type, address, line_data = ihex_parse(line)
             if (record_type == 0):
-                self.assertEqual(line_data, data[address:address+len(line_data)])
+                self.assertEqual(readable_binary_string(line_data),
+                        readable_binary_string(data[address:address+len(line_data)]))
 
 class InstantHaltTest(DeleteServer):
     def setUp(self):
         self.server = target.server()
-        self.gdb = gdb()
-        self.gdb.command("set arch riscv:rv%d" % target.xlen)
-        self.gdb.command("target extended-remote localhost:%d" % self.server.port)
-
+        self.gdb = gdb(target, self.server.port)
+         
     def test_instant_halt(self):
         self.assertEqual(target.reset_vector, self.gdb.p("$pc"))
         # mcycle and minstret have no defined reset value.
@@ -198,9 +214,7 @@ class DebugTest(DeleteServer):
         self.binary = target.compile("programs/debug.c", "programs/checksum.c",
                 "programs/tiny-malloc.c", "-DDEFINE_MALLOC", "-DDEFINE_FREE")
         self.server = target.server()
-        self.gdb = gdb()
-        self.gdb.command("file %s" % self.binary)
-        self.gdb.command("target extended-remote localhost:%d" % self.server.port)
+        self.gdb = gdb(target, self.server.port, self.binary)
         self.gdb.load()
         self.gdb.b("_exit")
 
@@ -213,9 +227,8 @@ class DebugTest(DeleteServer):
     def test_function_call(self):
         self.gdb.b("main:start")
         self.gdb.c()
-        text = "Howdy, Earth!"
-        gdb_length = self.gdb.p('strlen("%s")' % text)
-        self.assertEqual(gdb_length, len(text))
+        self.assertEqual(self.gdb.p('fib(6)'), 8)
+        self.assertEqual(self.gdb.p('fib(7)'), 13)
         self.exit()
 
     def test_change_string(self):
@@ -227,6 +240,8 @@ class DebugTest(DeleteServer):
 
     def test_turbostep(self):
         """Single step a bunch of times."""
+        self.gdb.b("main:start")
+        self.gdb.c()
         self.gdb.command("p i=0");
         last_pc = None
         advances = 0
@@ -351,9 +366,7 @@ class StepTest(DeleteServer):
     def setUp(self):
         self.binary = target.compile("programs/step.S")
         self.server = target.server()
-        self.gdb = gdb()
-        self.gdb.command("file %s" % self.binary)
-        self.gdb.command("target extended-remote localhost:%d" % self.server.port)
+        self.gdb = gdb(target, self.server.port, self.binary)
         self.gdb.load()
         self.gdb.b("main")
         self.gdb.c()
@@ -365,13 +378,82 @@ class StepTest(DeleteServer):
             pc = self.gdb.p("$pc")
             self.assertEqual("%x" % pc, "%x" % (expected + main))
 
+class TriggerTest(DeleteServer):
+    def setUp(self):
+        self.binary = target.compile("programs/trigger.S")
+        self.server = target.server()
+        self.gdb = gdb(target, self.server.port, self.binary)
+        self.gdb.load()
+        self.gdb.b("_exit")
+        self.gdb.b("main")
+        self.gdb.c()
+
+    def exit(self):
+        output = self.gdb.c()
+        self.assertIn("Breakpoint", output)
+        self.assertIn("_exit", output)
+
+    def test_execute_instant(self):
+        """Test an execute breakpoint on the first instruction executed out of
+        debug mode."""
+        main = self.gdb.p("$pc")
+        self.gdb.command("hbreak *0x%x" % (main + 4))
+        self.gdb.c()
+        self.assertEqual(self.gdb.p("$pc"), main+4)
+
+    def test_load_address(self):
+        self.gdb.command("rwatch *((&data)+1)");
+        output = self.gdb.c()
+        self.assertIn("read_loop", output)
+        self.assertEqual(self.gdb.p("$a0"),
+                self.gdb.p("(&data)+1"))
+        self.exit()
+
+    def test_load_address_instant(self):
+        """Test a load address breakpoint on the first instruction executed out
+        of debug mode."""
+        self.gdb.command("b just_before_read_loop")
+        self.gdb.c()
+        read_loop = self.gdb.p("&read_loop")
+        self.gdb.command("rwatch data");
+        self.gdb.c()
+        # Accept hitting the breakpoint before or after the load instruction.
+        self.assertIn(self.gdb.p("$pc"), [read_loop, read_loop + 4])
+        self.assertEqual(self.gdb.p("$a0"), self.gdb.p("&data"))
+
+    def test_store_address(self):
+        self.gdb.command("watch *((&data)+3)");
+        output = self.gdb.c()
+        self.assertIn("write_loop", output)
+        self.assertEqual(self.gdb.p("$a0"),
+                self.gdb.p("(&data)+3"))
+        self.exit()
+
+    def test_store_address_instant(self):
+        """Test a store address breakpoint on the first instruction executed out
+        of debug mode."""
+        self.gdb.command("b just_before_write_loop")
+        self.gdb.c()
+        write_loop = self.gdb.p("&write_loop")
+        self.gdb.command("watch data");
+        self.gdb.c()
+        # Accept hitting the breakpoint before or after the store instruction.
+        self.assertIn(self.gdb.p("$pc"), [write_loop, write_loop + 4])
+        self.assertEqual(self.gdb.p("$a0"), self.gdb.p("&data"))
+
+    def test_dmode(self):
+        self.gdb.command("hbreak handle_trap")
+        self.gdb.p("$pc=write_valid")
+        output = self.gdb.c()
+        self.assertIn("handle_trap", output)
+        self.assertIn("mcause=2", output)
+        self.assertIn("mepc=%d" % self.gdb.p("&write_invalid_illegal"), output)
+
 class RegsTest(DeleteServer):
     def setUp(self):
         self.binary = target.compile("programs/regs.S")
         self.server = target.server()
-        self.gdb = gdb()
-        self.gdb.command("file %s" % self.binary)
-        self.gdb.command("target extended-remote localhost:%d" % self.server.port)
+        self.gdb = gdb(target, self.server.port, self.binary)
         self.gdb.load()
         self.gdb.b("main")
         self.gdb.b("handle_trap")
@@ -382,8 +464,8 @@ class RegsTest(DeleteServer):
 
         self.gdb.p("$pc=write_regs")
         for i, r in enumerate(regs):
-            self.gdb.command("p $%s=%d" % (r, (0xdeadbeef<<i)+17))
-        self.gdb.command("p $x1=data")
+            self.gdb.p("$%s=%d" % (r, (0xdeadbeef<<i)+17))
+        self.gdb.p("$x1=data")
         self.gdb.command("b all_done")
         output = self.gdb.c()
         self.assertIn("Breakpoint ", output)
@@ -439,10 +521,8 @@ class DownloadTest(DeleteServer):
 
         self.binary = target.compile(download_c.name, "programs/checksum.c")
         self.server = target.server()
-        self.gdb = gdb()
-        self.gdb.command("file %s" % self.binary)
-        self.gdb.command("target extended-remote localhost:%d" % self.server.port)
-
+        self.gdb = gdb(target, self.server.port, self.binary)
+        
     def test_download(self):
         output = self.gdb.load()
         self.gdb.command("b _exit")
@@ -453,9 +533,7 @@ class MprvTest(DeleteServer):
     def setUp(self):
         self.binary = target.compile("programs/mprv.S")
         self.server = target.server()
-        self.gdb = gdb()
-        self.gdb.command("file %s" % self.binary)
-        self.gdb.command("target extended-remote localhost:%d" % self.server.port)
+        self.gdb = gdb(target, self.server.port, self.binary)
         self.gdb.load()
 
     def test_mprv(self):
@@ -470,9 +548,7 @@ class PrivTest(DeleteServer):
     def setUp(self):
         self.binary = target.compile("programs/priv.S")
         self.server = target.server()
-        self.gdb = gdb()
-        self.gdb.command("file %s" % self.binary)
-        self.gdb.command("target extended-remote localhost:%d" % self.server.port)
+        self.gdb = gdb(target, self.server.port, self.binary)
         self.gdb.load()
 
         misa = self.gdb.p("$misa")
@@ -520,14 +596,16 @@ class PrivTest(DeleteServer):
 
 class Target(object):
     directory = None
-
+    timeout_sec = 2
+    
     def server(self):
         raise NotImplementedError
 
     def compile(self, *sources):
-        binary_name = "%s_%s" % (
+        binary_name = "%s_%s-%d" % (
                 self.name,
-                os.path.basename(os.path.splitext(sources[0])[0]))
+                os.path.basename(os.path.splitext(sources[0])[0]),
+                self.xlen)
         if parsed.isolate:
             self.temporary_binary = tempfile.NamedTemporaryFile(
                     prefix=binary_name + "_")
@@ -546,7 +624,7 @@ class SpikeTarget(Target):
     directory = "spike"
     ram = 0x80010000
     ram_size = 5 * 1024 * 1024
-    instruction_hardware_breakpoint_count = 0
+    instruction_hardware_breakpoint_count = 4
     reset_vector = 0x1000
 
 class Spike64Target(SpikeTarget):
@@ -574,42 +652,101 @@ class FreedomE300Target(Target):
         return testlib.Openocd(cmd=parsed.cmd,
                 config="targets/%s/openocd.cfg" % self.name)
 
+class FreedomE300SimTarget(Target):
+    name = "freedom-e300-sim"
+    xlen = 32
+    timeout_sec = 240
+    ram = 0x80000000
+    ram_size = 256 * 1024 * 1024
+    instruction_hardware_breakpoint_count = 2
+       
+    def server(self):
+        sim = testlib.VcsSim(simv=parsed.run, debug=False)
+        openocd = testlib.Openocd(cmd=parsed.cmd,
+                            config="targets/%s/openocd.cfg" % self.name,
+                            otherProcess = sim)
+        time.sleep(20)
+        return openocd
+
+class FreedomU500Target(Target):
+    name = "freedom-u500"
+    xlen = 64
+    ram = 0x80000000
+    ram_size = 16 * 1024
+    instruction_hardware_breakpoint_count = 2
+
+    def server(self):
+        return testlib.Openocd(cmd=parsed.cmd,
+                config="targets/%s/openocd.cfg" % self.name)
+    
+class FreedomU500SimTarget(Target):
+    name = "freedom-u500-sim"
+    xlen = 64
+    timeout_sec = 240
+    ram = 0x80000000
+    ram_size = 256 * 1024 * 1024
+    instruction_hardware_breakpoint_count = 2
+       
+    def server(self):
+        sim = testlib.VcsSim(simv=parsed.run, debug=False)
+        openocd = testlib.Openocd(cmd=parsed.cmd,
+                            config="targets/%s/openocd.cfg" % self.name,
+                            otherProcess = sim)
+        time.sleep(20)
+        return openocd
+
 targets = [
         Spike32Target,
         Spike64Target,
-        FreedomE300Target
-        ]
+        FreedomE300Target,
+        FreedomU500Target,
+        FreedomE300SimTarget,
+        FreedomU500SimTarget]
 
 def main():
     parser = argparse.ArgumentParser(
             epilog="""
             Example command line from the real world:
-            Run all RegsTest cases against a MicroSemi m2gl_m2s board, with custom openocd command:
-            ./gdbserver.py --m2gl_m2s --cmd "$HOME/SiFive/openocd/src/openocd -s $HOME/SiFive/openocd/tcl -d" -- -vf RegsTest
+            Run all RegsTest cases against a physical FPGA, with custom openocd command:
+            ./gdbserver.py --freedom-e-300 --cmd "$HOME/SiFive/openocd/src/openocd -s $HOME/SiFive/openocd/tcl -d" -- -vf RegsTest
             """)
     group = parser.add_mutually_exclusive_group(required=True)
     for t in targets:
         group.add_argument("--%s" % t.name, action="store_const", const=t,
                 dest="target")
+    parser.add_argument("--run",
+                        help="The command to use to start the actual target (e.g. simulation)")
     parser.add_argument("--cmd",
             help="The command to use to start the debug server.")
     parser.add_argument("--gdb",
             help="The command to use to start gdb.")
+
+    xlen_group = parser.add_mutually_exclusive_group()
+    xlen_group.add_argument("--32", action="store_const", const=32, dest="xlen",
+            help="Force the target to be 32-bit.")
+    xlen_group.add_argument("--64", action="store_const", const=64, dest="xlen",
+            help="Force the target to be 64-bit.")
+
     parser.add_argument("--isolate", action="store_true",
             help="Try to run in such a way that multiple instances can run at "
             "the same time. This may make it harder to debug a failure if it "
             "does occur.")
+
     parser.add_argument("unittest", nargs="*")
     global parsed
     parsed = parser.parse_args()
 
     global target
     target = parsed.target()
+
+    if parsed.xlen:
+        target.xlen = parsed.xlen
+
     unittest.main(argv=[sys.argv[0]] + parsed.unittest)
 
 # TROUBLESHOOTING TIPS
 # If a particular test fails, run just that one test, eg.:
-# ./tests/gdbserver.py MprvTest.test_mprv
+# ./gdbserver.py MprvTest.test_mprv
 # Then inspect gdb.log and spike.log to see what happened in more detail.
 
 if __name__ == '__main__':
