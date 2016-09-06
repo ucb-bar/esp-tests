@@ -50,11 +50,12 @@ RVTEST_CODE_BEGIN
   li TESTNUM, 6
   bne a3, a0, fail
 
-  li a3, 9
-  vsetvl a3, a3
-  li a0, 8
-  li TESTNUM, 7
-  bne a3, a0, fail
+  # this is check is dependent on HW size
+  #li a3, 9
+  #vsetvl a3, a3
+  #li a0, 8
+  #li TESTNUM, 7
+  #bne a3, a0, fail
 
   li a3, 7
   vsetvl a3, a3

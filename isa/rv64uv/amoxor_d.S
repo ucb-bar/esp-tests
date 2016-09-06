@@ -30,13 +30,18 @@ RVTEST_CODE_BEGIN
   li a1,0
   li a2,-1
   li t0,0xaaaaaaaaaaaaaaaa
+  xor a2,a2,t0
+  xor a3,a2,t0
 loop:
   ld a0,0(a6)
   addi TESTNUM,a1,2
+  bne a0,a3,else
+  j skip
+else:
   bne a0,a2,fail
+skip:
   addi a6,a6,8
   addi a1,a1,1
-  xor a2,a2,t0
   bne a1,a4,loop
   j pass
 

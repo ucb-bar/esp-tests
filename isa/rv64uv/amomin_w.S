@@ -29,12 +29,12 @@ RVTEST_CODE_BEGIN
   fence
 
   li a1,0
-  li a2,0
+  li a2,-1
 loop:
-  lw a0,0(a6)
+  lw a0,0(a5)
   addi TESTNUM,a1,2
   bne a0,a2,fail
-  addi a6,a6,4
+  addi a5,a5,4
   addi a1,a1,1
   addi a2,a2,-1
   bne a1,a4,loop
@@ -44,11 +44,14 @@ loop:
 vtcode:
   vpset vp0
   veidx vv3
+  vaddi vs3, vs0, 2
+  vsll.vs vv3, vv3, vs3
+  vadd.sv vv2, vs2, vv3
+  veidx vv3
   vaddi vs3,vs0,1
   vadd.vs vv3,vv3,vs3
   vmul.vs vv3,vv3,vs1
-  vadd.ss vv1,vs0,vs1 
-  vadd.ss vv2,vs0,vs2
+  vadd.ss vv1,vs0,vs1
   vamomin.w.vv vv1,0(vv2),vv3
   vsw vv1,va1
   vstop
@@ -62,9 +65,8 @@ RVTEST_DATA_BEGIN
 
   TEST_DATA
 
-  .skip 4
 amodest:
-  .word 0
+  .skip 16384
 dest:
   .skip 16384
 

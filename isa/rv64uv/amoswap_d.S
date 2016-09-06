@@ -25,12 +25,25 @@ RVTEST_CODE_BEGIN
   vf %pcrel_lo(1b)(a0)
   fence
 
+#mark each value in an array
+  li a1, 0
+  la a2, tracker
+  li a5, 1
+tracker_loop:
+  ld a0,0(a6)
+  add a3, a2, a0
+  sb a5, 0(a3)
+  addi a6,a6,8
+  addi a1,a1,1
+  bne a1,a4,tracker_loop
+
+#check that each value in the array is set
   li a1,0
 loop:
-  ld a0,0(a6)
+  lb a0,0(a2)
   addi TESTNUM,a1,2
-  bne a0,a1,fail
-  addi a6,a6,8
+  beqz a0,fail
+  addi a2,a2,1
   addi a1,a1,1
   bne a1,a4,loop
   j pass
@@ -58,6 +71,8 @@ RVTEST_DATA_BEGIN
 amodest:
   .dword 0
 dest:
+  .skip 16384
+tracker:
   .skip 16384
 
 RVTEST_DATA_END
