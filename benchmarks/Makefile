@@ -74,7 +74,7 @@ RISCV_LINK ?= $(RISCV_GCC) -T $(src_dir)/common/test.ld $(incs)
 RISCV_LINK_MT ?= $(RISCV_GCC) -T $(src_dir)/common/test-mt.ld
 RISCV_LINK_OPTS ?= -nostdlib -nostartfiles -ffast-math -lgcc
 RISCV_OBJDUMP ?= $(RISCV_PREFIX)objdump --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.data
-RISCV_SIM ?= spike --extension=hwacha
+RISCV_SIM ?= spike -p$(CORES) --extension=hwacha
 
 VPATH += $(addprefix $(src_dir)/, $(bmarks))
 VPATH += $(src_dir)/common
@@ -93,6 +93,7 @@ bmarks_riscv_out  = $(addsuffix .riscv.out,  $(bmarks))
 
 bmarks_defs   = -DPREALLOCATE=1 -DHOST_DEBUG=0
 bmarks_cycles = 80000
+CORES ?= 1
 
 $(bmarks_riscv_dump): %.riscv.dump: %.riscv
 	$(RISCV_OBJDUMP) $< > $@
@@ -105,7 +106,7 @@ $(bmarks_riscv_out): %.riscv.out: %.riscv
 	             -c $(incs) $< -o $@
 
 %.o: %.S
-	$(RISCV_GCC) $(RISCV_GCC_OPTS) $(bmarks_defs) -D__ASSEMBLY__=1 \
+	$(RISCV_GCC) $(RISCV_GCC_OPTS) $(bmarks_defs) -D__ASSEMBLY__=1 -DMULTITHREAD=$(CORES)\
 	             -c $(incs) $< -o $@
 
 riscv: $(bmarks_riscv_dump)
