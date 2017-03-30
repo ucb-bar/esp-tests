@@ -43,8 +43,8 @@ bmarks = \
 	vec-dgemm-opt  \
 	vec-sdgemm-opt  \
 	vec-hsgemm-opt \
-	vec-saxpy-streamx
-
+	vec-saxpy-streamx \
+	vec-conv-channel
 	#vec-fft \
 	#vec-cmplxmult \
 	#vec-matmul \
