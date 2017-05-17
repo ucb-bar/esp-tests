@@ -5,7 +5,7 @@
 
 #define STACK_SIZE 512
 
-#ifdef __riscv64
+#if XLEN == 64
 # define LREG ld
 # define SREG sd
 # define REGBYTES 8
@@ -35,7 +35,10 @@ handle_reset:
   csrwi mie, 0
 
   # initialize global pointer
-  la gp, _gp
+.option push
+.option norelax
+  la gp, __global_pointer$
+.option pop
 
   # initialize stack pointer
   la sp, stack_top

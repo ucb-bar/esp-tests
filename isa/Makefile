@@ -45,10 +45,10 @@ vpath %.S $(src_dir)
 	$(RISCV_OBJDUMP) $< > $@
 
 %.out: %
-	$(RISCV_SIM) --extension=hwacha $< 2> $@
+	$(RISCV_SIM) --isa=rv64gc --extension=hwacha $< 2> $@
 
 %.out32: %
-	$(RISCV_SIM) --isa=RV32 $< 2> $@
+	$(RISCV_SIM) --isa=rv32gc $< 2> $@
 
 define compile_template
 
@@ -57,7 +57,7 @@ $$($(1)_p_tests): $(1)-p-%: $(1)/%.S
 $(1)_tests += $$($(1)_p_tests)
 
 $$($(1)_v_tests): $(1)-v-%: $(1)/%.S
-	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -DENTROPY=0x$$(shell echo \$$@ | md5sum | cut -c 1-7) -std=gnu99 -O2 -I$(src_dir)/../env/v -I$(src_dir)/macros/scalar -T$(src_dir)/../env/v/link.ld $(src_dir)/../env/v/entry.S $(src_dir)/../env/v/*.c $$< -lc -o $$@
+	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -DENTROPY=0x$$(shell echo \$$@ | md5sum | cut -c 1-7) -std=gnu99 -O2 -I$(src_dir)/../env/v -I$(src_dir)/macros/scalar -T$(src_dir)/../env/v/link.ld $(src_dir)/../env/v/entry.S $(src_dir)/../env/v/*.c $$< -o $$@
 $(1)_tests += $$($(1)_v_tests)
 
 $$($(1)_vp_tests): $(1)-vp-%: $(1)/%.S
@@ -98,24 +98,24 @@ tests += $$($(1)_tests)
 
 endef
 
-$(eval $(call compile_template,rv32ui,-m32))
-$(eval $(call compile_template,rv32uc,-m32))
-$(eval $(call compile_template,rv32um,-m32))
-$(eval $(call compile_template,rv32ua,-m32))
-$(eval $(call compile_template,rv32uf,-m32))
-$(eval $(call compile_template,rv32si,-m32))
-$(eval $(call compile_template,rv32mi,-m32))
+$(eval $(call compile_template,rv32ui,-march=rv32g -mabi=ilp32))
+$(eval $(call compile_template,rv32uc,-march=rv32g -mabi=ilp32))
+$(eval $(call compile_template,rv32um,-march=rv32g -mabi=ilp32))
+$(eval $(call compile_template,rv32ua,-march=rv32g -mabi=ilp32))
+$(eval $(call compile_template,rv32uf,-march=rv32g -mabi=ilp32))
+$(eval $(call compile_template,rv32si,-march=rv32g -mabi=ilp32))
+$(eval $(call compile_template,rv32mi,-march=rv32g -mabi=ilp32))
 ifeq ($(XLEN),64)
-$(eval $(call compile_template,rv64ui))
-$(eval $(call compile_template,rv64uc))
-$(eval $(call compile_template,rv64um))
-$(eval $(call compile_template,rv64ua))
-$(eval $(call compile_template,rv64uf))
-$(eval $(call compile_template,rv64uv))
-$(eval $(call compile_template,rv64ud))
-$(eval $(call compile_template,rv64si))
-$(eval $(call compile_template,rv64sv))
-$(eval $(call compile_template,rv64mi))
+$(eval $(call compile_template,rv64ui,-march=rv64g -mabi=lp64))
+$(eval $(call compile_template,rv64uc,-march=rv64g -mabi=lp64))
+$(eval $(call compile_template,rv64um,-march=rv64g -mabi=lp64))
+$(eval $(call compile_template,rv64ua,-march=rv64g -mabi=lp64))
+$(eval $(call compile_template,rv64uf,-march=rv64g -mabi=lp64))
+$(eval $(call compile_template,rv64ud,-march=rv64g -mabi=lp64))
+$(eval $(call compile_template,rv64si,-march=rv64g -mabi=lp64))
+$(eval $(call compile_template,rv64mi,-march=rv64g -mabi=lp64))
+$(eval $(call compile_template,rv64uv,-march=rv64gXhwacha -mabi=lp64))
+$(eval $(call compile_template,rv64sv,-march=rv64gXhwacha -mabi=lp64))
 endif
 
 tests_dump = $(addsuffix .dump, $(tests))
@@ -124,8 +124,6 @@ tests_out = $(addsuffix .out, $(spike_tests))
 tests32_out = $(addsuffix .out32, $(spike32_tests))
 
 run: $(tests_out) $(tests32_out)
-	echo; perl -ne 'print "  [$$1] $$ARGV \t$$2\n" if /\*{3}(.{8})\*{3}(.*)/' \
-	       $(tests_out) $(tests32_out); echo;
 
 junk += $(tests) $(tests_dump) $(tests_hex) $(tests_out) $(tests32_out)
 
