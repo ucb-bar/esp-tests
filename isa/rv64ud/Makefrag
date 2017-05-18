@@ -7,10 +7,10 @@ rv64ud_sc_tests = \
 	ldst move structural recoding \
 
 rv64ud_sc_vec_tests = \
-	fadd fdiv fclass fcmp fcvt fcvt_w fmadd fmin fsgnj \
+	fadd fdiv fclass fcmp fcvt fcvt_w fmadd fmin \
 
 rv64ud_sc_svec_tests = \
-	fadd fdiv fclass fcvt fcvt_w fmadd fmin fsgnj \
+	fadd fdiv fclass fcvt fcvt_w fmadd fmin \
 
 rv64ud_p_tests = $(addprefix rv64ud-p-, $(rv64ud_sc_tests))
 rv64ud_v_tests = $(addprefix rv64ud-v-, $(rv64ud_sc_tests))

@@ -246,6 +246,10 @@ next ## testnum :
 #-----------------------------------------------------------------------
 # Tests floating-point instructions
 #-----------------------------------------------------------------------
+#define qNaNf 0f:7fc00000
+#define sNaNf 0f:7f800001
+#define qNaN 0d:7ff8000000000000
+#define sNaN 0d:7ff0000000000001
 
 #define TEST_FP_OP_INTERNAL_NREG( testnum, nxreg, npreg, result, val1, val2, val3, vload, vstore, load, lskip, code... ) \
 test_ ## testnum: \
@@ -350,13 +354,13 @@ vtcode ## testnum : \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 1, dword result, dword val1, dword 0, dword 0, vlad, vsd, ld, 8, \
                     v ## inst.v vv1, vv2, rm)
 
-#define TEST_FP_CMP_OP_S( testnum, inst, result, val1, val2 ) \
+#define TEST_FP_CMP_OP_S( testnum, inst, flags, result, val1, val2 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 2, word result, float val1, float val2, float 0.0, vlaw, vsw, lw, 4, \
                     vcmp ## inst.vv vp1, vv2, vv3;\
                     vaddi vs1,vs0,1; @vp1 vadd.ss vv1,vs0,vs1;\
                     @!vp1 vadd.ss vv1,vs0,vs0 )
 
-#define TEST_FP_CMP_OP_D( testnum, inst, result, val1, val2 ) \
+#define TEST_FP_CMP_OP_D( testnum, inst, flags, result, val1, val2 ) \
   TEST_FP_OP_INTERNAL_NREG( testnum, 6, 2, dword result, double val1, double val2, double 0.0, vlad, vsd, ld, 8, \
                     vcmp ## inst.vv vp1, vv2, vv3;\
                     vaddi vs1,vs0,1; @vp1 vadd.ss vv1,vs0,vs1;\

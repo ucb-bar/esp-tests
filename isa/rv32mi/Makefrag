@@ -11,7 +11,8 @@ rv32mi_sc_tests = \
 	ma_addr \
 	scall \
 	sbreak \
-	shamt \
+	
+  #shamt \
 
 rv32mi_p_tests = $(addprefix rv32mi-p-, $(rv32mi_sc_tests))
 

@@ -221,6 +221,10 @@ next ## testnum :
 #-----------------------------------------------------------------------
 # Tests floating-point instructions
 #-----------------------------------------------------------------------
+#define qNaNf 0f:7fc00000
+#define sNaNf 0f:7f800001
+#define qNaN 0d:7ff8000000000000
+#define sNaN 0d:7ff0000000000001
 
 #define TEST_FP_OP_INTERNAL_NREG( testnum, nxreg, npreg, result, val1, val2, val3, vload, vstore, load, lskip, code... ) \
 test_ ## testnum: \
