@@ -28,7 +28,7 @@ RVTEST_CODE_BEGIN
   # Try a faulting store to make sure dirty bit is not set
   li TESTNUM, 2
   li t2, 1
-  sw t2, dummy - DRAM_BASE, t1
+  sw t2, dummy - DRAM_BASE, a0
 
   # Set SUM=1 so user memory access is permitted
   li TESTNUM, 3
@@ -40,7 +40,7 @@ RVTEST_CODE_BEGIN
   bnez t0, die
 
   # Try a non-faulting store to make sure dirty bit is set
-  sw t2, dummy - DRAM_BASE, t1
+  sw t2, dummy - DRAM_BASE, a0
 
   # Make sure it succeeded
   lw t0, dummy - DRAM_BASE
@@ -52,9 +52,22 @@ RVTEST_CODE_BEGIN
 
   # Make sure D bit is set
   lw t0, page_table_1
-  li t1, PTE_A | PTE_D
-  and t0, t0, t1
-  bne t0, t1, die
+  li a0, PTE_A | PTE_D
+  and t0, t0, a0
+  bne t0, a0, die
+
+  # Enter MPRV again
+  li t0, MSTATUS_MPRV
+  csrs mstatus, t0
+
+  # Make sure that superpage entries trap when PPN LSBs are set.
+  li TESTNUM, 4
+  lw a0, page_table_1 - DRAM_BASE
+  or a0, a0, 1 << PTE_PPN_SHIFT
+  sw a0, page_table_1 - DRAM_BASE, t0
+  sfence.vma
+  sw a0, page_table_1 - DRAM_BASE, t0
+  j die
   
   RVTEST_PASS
 
@@ -81,11 +94,20 @@ skip:
 1:
   li t1, 3
   bne TESTNUM, t1, 1f
-  # The implementation doesn't appear to set D bits in HW.  Skip the test,
-  # after making sure the D bit is clear.
+  # The implementation doesn't appear to set D bits in HW.
+  # Make sure the D bit really is clear.
   lw t0, page_table_1
   and t1, t0, PTE_D
   bnez t1, die
+  # Set the D bit.
+  or t0, t0, PTE_D
+  sw t0, page_table_1, t1
+  sfence.vma
+  mret
+
+1:
+  li t1, 4
+  bne TESTNUM, t1, 1f
   j pass
 
 1:
