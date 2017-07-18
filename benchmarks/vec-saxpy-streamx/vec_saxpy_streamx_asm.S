@@ -10,23 +10,23 @@
 
 # assumes calling convention:
 # a0 has int n
-# fa1 has float a  <---
-# a2 has float* x
-# a3 has float* y
+# fa0 has float a  <---
+# a1 has float* x
+# a2 has float* y
 vec_saxpy_streamx_asm:
     li t0, VCFG(0, 2, 0, 1)
     vsetcfg t0
-    fmv.x.s a1, fa1
-    vmcs vs1, a1
+    fmv.x.s a4, fa0
+    vmcs vs1, a4
 stripmine:
     vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
-    vmca va0, a2
-    vmca va1, a3
+    vmca va0, a1
+    vmca va1, a2
     la t5, saxpy_streamx_v
     vf 0(t5)
     slli t1, t0, 2
+    add a1, a1, t1
     add a2, a2, t1
-    add a3, a3, t1
     sub a0, a0, t0
     bnez a0, stripmine
     fence
