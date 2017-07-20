@@ -22,12 +22,16 @@ RVTEST_CODE_BEGIN
   vmca va2,a4
   la a4,dest
   vmca va1,a4
+  la a5,result
+  lh a6, 0(a5)
+  vmcs vs1, a6
+  la a6, scalar
+  vmca va3, a6
 1:auipc a0,%pcrel_hi(vtcode)
   vf %pcrel_lo(1b)(a0)
   fence
 
   li a6,0
-  la a5,result
 loop:
   lh a1,0(a4)
   lh a2,0(a5)
@@ -37,6 +41,13 @@ loop:
   addi a5,a5,2
   addi a6,a6,1
   bne a6,a3,loop
+#check scalar
+  addi TESTNUM,a6,3
+  la a4, src
+  lw a1, 0(a4)
+  la a5, scalar
+  lw a2, 0(a5)
+  bne a1,a2,fail
   j pass
 
 .align 3
@@ -44,7 +55,9 @@ vtcode:
   vpset vp0
   vlw vv1,va2
   vfcvt.h.s.v vv2,vv1
-  vsh vv2,va1
+  vsh vv2, va1
+  vfcvt.s.h vs2, vs1
+  vsaw va3, vs2
   vstop
 
   TEST_PASSFAIL
@@ -77,6 +90,8 @@ dest:
   .dword 0xdeadbeefcafebabe
   .dword 0xdeadbeefcafebabe
   .dword 0xdeadbeefcafebabe
+  .dword 0xdeadbeefcafebabe
+scalar:
   .dword 0xdeadbeefcafebabe
 result:
   .hword 0x3c00
