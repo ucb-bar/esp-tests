@@ -29,6 +29,7 @@ RVTEST_CODE_BEGIN
 #mark each value in an array
   li a1, 0
   la a2, tracker
+  li a5, 1
 tracker_loop:
   lw a0,0(a6)
   add a3, a2, a0
@@ -38,12 +39,18 @@ tracker_loop:
   bne a1,a4,tracker_loop
 
 #check that each value in the array is set
+# NOTE: we actually only guarantee that vlen unique numbers between 0 and vlen
+# inclusive are returned. The last amoswap doesn't need to be vlen it could
+# be any other index and that index will not be in the tracker
   li a1,0
+  li a3,0
 loop:
   lb a0,0(a2)
   addi TESTNUM,a1,2
-  beqz a0,fail
-  addi a2,a2,1
+  bnez a0,1f
+  bnez a3, fail
+  addi a3, x0, 1
+1:addi a2,a2,1
   addi a1,a1,1
   bne a1,a4,loop
   j pass
