@@ -8,7 +8,7 @@
 
 void vec_sgemm_opt_c(int n, float * result, float * A, float * B)
 {
-    asm volatile ("vsetcfg %0" : : "r" (VCFG(8, 0, 0, 1)));
+    asm volatile ("vsetcfg %0" : : "r" (VCFG(0, 8, 0, 1)));
 
     int vlen_result;
     asm volatile ("vsetvl %0, %1" : "=r" (vlen_result) : "r" (n));
