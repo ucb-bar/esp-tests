@@ -26,7 +26,24 @@ RVTEST_CODE_BEGIN
 
   # For RV64, make sure UXL encodes RV64.  (UXL does not exist for RV32.)
 #if __riscv_xlen == 64
+  # If running in M mode, use mstatus.MPP to check existence of U mode.
+  # Otherwise, if in S mode, then U mode must exist and we don't need to check.
+#ifdef __MACHINE_MODE
+  li t0, MSTATUS_MPP
+  csrc mstatus, t0
+  csrr t1, mstatus
+  and t0, t0, t1
+  bnez t0, 1f
+#endif
+  # If U mode is present, UXL should be 2 (XLEN = 64-bit)
   TEST_CASE(13, a0, SSTATUS_UXL & (SSTATUS_UXL << 1), csrr a0, sstatus; li a1, SSTATUS_UXL; and a0, a0, a1)
+#ifdef __MACHINE_MODE
+  j 2f
+1:
+  # If U mode is not present, UXL should be 0
+  TEST_CASE(14, a0, 0, csrr a0, sstatus; li a1, SSTATUS_UXL; and a0, a0, a1)
+2:
+#endif
 #endif
 
   csrwi sscratch, 3
@@ -47,10 +64,15 @@ RVTEST_CODE_BEGIN
   # If so, make sure FP stores have no effect when mstatus.FS is off.
   li a1, MSTATUS_FS
   csrs mstatus, a1
+#ifdef __riscv_flen
   fmv.s.x f0, x0
   csrc mstatus, a1
   la a1, fsw_data
   TEST_CASE(10, a0, 1, fsw f0, (a1); lw a0, (a1));
+#else
+  # Fail if this test is compiled without F but executed on a core with F.
+  TEST_CASE(10, zero, 1)
+#endif
 1:
 
   # Figure out if 'U' is set in misa
@@ -58,7 +80,7 @@ RVTEST_CODE_BEGIN
   srli a0, a0, 20 # a0 = a0 >> 20
   andi a0, a0, 1  # a0 = a0 & 1
   beqz a0, finish # if no user mode, skip the rest of these checks
-#endif
+#endif /* __MACHINE_MODE */
 
   # jump to user land
   li t0, SSTATUS_SPP
@@ -89,6 +111,7 @@ finish:
   TEST_PASSFAIL
 
   .align 2
+  .global stvec_handler
 stvec_handler:
   # Trapping on tests 10-12 is good news.
   # Note that since the test didn't complete, TESTNUM is smaller by 1.

@@ -13,6 +13,7 @@
 RVTEST_RV64M
 RVTEST_CODE_BEGIN
 
+  .align 2
   .option norvc
 
   la s0, data
@@ -92,6 +93,7 @@ RVTEST_CODE_BEGIN
   TEST_PASSFAIL
 
   .align 3
+  .global mtvec_handler
 mtvec_handler:
   csrr t0, mcause
   bne t0, s1, fail

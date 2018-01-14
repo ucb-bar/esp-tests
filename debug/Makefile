@@ -4,20 +4,22 @@ XLEN ?= 64
 src_dir ?= .
 GDBSERVER_PY = $(src_dir)/gdbserver.py
 
-default: spike$(XLEN).log
+default: spike$(XLEN)-2
 
-all:	pylint spike32.log spike64.log
+all-tests: spike32 spike32-2 spike32-2-rtos spike64 spike64-2 spike64-2-rtos
+
+all:	pylint all-tests
 
 pylint:
-	pylint --rcfile=pylint.rc *.py
+	pylint --rcfile=pylint.rc `git ls-files '*.py'`
 
-%.log:
+spike%:
 	$(GDBSERVER_PY) \
 		--isolate \
-		--$(subst .log,,$@) \
+		--print-failures \
+		$(src_dir)/targets/RISC-V/$@.py \
 		--sim_cmd $(RISCV)/bin/$(RISCV_SIM) \
-		--server_cmd $(RISCV)/bin/openocd \
-	    | tee $@ 2>&1 || (sed s/^/$@:\ / $@ && false)
+		--server_cmd $(RISCV)/bin/openocd
 
 clean:
-	rm -f *.log *.pyc
+	rm -f *.pyc

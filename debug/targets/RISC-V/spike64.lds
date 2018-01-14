@@ -2,9 +2,7 @@ OUTPUT_ARCH( "riscv" )
 
 SECTIONS
 {
-  /* Leave some space for pk's data structures, which includes tohost/fromhost
-   * which are special addresses we ought to leave alone.  */
-  . = 0x10010000;
+  . = 0x1212340000;
   .text : 
   {
     *(.text.entry)
@@ -22,11 +20,13 @@ SECTIONS
   }
 
   /* bss segment */
+  __bss_start = .;
   .sbss : {
     *(.sbss .sbss.* .gnu.linkonce.sb.*)
     *(.scommon)
   }
   .bss : { *(.bss) }
+  __bss_end = .;
 
   __malloc_start = .;
   . = . + 512;

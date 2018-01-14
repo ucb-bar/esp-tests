@@ -35,6 +35,7 @@ RVTEST_CODE_BEGIN
   TEST_FP_INT_OP_D(18, fcvt.wu.d, 0x10,          0, -3e9, rtz);
   TEST_FP_INT_OP_D(19, fcvt.wu.d, 0x00, 0xffffffffb2d05e00, 3e9, rtz);
 
+#if __riscv_xlen >= 64
   TEST_FP_INT_OP_D(22,  fcvt.l.d, 0x01,         -1, -1.1, rtz);
   TEST_FP_INT_OP_D(23,  fcvt.l.d, 0x00,         -1, -1.0, rtz);
   TEST_FP_INT_OP_D(24,  fcvt.l.d, 0x01,          0, -0.9, rtz);
@@ -54,6 +55,7 @@ RVTEST_CODE_BEGIN
   TEST_FP_INT_OP_D(37, fcvt.lu.d, 0x01,          1,  1.1, rtz);
   TEST_FP_INT_OP_D(38, fcvt.lu.d, 0x10,          0, -3e9, rtz);
   TEST_FP_INT_OP_D(39, fcvt.lu.d, 0x00, 3000000000,  3e9, rtz);
+#endif
 
   TEST_PASSFAIL
 
