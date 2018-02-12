@@ -13,17 +13,6 @@ void vec_sgemm_opt_c(int n, float * result, float * A, float * B)
     int vlen_result;
     asm volatile ("vsetvl %0, %1" : "=r" (vlen_result) : "r" (n));
 
-    void * vpset_vfblockaddr;
-    asm volatile ("la %0, sgemm_opt_v_4_4_vpset" : "=r" (vpset_vfblockaddr));
-    asm volatile ("vf 0(%0)" : : "r" (vpset_vfblockaddr));
-
-    void * pre_vfblockaddr;
-    void * main_vfblockaddr;
-    void * post_vfblockaddr;
-    asm volatile ("la %0, sgemm_opt_v_4_4_pre" : "=r" (pre_vfblockaddr));
-    asm volatile ("la %0, sgemm_opt_v_4_4" : "=r" (main_vfblockaddr));
-    asm volatile ("la %0, sgemm_opt_v_4_4_post" : "=r" (post_vfblockaddr));
-
     for (int i = 0; i < n; i+=4) {
         for (int k = 0; k < n; ) {
             int consumed;
@@ -36,51 +25,80 @@ void vec_sgemm_opt_c(int n, float * result, float * A, float * B)
             asm volatile ("vsetvl %0, %1" : "=r" (consumed) : "r" (artificial));
 
             // C rows 1, 2, 3, 4
-            asm volatile ("vmca va0, %0" : : "r" (&result[i*n+k]));
-            asm volatile ("vmca va1, %0" : : "r" (&result[(i+1)*n+k]));
-            asm volatile ("vmca va2, %0" : : "r" (&result[(i+2)*n+k]));
-            asm volatile ("vmca va3, %0" : : "r" (&result[(i+3)*n+k]));
-
-            asm volatile ("vf 0(%0)" : : "r" (pre_vfblockaddr));
+            asm volatile ("vld v0, %0 # c0\n
+                           vld v1, %1 # c1\n
+                           vld v2, %2 # c2\n
+                           vld v3, %3 # c3\n
+                          " : : "r" (&result[i*n+k]),
+                                "r" (&result[(i+1)*n+k]),
+                                "r" (&result[(i+2)*n+k]),
+                                "r" (&result[(i+3)*n+k]));
 
             for (int j = 0; j < n; j+=4) {
 
-                // B row 1, 2, 3, 4
-                asm volatile ("vmca va4, %0" : : "r" (&B[j*n+k]));
-                asm volatile ("vmca va5, %0" : : "r" (&B[(j+1)*n+k]));
-                asm volatile ("vmca va6, %0" : : "r" (&B[(j+2)*n+k]));
-                asm volatile ("vmca va7, %0" : : "r" (&B[(j+3)*n+k]));
-
                 // A row 1, 2, 3, 4
-                asm volatile ("vmcs vs1, %0\n"
-                              "vmcs vs2, %1\n"
-                              "vmcs vs3, %2\n"
-                              "vmcs vs4, %3\n"
+                asm volatile ("vinsert v31, %0, zero\n"
+                              "vinsert v30, %1, zero\n"
+                              "vinsert v29, %2, zero\n"
+                              "vinsert v28, %3, zero\n"
 
-                              "vmcs vs5, %4\n"
-                              "vmcs vs6, %5\n"
-                              "vmcs vs7, %6\n"
-                              "vmcs vs8, %7\n"
+                              "vinsert v27, %4, zero\n"
+                              "vinsert v26, %5, zero\n"
+                              "vinsert v25, %6, zero\n"
+                              "vinsert v24, %7, zero\n"
 
-                              "vmcs vs9, %8\n"
-                              "vmcs vs10, %9\n"
-                              "vmcs vs11, %10\n"
-                              "vmcs vs12, %11\n"
+                              "vinsert v23, %8, zero\n"
+                              "vinsert v22, %9, zero\n"
+                              "vinsert v21, %10, zero\n"
+                              "vinsert v20, %11, zero\n"
 
-                              "vmcs vs13, %12\n"
-                              "vmcs vs14, %13\n"
-                              "vmcs vs15, %14\n"
-                              "vmcs vs16, %15"
-                        : 
-                        : "r" (A[j+(i+0)*n+0]), "r" (A[j+(i+0)*n+1]), "r" (A[j+(i+0)*n+2]), "r" (A[j+(i+0)*n+3]), 
+                              "vinsert v19, %12, zero\n"
+                              "vinsert v18, %13, zero\n"
+                              "vinsert v17, %14, zero\n"
+                              "vinsert v16, %15, zero"
+                        :
+                        : "r" (A[j+(i+0)*n+0]), "r" (A[j+(i+0)*n+1]), "r" (A[j+(i+0)*n+2]), "r" (A[j+(i+0)*n+3]),
                           "r" (A[j+(i+1)*n+0]), "r" (A[j+(i+1)*n+1]), "r" (A[j+(i+1)*n+2]), "r" (A[j+(i+1)*n+3]),
                           "r" (A[j+(i+2)*n+0]), "r" (A[j+(i+2)*n+1]), "r" (A[j+(i+2)*n+2]), "r" (A[j+(i+2)*n+3]),
                           "r" (A[j+(i+3)*n+0]), "r" (A[j+(i+3)*n+1]), "r" (A[j+(i+3)*n+2]), "r" (A[j+(i+3)*n+3])
                         );
+                                                                                                                                                                 
+                asm volatile ("vld v4, %0                     # b0\n
+                               vmadd v0, v4, v31, v0     # c0 += a00 * b0\n
+                               vmadd v1, v4, v27, v1     # c1 += a10 * b0\n
 
-                asm volatile ("vf 0(%0)" : : "r" (main_vfblockaddr));
+                               vld v5, %1                     # b1\n
+                               vmadd v2, v4, v23, v2     # c2 += a20 * b0\n
+                               vmadd v3, v4, v19, v3    # c3 += a30 * b0\n
+
+                               vld v6, %2                     # b2\n
+                               vmadd v0, v5, v30, v0     # c0 += a01 * b1\n
+                               vmadd v1, v5, v26, v1     # c1 += a11 * b1\n
+
+                               vld v7, %3                     # b3\n
+                               vmadd v0, v6, v29, v0     # c0 += a02 * b2\n
+                               vmadd v1, v6, v25, v1     # c1 += a12 * b2\n
+                               vmadd v0, v7, v28, v0     # c0 += a03 * b3\n
+                               vmadd v1, v7, v24, v1     # c1 += a13 * b3\n
+                               vmadd v2, v5, v22, v2    # c2 += a21 * b1\n
+                               vmadd v3, v5, v18, v3    # c3 += a31 * b1\n
+                               vmadd v2, v6, v21, v2    # c2 += a22 * b2\n
+                               vmadd v3, v6, v17, v3    # c3 += a32 * b2\n
+                               vmadd v2, v7, v20, v2    # c2 += a23 * b3\n
+                               vmadd v3, v7, v16, v3    # c3 += a33 * b3\n
+                              " : : "r" (&B[j*n+k]),
+                                    "r" (&B[(j+1)*n+k]),
+                                    "r" (&B[(j+2)*n+k]),
+                                    "r" (&B[(j+3)*n+k]));
             }
-            asm volatile ("vf 0(%0)" : : "r" (post_vfblockaddr));
+            asm volatile ("vst v0, va0 # c0\n
+                           vst v1, va1 # c1\n
+                           vst v2, va2 # c2\n
+                           vst v3, va3 # c3\n
+                           " : : "r" (&result[i*n+k]),
+                                 "r" (&result[(i+1)*n+k]),
+                                 "r" (&result[(i+2)*n+k]),
+                                 "r" (&result[(i+3)*n+k]));
             k += consumed;
         }
     }
