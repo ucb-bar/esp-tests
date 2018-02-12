@@ -17,13 +17,14 @@ vec_saxpy_asm:
     li t0, VCFG(0, 2, 0, 1)
     vsetcfg t0
     fmv.x.s a4, fa0
-    vmcs vs1, a4
+    vinsert v31, a4, zero
 stripmine:
     vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
-    vmca va0, a1
-    vmca va1, a2
-    la t5, saxpy_v
-    vf 0(t5)
+    vld v0, a1
+    vld v1, a2
+    # appears to be faster if we write into v1 instead of using a new reg?
+    vmadd v1, v31, v0, v1
+    vst v1, a2
     slli t1, t0, 2
     add a1, a1, t1
     add a2, a2, t1
@@ -31,14 +32,3 @@ stripmine:
     bnez a0, stripmine
     fence
     ret
-
-# vector thread asm
-.align 3
-saxpy_v:
-    vpset vp0
-    vlw vv0, va0
-    vlw vv1, va1
-    # appears to be faster if we write into vv1 instead of using a new reg?
-    vfmadd.s vv1, vs1, vv0, vv1
-    vsw vv1, va1
-    vstop

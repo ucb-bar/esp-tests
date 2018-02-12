@@ -17,13 +17,13 @@ vec_daxpy_asm:
     li t0, VCFG(2, 0, 0, 1)
     vsetcfg t0
     fmv.x.d a3, fa0
-    vmcs vs1, a3
+    vinsert v31, a3, zero
 stripmine:
     vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
-    vmca va0, a1
-    vmca va1, a2
-    la t5, daxpy_v
-    vf 0(t5)
+    vld v0, a1
+    vld v1, a2
+    vmadd v1, v31, v0, v1
+    vst v1, a2
     slli t1, t0, 3
     add a1, a1, t1
     add a2, a2, t1
@@ -31,13 +31,3 @@ stripmine:
     bnez a0, stripmine
     fence
     ret
-
-# vector thread asm
-.align 3
-daxpy_v:
-    vpset vp0
-    vld vv0, va0
-    vld vv1, va1
-    vfmadd.d vv1, vs1, vv0, vv1
-    vsd vv1, va1
-    vstop
