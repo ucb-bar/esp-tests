@@ -14,7 +14,7 @@ void vec_sgemm_naive_c(int n, float * result, float * A, float * B) {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            asm volatile ("vmcs vs1, %0"
+            asm volatile ("vinsert v31, %0, insert"
                     : 
                     : "r" (A[j+i*n]));
 
@@ -29,19 +29,13 @@ void vec_sgemm_naive_c(int n, float * result, float * A, float * B) {
                         : "=r" (consumed)
                         : "r" (artificial));
 
-
-                asm volatile ("vmca va1, %0"
-                        : 
-                        : "r" (&B[j*n+k]));
-                asm volatile ("vmca va2, %0"
-                        : 
-                        : "r" (&result[i*n+k]));
-
-                asm volatile ("la t0, sgemm_naive_v"
+                asm volatile ("vld v0, %0  # B \n\t"
+                              "vld v1, %1  # C \n\t"
+                              "vmadd v2, v0, v31, v1 \n\t"
+                              "vst v2, %1  # store back to C \n\t"
                         :
                         :
-                        : "t0");
-                asm volatile ("vf 0(t0)");
+                        "r" (&B[j*n+k]), "r" (&result[i*n+k]));
                 k += consumed;
             }
         }
