@@ -19,9 +19,7 @@ vec_sgemm_naive_asm:
 # vector thread asm
 .align 3
 sgemm_naive_v:
-    vpset vp0
-    vlw vv0, va1  # B
-    vlw vv1, va2  # C
-    vfmadd.s vv2, vv0, vs1, vv1 
-    vsw vv2, va2  # store back to C
-    vstop
+    vld v0, va1  # B
+    vld v1, va2  # C
+    vmadd v2, v0, vs1, v1 
+    vst v2, va2  # store back to C
