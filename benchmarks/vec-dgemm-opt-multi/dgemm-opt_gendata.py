@@ -30,11 +30,11 @@ def print_scalar(scalar_type, scalar_name, pyscalar):
 
 print "#define MAT_WIDTH {}".format(data_size)
 
-print_arr("double", "input_data_X", "MAT_WIDTH*MAT_WIDTH", X)
+print_arr("static double", "input_data_X", "MAT_WIDTH*MAT_WIDTH", X)
 
-print_arr("double", "input_data_Y", "MAT_WIDTH*MAT_WIDTH", Y)
+print_arr("static double", "input_data_Y", "MAT_WIDTH*MAT_WIDTH", Y)
 
-print_arr("double", "verify_data", "MAT_WIDTH*MAT_WIDTH", result)
+print_arr("static double", "verify_data", "MAT_WIDTH*MAT_WIDTH", result)
 
-print_arr("double", "result_holder", "MAT_WIDTH*MAT_WIDTH", result_holder)
+print_arr("static double", "result_holder", "MAT_WIDTH*MAT_WIDTH", result_holder)
 
