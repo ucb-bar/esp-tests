@@ -25,7 +25,7 @@ rv64uv_sc_tests = \
 	sched_sreg_xbar sched_fadd sched_waw sched_war \
 	pointer \
 	vcjal vfirst vfence \
-	cmp \
+	cmp fcmp \
 
 rv64uv_sc_vec_tests = \
 	 \
