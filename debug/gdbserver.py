@@ -12,7 +12,8 @@ import targets
 import testlib
 from testlib import assertEqual, assertNotEqual, assertIn, assertNotIn
 from testlib import assertGreater, assertRegexpMatches, assertLess
-from testlib import GdbTest, GdbSingleHartTest, TestFailed, assertTrue
+from testlib import GdbTest, GdbSingleHartTest, TestFailed
+from testlib import assertTrue
 
 MSTATUS_UIE = 0x00000001
 MSTATUS_SIE = 0x00000002
@@ -121,6 +122,12 @@ class SimpleF18Test(SimpleRegisterTest):
             self.gdb.stepi()
             assertLess(abs(float(self.gdb.p_raw("$%s" % name)) - b), .001)
             assertLess(abs(float(self.gdb.p_raw("$%s" % alias)) - b), .001)
+
+            size = self.gdb.p("sizeof($%s)" % name)
+            if self.hart.extensionSupported('D'):
+                assertEqual(size, 8)
+            else:
+                assertEqual(size, 4)
         else:
             output = self.gdb.p_raw("$" + name)
             assertEqual(output, "void")
@@ -129,6 +136,50 @@ class SimpleF18Test(SimpleRegisterTest):
 
     def test(self):
         self.check_reg("f18", "fs2")
+
+class CustomRegisterTest(SimpleRegisterTest):
+    def early_applicable(self):
+        return self.target.implements_custom_test
+
+    def check_custom(self, magic):
+        regs = {k: v for k, v in self.gdb.info_registers("all").iteritems()
+                if k.startswith("custom")}
+        assertEqual(set(regs.keys()),
+                set(("custom1",
+                    "custom12345",
+                    "custom12346",
+                    "custom12347",
+                    "custom12348")))
+        for name, value in regs.iteritems():
+            number = int(name[6:])
+            if number % 2:
+                expect = number + magic
+                assertIn(value, (expect, expect + (1<<32)))
+            else:
+                assertIn("Could not fetch register", value)
+
+    def test(self):
+        self.check_custom(0)
+
+        # Now test writing
+        magic = 6667
+        self.gdb.p("$custom12345=%d" % (12345 + magic))
+        self.gdb.stepi()
+
+        self.check_custom(magic)
+
+class SimpleNoExistTest(GdbTest):
+    def test(self):
+        try:
+            self.gdb.p("$csr2288")
+            assert False, "Reading csr2288 should have failed"
+        except testlib.CouldNotFetch:
+            pass
+        try:
+            self.gdb.p("$csr2288=5")
+            assert False, "Writing csr2288 should have failed"
+        except testlib.CouldNotFetch:
+            pass
 
 class SimpleMemoryTest(GdbTest):
     def access_test(self, size, data_type):
@@ -533,42 +584,117 @@ class MulticoreRegTest(GdbTest):
                 value = self.gdb.p("$x%d" % n)
                 assertEqual(value, hart.index * 0x800 + n - 1)
 
-class MulticoreRunHaltStepiTest(GdbTest):
+#class MulticoreRunHaltStepiTest(GdbTest):
+#    compile_args = ("programs/multicore.c", "-DMULTICORE")
+#
+#    def early_applicable(self):
+#        return len(self.target.harts) > 1
+#
+#    def setup(self):
+#        self.gdb.load()
+#        for hart in self.target.harts:
+#            self.gdb.select_hart(hart)
+#            self.gdb.p("$mhartid")
+#            self.gdb.p("$pc=_start")
+#
+#    def test(self):
+#        previous_hart_count = [0 for h in self.target.harts]
+#        previous_interrupt_count = [0 for h in self.target.harts]
+#        # Check 10 times
+#        for i in range(10):
+#            # 3 attempts for each time we want the check to pass
+#            for attempt in range(3):
+#                self.gdb.global_command("echo round %d attempt %d\\n" % (i,
+#                    attempt))
+#                self.gdb.c_all(wait=False)
+#                time.sleep(2)
+#                self.gdb.interrupt_all()
+#                hart_count = self.gdb.p("hart_count")
+#                interrupt_count = self.gdb.p("interrupt_count")
+#                ok = True
+#                for i, h in enumerate(self.target.harts):
+#                    if hart_count[i] <= previous_hart_count[i]:
+#                        ok = False
+#                        break
+#                    if interrupt_count[i] <= previous_interrupt_count[i]:
+#                        ok = False
+#                        break
+#                    self.gdb.p("$mie")
+#                    self.gdb.p("$mip")
+#                    self.gdb.p("$mstatus")
+#                    self.gdb.p("$priv")
+#                    self.gdb.p("buf", fmt="")
+#                    self.gdb.select_hart(h)
+#                    pc = self.gdb.p("$pc")
+#                    self.gdb.stepi()
+#                    stepped_pc = self.gdb.p("$pc")
+#                    assertNotEqual(pc, stepped_pc)
+#                previous_hart_count = hart_count
+#                previous_interrupt_count = interrupt_count
+#                if ok:
+#                    break
+#            else:
+#                assert False, \
+#                        "hart count or interrupt didn't increment as expected"
+
+class MulticoreRunAllHaltOne(GdbTest):
     compile_args = ("programs/multicore.c", "-DMULTICORE")
 
     def early_applicable(self):
         return len(self.target.harts) > 1
 
     def setup(self):
+        self.gdb.select_hart(self.target.harts[0])
         self.gdb.load()
         for hart in self.target.harts:
             self.gdb.select_hart(hart)
             self.gdb.p("$pc=_start")
 
     def test(self):
-        previous_hart_count = [0 for h in self.target.harts]
-        previous_interrupt_count = [0 for h in self.target.harts]
-        for _ in range(10):
-            self.gdb.c(wait=False)
-            time.sleep(2)
-            self.gdb.interrupt()
-            self.gdb.p("$mie")
-            self.gdb.p("$mip")
-            self.gdb.p("$mstatus")
-            self.gdb.p("$priv")
-            self.gdb.p("buf", fmt="")
-            hart_count = self.gdb.p("hart_count")
-            interrupt_count = self.gdb.p("interrupt_count")
-            for i, h in enumerate(self.target.harts):
-                assertGreater(hart_count[i], previous_hart_count[i])
-                assertGreater(interrupt_count[i], previous_interrupt_count[i])
-                self.gdb.select_hart(h)
-                pc = self.gdb.p("$pc")
-                self.gdb.stepi()
-                stepped_pc = self.gdb.p("$pc")
-                assertNotEqual(pc, stepped_pc)
+        if not self.gdb.one_hart_per_gdb():
+            return 'not_applicable'
 
-class StepTest(GdbTest):
+        # Run harts in reverse order
+        for h in reversed(self.target.harts):
+            self.gdb.select_hart(h)
+            self.gdb.c(wait=False)
+
+        self.gdb.interrupt()
+        # Give OpenOCD time to call poll() on both harts, which is what causes
+        # the bug.
+        time.sleep(1)
+        self.gdb.p("buf", fmt="")
+
+class MulticoreRtosSwitchActiveHartTest(GdbTest):
+    compile_args = ("programs/multicore.c", "-DMULTICORE")
+
+    def early_applicable(self):
+        return len(self.target.harts) > 1
+
+    def setup(self):
+        self.gdb.select_hart(self.target.harts[0])
+        self.gdb.load()
+        for hart in self.target.harts:
+            self.gdb.select_hart(hart)
+            self.gdb.p("$pc=_start")
+
+    def test(self):
+        if self.gdb.one_hart_per_gdb():
+            return 'not_applicable'
+
+        # Set breakpoint near '_start' label to increase the chances of a
+        # situation when all harts hit breakpoint immediately and
+        # simultaneously.
+        self.gdb.b("set_trap_handler")
+
+        # Check that all harts hit breakpoint one by one.
+        for _ in range(len(self.target.harts)):
+            output = self.gdb.c()
+            assertIn("hit Breakpoint", output)
+            assertIn("set_trap_handler", output)
+            assertNotIn("received signal SIGTRAP", output)
+
+class StepTest(GdbSingleHartTest):
     compile_args = ("programs/step.S", )
 
     def setup(self):
@@ -587,7 +713,30 @@ class StepTest(GdbTest):
             pc = self.gdb.p("$pc")
             assertEqual("%x" % (pc - main_address), "%x" % expected)
 
-class TriggerTest(GdbTest):
+class JumpHbreak(GdbSingleHartTest):
+    """'jump' resumes execution at location. Execution stops again immediately
+    if there is a breakpoint there.
+    That second line can be trouble."""
+    compile_args = ("programs/trigger.S", )
+
+    def early_applicable(self):
+        return self.hart.instruction_hardware_breakpoint_count >= 1
+
+    def setup(self):
+        self.gdb.load()
+        self.gdb.hbreak("main")
+        self.gdb.c()
+        self.gdb.command("delete 1")
+
+    def test(self):
+        self.gdb.b("read_loop")
+        self.gdb.command("hbreak just_before_read_loop")
+        output = self.gdb.command("jump just_before_read_loop")
+        assertRegexpMatches(output, r"Breakpoint \d, just_before_read_loop ")
+        output = self.gdb.c()
+        assertRegexpMatches(output, r"Breakpoint \d, read_loop ")
+
+class TriggerTest(GdbSingleHartTest):
     compile_args = ("programs/trigger.S", )
     def setup(self):
         self.gdb.load()
@@ -626,10 +775,16 @@ class TriggerLoadAddressInstant(TriggerTest):
         self.gdb.command("b just_before_read_loop")
         self.gdb.c()
         read_loop = self.gdb.p("&read_loop")
-        self.gdb.command("rwatch data")
+        read_again = self.gdb.p("&read_again")
+        data = self.gdb.p("&data")
+        self.gdb.command("rwatch *0x%x" % data)
         self.gdb.c()
         # Accept hitting the breakpoint before or after the load instruction.
         assertIn(self.gdb.p("$pc"), [read_loop, read_loop + 4])
+        assertEqual(self.gdb.p("$a0"), self.gdb.p("&data"))
+
+        self.gdb.c()
+        assertIn(self.gdb.p("$pc"), [read_again, read_again + 4])
         assertEqual(self.gdb.p("$a0"), self.gdb.p("&data"))
 
 # FIXME: Triggers aren't quite working yet
@@ -649,8 +804,21 @@ class TriggerStoreAddressInstant(TriggerTest):
         self.gdb.command("b just_before_write_loop")
         self.gdb.c()
         write_loop = self.gdb.p("&write_loop")
-        self.gdb.command("watch data")
-        self.gdb.c()
+        data = self.gdb.p("&data")
+        self.gdb.command("watch *0x%x" % data)
+        output = self.gdb.c()
+        if "_exit (status=0)" in output:
+            # We ran to _exit. It looks as if we didn't hit the trigger at all.
+            # However this can be "correct" behavior. gdb's definition of
+            # "watch" is to run until the value in memory changes. To do this
+            # it reads the memory value when the trigger is set, and then when
+            # the halt happens. Because our triggers can fire just before the
+            # write happens, when gdb does this check the memory hasn't
+            # changed. So it silently resumes running.
+            # https://github.com/riscv/riscv-openocd/issues/295 tracks this
+            # problem. Until it's fixed, we're going to allow running to _exit.
+            return
+
         # Accept hitting the breakpoint before or after the store instruction.
         assertIn(self.gdb.p("$pc"), [write_loop, write_loop + 4])
         assertEqual(self.gdb.p("$a0"), self.gdb.p("&data"))
@@ -701,7 +869,7 @@ class TriggerDmode(TriggerTest):
         assertIn("clear_triggers", output)
         self.check_triggers((1<<6) | (1<<0), 0xfeedac00)
 
-class RegsTest(GdbTest):
+class RegsTest(GdbSingleHartTest):
     compile_args = ("programs/regs.S", )
     def setup(self):
         self.gdb.load()
@@ -778,16 +946,17 @@ class DownloadTest(GdbTest):
 
         self.binary = self.target.compile(self.hart, self.download_c.name,
                 "programs/checksum.c")
-        self.gdb.command("file %s" % self.binary)
+        self.gdb.global_command("file %s" % self.binary)
 
     def test(self):
         self.gdb.load()
+        self.parkOtherHarts()
         self.gdb.command("b _exit")
-        self.gdb.c(timeout=60)
+        self.gdb.c()
         assertEqual(self.gdb.p("status"), self.crc)
         os.unlink(self.download_c.name)
 
-#class MprvTest(GdbTest):
+#class MprvTest(GdbSingleHartTest):
 #    compile_args = ("programs/mprv.S", )
 #    def setup(self):
 #        self.gdb.load()
@@ -800,7 +969,7 @@ class DownloadTest(GdbTest):
 #        output = self.gdb.command("p/x *(int*)(((char*)&data)-0x80000000)")
 #        assertIn("0xbead", output)
 
-class PrivTest(GdbTest):
+class PrivTest(GdbSingleHartTest):
     compile_args = ("programs/priv.S", )
     def setup(self):
         # pylint: disable=attribute-defined-outside-init
@@ -816,15 +985,27 @@ class PrivTest(GdbTest):
             self.supported.add(2)
         self.supported.add(3)
 
+        # Disable physical memory protection by allowing U mode access to all
+        # memory.
+        try:
+            self.gdb.p("$pmpcfg0=0xf")  # TOR, R, W, X
+            self.gdb.p("$pmpaddr0=0x%x" %
+                    ((self.hart.ram + self.hart.ram_size) >> 2))
+        except testlib.CouldNotFetch:
+            # PMP registers are optional
+            pass
+
+        # Ensure Virtual Memory is disabled if applicable (SATP register is not
+        # reset)
+        try:
+            self.gdb.p("$satp=0")
+        except testlib.CouldNotFetch:
+            # SATP only exists if you have S mode.
+            pass
+
 class PrivRw(PrivTest):
     def test(self):
         """Test reading/writing priv."""
-        # Disable physical memory protection by allowing U mode access to all
-        # memory.
-        self.gdb.p("$pmpcfg0=0xf")  # TOR, R, W, X
-        self.gdb.p("$pmpaddr0=0x%x" %
-                ((self.hart.ram + self.hart.ram_size) >> 2))
-
         # Leave the PC at _start, where the first 4 instructions should be
         # legal in any mode.
         for privilege in range(4):

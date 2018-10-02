@@ -106,6 +106,51 @@ RVTEST_CODE_BEGIN
   j fail
 2:
 
+#ifdef __MACHINE_MODE
+  # RVC cannot be disabled if doing so would cause a misaligned instruction
+  # exception on the next instruction fetch. (This test assumes no other
+  # extensions that support misalignment are present.)
+  li TESTNUM, 8
+  csrr t2, misa
+  andi t2, t2, 1 << ('c' - 'a')
+  beqz t2, 2f
+
+  .option rvc
+  c.nop
+  csrci misa, 1 << ('c' - 'a')
+1:
+  c.nop
+  .option norvc
+
+  csrr t2, misa
+  andi t2, t2, 1 << ('c' - 'a')
+  beqz t2, fail
+
+  # When RVC is disabled, mret to a misaligned mepc should succeed,
+  # masking off mepc[1].
+  la t0, 1f
+  addi t0, t0, -2
+  csrw mepc, t0
+
+  # Try to disable RVC; if it can't be disabled, skip the test.
+  csrci misa, 1 << ('c' - 'a')
+  csrr t2, misa
+  andi t2, t2, 1 << ('c' - 'a')
+  bnez t2, 2f
+
+  li t2, MSTATUS_MPP
+  csrs mstatus, t2
+  mret
+
+  # mret should transfer control to this branch.  Otherwise, it will
+  # transfer control two bytes into the branch, which happens to be the
+  # illegal instruction c.unimp.
+  beqz x0, 1f
+1:
+  csrsi misa, 1 << ('c' - 'a')
+2:
+#endif
+
   j pass
 
   TEST_PASSFAIL
@@ -113,7 +158,7 @@ RVTEST_CODE_BEGIN
   .align 2
   .global stvec_handler
 stvec_handler:
-  # tests 2, 4, 5, and 6 should trap
+  # tests 2, 4, 5, 6, and 8 should trap
   li a0, 2
   beq TESTNUM, a0, 1f
   li a0, 4

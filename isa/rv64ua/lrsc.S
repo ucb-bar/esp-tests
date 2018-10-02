@@ -35,7 +35,7 @@ TEST_CASE( 2, a4, 1, \
 # TODO is this actually mandatory behavior?
 TEST_CASE( 3, a4, 1, \
   la a0, foo; \
-  add a1, a0, 1024; \
+  la a1, fooTest3; \
   lr.w a1, (a1); \
   sc.w a4, a1, (a0); \
 )
@@ -70,6 +70,15 @@ TEST_CASE( 4, a0, 0, \
   bgez a3, 1b
 )
 
+# make sure that sc-after-successful-sc fails.
+TEST_CASE( 5, a1, 1, \
+  la a0, foo; \
+1:lr.w a1, (a0); \
+  sc.w a1, x0, (a0); \
+  bnez a1, 1b; \
+  sc.w a1, x0, (a0)
+)
+
 TEST_PASSFAIL
 
 RVTEST_CODE_END
@@ -82,4 +91,6 @@ RVTEST_DATA_BEGIN
 coreid: .word 0
 barrier: .word 0
 foo: .word 0
+.skip 1024
+fooTest3: .word 0
 RVTEST_DATA_END
