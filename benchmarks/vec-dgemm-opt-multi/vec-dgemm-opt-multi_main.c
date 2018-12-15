@@ -6,12 +6,14 @@
 //
 
 #include "util.h"
-#include "vec-dgemm-opt.h"
+#include "vec-dgemm-opt-multi.h"
 
 //--------------------------------------------------------------------------
 // Input/Reference Data
 
 #include "dataset1.h"
+
+extern void __attribute__((noinline)) vec_dgemm_opt_multi_c(int n, double * result, double * A, double * B, int cid, int nc);
 
 //--------------------------------------------------------------------------
 // Main
@@ -21,7 +23,7 @@ void thread_entry(int cid, int nc)
 {
   // Do the saxpy
   setStats(1);
-  vec_dgemm_opt_multi_c(MAT_WIDTH, result_holder, input_data_X, input_data_Y, cid);
+  vec_dgemm_opt_multi_c(MAT_WIDTH, result_holder, input_data_X, input_data_Y, cid, nc);
   
   barrier(nc);
   setStats(0);
