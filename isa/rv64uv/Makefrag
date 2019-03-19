@@ -26,6 +26,7 @@ rv64uv_sc_tests = \
 	pointer \
 	vcjal vfirst vfence \
 	cmp fcmp \
+	vmerge \
 
 rv64uv_sc_vec_tests = \
 	 \
