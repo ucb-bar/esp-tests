@@ -6,9 +6,9 @@
 
 #include "vec-util.h"
 
-#define NUMCORES 8
+//#define NUMCORES 2
 
-void vec_dgemm_opt_multi_c(int n, double * result, double * A, double * B, int cid)
+void vec_dgemm_opt_multi_c(int n, double * result, double * A, double * B, int cid, int nc)
 {
 
     asm volatile ("vsetcfg %0" : : "r" (VCFG(8, 0, 0, 1)));
@@ -28,9 +28,14 @@ void vec_dgemm_opt_multi_c(int n, double * result, double * A, double * B, int c
     asm volatile ("la %0, dgemm_opt_v_4_4" : "=r" (main_vfblockaddr));
     asm volatile ("la %0, dgemm_opt_v_4_4_post" : "=r" (post_vfblockaddr));
 
+    //int block = n / NUMCORES;
+    int block = n / nc;
+    int start = block * cid;
+    if ((start + block) > n) block = n - cid*block;
 
-//    #pragma omp parallel for schedule(dynamic, 1)
-    for (int i = 0*cid; i < n; i+=4*NUMCORES) {
+    //#pragma omp parallel for schedule(dynamic, 1)
+    //for (int i = 1*cid; i < n; i+=4*NUMCORES) {
+    for (int i = start; i < start+block; i+=4) {
 
         // INSERT CORE ASSIGNMENT CODE HERE
         //========================================

@@ -8,7 +8,7 @@
 # the benchmark name as a prefix so that they are unique.
 #
 
-CORES = 8
+CORES = 2
 
 vec-dgemm-opt-multi_c_src = \
 	vec-dgemm-opt-multi_main.c \
