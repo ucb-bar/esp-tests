@@ -27,6 +27,7 @@ rv64uv_sc_tests = \
 	vcjal vfirst vfence \
 	cmp fcmp \
 	vmerge \
+	vclipb vcliph vclipw \
 
 rv64uv_sc_vec_tests = \
 	 \
