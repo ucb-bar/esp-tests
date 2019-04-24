@@ -28,6 +28,7 @@ rv64uv_sc_tests = \
 	cmp fcmp \
 	vmerge \
 	vclipb vcliph vclipw \
+	vmadd \
 
 rv64uv_sc_vec_tests = \
 	 \

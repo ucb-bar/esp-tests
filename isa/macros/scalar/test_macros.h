@@ -161,6 +161,14 @@ test_ ## testnum: \
       inst x30, x1, x2; \
     )
 
+#define TEST_RRR_OP( testnum, inst, result, val1, val2, val3 ) \
+    TEST_CASE( testnum, x30, result, \
+      li  x1, MASK_XLEN(val1); \
+      li  x2, MASK_XLEN(val2); \
+      li  x3, MASK_XLEN(val3); \
+      inst x30, x1, x2, x3; \
+    )
+
 #define TEST_RR_SRC1_EQ_DEST( testnum, inst, result, val1, val2 ) \
     TEST_CASE( testnum, x1, result, \
       li  x1, MASK_XLEN(val1); \

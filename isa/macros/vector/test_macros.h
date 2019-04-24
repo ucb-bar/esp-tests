@@ -67,6 +67,43 @@ vtcode ## testnum : \
   vstop; \
 next ## testnum :
 
+#define TEST_CASE_NREG_OP3( testnum, nxreg, testreg, correctval, val1, val2, val3, code... ) \
+test_ ## testnum: \
+  li a3, VCFG(nxreg, 0, 0, 1); \
+  vsetcfg a3; \
+  li a3,2048; \
+  vsetvl a3,a3; \
+  li a4, val1; \
+  vmcs vs1, a4; \
+  li a4, val2; \
+  vmcs vs2, a4; \
+  li a4, val3; \
+  vmcs vs3, a4; \
+  la a4,dst; \
+  vmca va4, a4; \
+1:auipc a0,%pcrel_hi(vtcode ## testnum); \
+  vf %pcrel_lo(1b)(a0); \
+  fence; \
+  li a1,correctval; \
+  li a2,0; \
+  li TESTNUM, testnum; \
+test_loop ## testnum: \
+  ld a0,0(a4); \
+  beq a0,a1,skip ## testnum; \
+  j fail; \
+skip ## testnum : \
+  addi a4,a4,8; \
+  addi a2,a2,1; \
+  bne a2,a3,test_loop ## testnum; \
+  j next ## testnum; \
+.align 3; \
+vtcode ## testnum : \
+  vpset vp0; \
+  code; \
+  vsd v ## testreg, va4; \
+  vstop; \
+next ## testnum :
+
 # We use a macro hack to simpify code generation for various numbers
 # of bubble cycles.
 
@@ -165,6 +202,14 @@ next ## testnum :
       vadd.ss  vv1, vs1, vs0; \
       vadd.ss  vv2, vs2, vs0; \
       v ## inst.vv vv3, vv1, vv2; \
+    )
+
+#define TEST_RRR_OP( testnum, inst, result, val1, val2, val3 ) \
+    TEST_CASE_NREG_OP3( testnum, 5, v4, result, val1, val2, val3, \
+      vadd.ss  vv1, vs1, vs0; \
+      vadd.ss  vv2, vs2, vs0; \
+      vadd.ss  vv3, vs3, vs0; \
+      v ## inst.vvv vv4, vv1, vv2, vv3; \
     )
 
 #define TEST_RR_SRC1_EQ_DEST( testnum, inst, result, val1, val2 ) \
