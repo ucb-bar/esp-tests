@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# add.S
+# max.S
 #-----------------------------------------------------------------------------
 #
-# Test add instruction.
+# Test max instruction.
 #
 
 #include "riscv_test.h"

@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# add.S
+# min.S
 #-----------------------------------------------------------------------------
 #
-# Test add instruction.
+# Test min instruction.
 #
 
 #include "riscv_test.h"
