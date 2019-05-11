@@ -29,6 +29,7 @@ rv64uv_sc_tests = \
 	vmerge \
 	vclipb vcliph vclipw \
 	vmadd \
+	vredsum \
 
 rv64uv_sc_vec_tests = \
 	 \
