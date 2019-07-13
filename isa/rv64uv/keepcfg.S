@@ -22,6 +22,8 @@ RVTEST_CODE_BEGIN
 1:auipc a0,%pcrel_hi(vtcode1)
   vf %pcrel_lo(1b)(a0)
 
+  fence // FIXME: Avoid rocc cmdq deadlock bug in v environment
+
   vsetcfg 3,1
   li s1,2048
   vsetvl s1,s1
