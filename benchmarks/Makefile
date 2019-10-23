@@ -45,6 +45,7 @@ bmarks = \
 	vec-sdgemm-opt  \
 	vec-hsgemm-opt \
 	vec-saxpy-streamx \
+	vec-box3x3 \
 	pmp \
 
 #--------------------------------------------------------------------
