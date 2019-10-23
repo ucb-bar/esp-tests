@@ -46,6 +46,8 @@ bmarks = \
 	vec-hsgemm-opt \
 	vec-saxpy-streamx \
 	pmp \
+	conv3x3 \
+	vec-conv3x3 \
 
 #--------------------------------------------------------------------
 # Build rules
