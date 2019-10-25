@@ -1,0 +1,17 @@
+COLORSPACE CONVERSION
+
+This T0 program converts an input RGB image to a YCrCb image.  For more
+info on colorspaces check out http://icsl.ee.washington.edu/
+~zjin/thesis/node10.html.  As the program now stands, the output image is
+simply a ppm file, with the Y represented as red, the Cr as G, and Cb as
+B.
+
+The program is run like this:
+
+spertrun ./conv in.ppm out.ppm
+
+The trace shows that the VP0 (multipliers) are almost totally saturated,
+with a single idle cycle after the loop branch.  This might be improved
+with a little more work.
+
+
