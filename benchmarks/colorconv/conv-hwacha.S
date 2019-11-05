@@ -43,23 +43,39 @@ void nv_conv(size_t n_pixels,	size of each color plane (in bytes)
 #define	matrix_r	a1
 #define	rshift_r	a2
 #define	in1_r		a3
-#define	in2_r		t0
-#define	in3_r		t1
-#define o1_r		t2
-#define o2_r		t3
-#define o3_r		t4
-#define t11_r		t5
-#define t12_r		t6
-#define t13_r		t7
-#define t21_r		t8
-#define t22_r		t9
-#define t23_r		s0
-#define t31_r		s1
-#define t32_r		s2
-#define t33_r		s3
-#define done_r		s4
-#define len_r		a1
+#define	in2_r		a4
+#define	in3_r		a5
+#define o1_r		a6
+#define o2_r		a7
+#define o3_r		t0
+#define t1_r		t1
+#define t2_r		t2
+#define t3_r		t3
+#define done_r		t4
+#define len_r		t5
 
+/*Hwacha scalar registers*/
+#define	n_pixels_r_h	vs0
+#define	matrix_r_h	vs1
+#define	rshift_r_h	vs2
+#define	in1_r_h1	va0
+#define	in2_r_h1	va1
+#define	in3_r_h1	va2
+#define	in1_r_h2	va0
+#define o1_r_h		va3
+#define o2_r_h		va4
+#define o3_r_h		va5
+#define t11_r_h		vs3
+#define t12_r_h		vs4
+#define t13_r_h		vs5
+#define t21_r_h		vs6
+#define t22_r_h		vs7
+#define t23_r_h		vs8
+#define t31_r_h		vs9
+#define t32_r_h		vs10
+#define t33_r_h		vs11
+#define done_r_h	vs12
+#define len_r_h		vs13
 
 	.globl	conv
 
@@ -67,138 +83,133 @@ void nv_conv(size_t n_pixels,	size of each color plane (in bytes)
 
 conv:
 setup:
-	# save some registers...
-	# adjust sp for 6 saved regs
-	subu	sp, sp, 24
-	.frame	sp, 24, ra
-	sw	ra, 0(sp)
-	sw	s0, 4(sp)
-	sw	s1, 8(sp)
-	sw	s2, 12(sp)
-	sw	s3, 16(sp)
-	sw	s4, 20(sp)
-
 	# get the last few arguments from the stack
-	lw	in2_r, 40(sp)
-	lw	in3_r, 44(sp)
-	lw	o1_r, 48(sp)
-	lw	o2_r, 52(sp)
-	lw	o3_r, 56(sp)
-	lh	t11_r, 0(matrix_r)
-	lh	t21_r, 2(matrix_r)
-	lh	t31_r, 4(matrix_r)
-	lh	t12_r, 6(matrix_r)
-	lh	t22_r, 8(matrix_r)
-	lh	t32_r, 10(matrix_r)
-	lh	t13_r, 12(matrix_r)
-	lh	t23_r, 14(matrix_r)
-	lh	t33_r, 16(matrix_r)
-	
-	# produce len_r, rshift_r, done_r
-	li	len_r, MAXVLEN
-	vsetvl	len_r, vlr
-	andi	rshift_r, rshift_r, 0x1f
-	and	done_r, n_pixels_r, ~(MAXVLEN - 1)
-	add	done_r, in3_r, done_r
-	jal	enter_loop
+	lw	o3_r, 0(sp)
 
-	andi	len_r, n_pixels_r, (MAXVLEN - 1)
-	beq	len_r, $0, done
-	add	done_r, in3_r, len_r
-	vsetvl	len_r, vlr
-	jal	enter_loop
+        # move arguments into hwacha scalar registers
+	vmcs	n_pixels_r_h, n_pixels_r
+	vmcs	matrix_r_h, matrix_r
+	vmcs	rshift_r_h, rshift_r
+	vmca	in1_r_h1, in1_r
+	vmca	in2_r_h1, in2_r
+	vmca	in3_r_h1, in3_r
+	vmca	o1_r_h1, o1_r
+	vmca	o2_r_h1, o2_r
+	vmca	o3_r_h1, o3_r
+	lh	t1_r, 0(matrix_r)
+	lh	t2_r, 2(matrix_r)
+	lh	t3_r, 4(matrix_r)
+	vmcs	t11_r_h, t1_r
+	vmcs	t12_r_h, t2_r
+	vmcs	t13_r_h, t3_r
+	lh	t1_r, 6(matrix_r)
+	lh	t2_r, 8(matrix_r)
+	lh	t3_r, 10(matrix_r)
+	vmcs	t21_r_h, t1_r
+	vmcs	t22_r_h, t2_r
+	vmcs	t23_r_h, t3_r
+	lh	t1_r, 12(matrix_r)
+	lh	t2_r, 14(matrix_r)
+	lh	t3_r, 16(matrix_r)
+	vmcs	t31_r_h, t1_r
+	vmcs	t32_r_h, t2_r
+	vmcs	t33_r_h, t3_r
+	vmcs	done_r_h, done_r
+	vmcs	len_r_h, len_r
+	andi	rshift_r, rshift_r, 0x1f
+	beq	n_pixels_r, $0, done
+	
+	vsetvl	len_r, n_pixels_r
+        add     in1_r2, in1_r, len_r
+	vmca	in1_r_h2, in1_r2
+	vf	enter_loop
+
+	# produce len_r, rshift_r, done_r
+outer:	vsetvl	len_r, n_pixels_r
+	add    	in2_r, in2_r, len_r
+	add	in3_r, in3_r, len_r
+        add     in1_r2, in1_r, len_r
+	vmca	in2_r_h1, in2_r
+	vmca	in3_r_h1, in3_r
+	vmca	in1_r_h2, in1_r2
+	vf	loop
+        sub	n_pixels_r, n_pixels_r, len_r
+	add	o1_r, o1_r, len_r
+	add	o2_r, o2_r, len_r
+	add	o3_r, o3_r, len_r
+	vmca	o1_r_h, o1_r
+	vmca	o2_r_h, o2_r
+	vmca	o3_r_h, o3_r
+	add	in1_r, in1_r, len_r
+	vmca	in1_r_h1, in1_r
+        bne     n_pixels_r, $0, outer
 
 done:
-	# fix the stack
-	lw	ra, 0(sp)
-	lw	s0, 4(sp)
-	lw	s1, 8(sp)
-	lw	s2, 12(sp)
-	lw	s3, 16(sp)
-	lw	s4, 20(sp)
-	addi	sp, sp, 24
-
 	# then return
-	jr	ra
+	vf	exit
+	fence
+	ret
 
 	.end	conv
 
 
-
-	.globl	enter_loop
-
-	.ent	enter_loop
-
 enter_loop:
-	.frame	sp, 0, ra
-	vlbu		in1_v, in1_r
-	add		in1_r, in1_r, len_r
-	vmul.vs		o1_v, in1_v, t11_r
-	vlbu    	in2_v, in2_rr
-	add     	in2_r, in2_r, len_r
-	vmul.vs		o2_v, in1_v, t12_r
-	vlbu	  	in3_v, in3_r
-	add		in3_r, in3_r, len_r
-	vmul.vs		o3_v, in1_v, t13_r
-	vmul.vs		temp1_v, in2_v, t21_r
+	vlbu		in1_v, in1_r_h1
+	vmul.vs		o1_v, in1_v, t11_r_h
+	vlbu    	in2_v, in2_r_h1
+	vmul.vs		o2_v, in1_v, t12_r_h
+	vlbu	  	in3_v, in3_r_h1
+	vmul.vs		o3_v, in1_v, t13_r_h
+	vmul.vs		temp1_v, in2_v, t21_r_h
 	vadd.vv		o1_v, o1_v, temp1_v
-	vmul.vs		temp2_v, in3_v, t31_r
+	vmul.vs		temp2_v, in3_v, t31_r_h
 	vadd.vv		out1_v, o1_v, temp2_v
-	vsra.vs		out1_v, out1_v, rshift_r
-	vmul.vs		temp1_v, in2_v, t22_r
+	vsra.vs		out1_v, out1_v, rshift_r_h
+	vmul.vs		temp1_v, in2_v, t22_r_h
 	vadd.vv		o2_v, o2_v, temp1_v
-	vmul.vs		temp2_v, in3_v, t32_r
+	vmul.vs		temp2_v, in3_v, t32_r_h
 	vadd.vv		out2_v, o2_v, temp2_v
-	vsra.vs		out2_v, out2_v, rshift_r
-	vmul.vs		temp1_v, in2_v, t23_r
-	vlbu		in1_v, in1_r
-	add		in1_r, in1_r, len_r
+	vsra.vs		out2_v, out2_v, rshift_r_h
+	vmul.vs		temp1_v, in2_v, t23_r_h
+	vlbu		in1_v, in1_r_h2
+	add		in1_r_h, in1_r_h, len_r
 	vadd.vv		o3_v, o3_v, temp1_v
-	vmul.vs		temp2_v, in3_v, t33_r
-	beq	in3_r, done_r, exit
+	vmul.vs		temp2_v, in3_v, t33_r_h
+        vstop
 
 loop:
-	vmul.vs		o1_v, in1_v, t11_r
+	vmul.vs		o1_v, in1_v, t11_r_h
 	vadd.vv		out3_v, o3_v, temp2_v
-	vsra.vs		out3_v, out3_v, rshift_r
-	vlbu		in2_v, in2_r
-	add		in2_r, in2_r, len_r
-	vmul.vs		o2_v, in1_v, t12_r
-	vlbu		in3_v, in3_rr
-	addv		in3_r, in3_r, len_r
-	vmul.vs		o3_v, in1_v, t13_r
-	vsb		out1_v, o1_r
-	add		o1_r, o1_r, len_r
-	vmul.vs		temp1_v, in2_v, t21_r
+	vsra.vs		out3_v, out3_v, rshift_r_h
+	vlbu		in2_v, in2_r_h1
+	add		in2_r_h, in2_r_h, len_r
+	vmul.vs		o2_v, in1_v, t12_r_h
+	vlbu		in3_v, in3_r_h1
+	addv		in3_r, in3_r_h, len_r
+	vmul.vs		o3_v, in1_v, t13_r_h
+	vsb		out1_v, o1_r_h
+	vmul.vs		temp1_v, in2_v, t21_r_h
 	vsb		out2_v, o2_r
-	add		o2_r, o2_r, len_r
 	vadd.vv		o1_v, o1_v, temp1_v
-	vmul.vs		temp2_v, in3_v, t31_r
-	vsb		out3_v, o3_r
-	add		o3_r, o3_r, len_r
+	vmul.vs		temp2_v, in3_v, t31_r_h
+	vsb		out3_v, o3_r_h
 	vadd.vv		out1_v, o1_v, temp2_v
-	vsra.vs		out1_v, out1_v, rshift_r
-	vmul.vs		temp1_v, in2_v, t22_r
+	vsra.vs		out1_v, out1_v, rshift_r_h
+	vmul.vs		temp1_v, in2_v, t22_r_h
 	vadd.vv		o2_v, o2_v, temp1_v
-	vmul.vs		temp2_v, in3_v, t32_r
+	vmul.vs		temp2_v, in3_v, t32_r_h
 	vadd.vv		out2_v, o2_v, temp2_v
-	vsra.vs		out2_v, out2_v, rshift_r
-	vmul.vs		temp1_v, in2_v, t23_r
-	vlbu		in1_v, in1_r
-	add		in1_r, in1_r, len_r
+	vsra.vs		out2_v, out2_v, rshift_r_h
+	vmul.vs		temp1_v, in2_v, t23_r_h
+	vlbu		in1_v, in1_r_h2
 	vadd.vv		o3_v, o3_v, temp1_v
-	vmul.vs		temp2_v, in3_v, t33_r
-	bne		in3_r, done_r, loop
+	vmul.vs		temp2_v, in3_v, t33_r_h
+        vstop
 
 exit:
 	vadd.vv		out3_v, o3_v, temp2_v
-	vsra.vs		out3_v, out3_v, rshift_r
-	vsb		out1_v, o1_r
-	add		o1_r, o1_r, len_r
-	vsb		out2_v, o2_r
-	add		o2_r, o2_r, len_r
-	vsb		out3_v, o3_r
-	add		o3_r, o3_r, len_r
-	jr	ra
-
-	.end enter_loop
+	vsra.vs		out3_v, out3_v, rshift_r_h
+	vsb		out1_v, o1_r_h
+	vsb		out2_v, o2_r_h
+	vsb		out3_v, o3_r_h
+        vstop
