@@ -4,8 +4,6 @@
 **
 */
 
-//#include "machine/tordef.h"
-
 /* This function takes an input image, separated into 3 color planes, 
 and performs a colorspace conversion described by the given transformation
 matrix.  The output is placed into 3 separate color planes.  The first
@@ -124,7 +122,6 @@ setup:
 1:
         auipc	t4, %pcrel_hi(enter_loop)
         vf	%pcrel_lo(1b)(t4)
-	#vf	enter_loop
 
 	# produce len_r, rshift_r, done_r
 outer:	vsetvl	len_r, n_pixels_r
@@ -137,7 +134,6 @@ outer:	vsetvl	len_r, n_pixels_r
 2:
         auipc	t4, %pcrel_hi(loop)
         vf	%pcrel_lo(2b)(t4)
-	#vf	loop
         sub	n_pixels_r, n_pixels_r, len_r
 	add	o1_r, o1_r, len_r
 	add	o2_r, o2_r, len_r
@@ -154,7 +150,6 @@ done:
 3:
         auipc	t4, %pcrel_hi(exit)
         vf	%pcrel_lo(3b)(t4)
-	#vf	exit
 	fence
 	ret
 
