@@ -20,6 +20,7 @@ rv64uv_sc_tests = \
 	imul \
 	fcvt fcvt_hs \
 	vvadd_d vvadd_w vvadd_fd vvadd_fw \
+	vvmadd_fd vvmadd_fd_long \
 	vvmul_d \
 	overlap \
 	sched_sreg_xbar sched_fadd sched_waw sched_war \

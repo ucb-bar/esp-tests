@@ -29,15 +29,8 @@ def find_file(path):
             return relpath
     return None
 
-def compile(args, xlen=32): # pylint: disable=redefined-builtin
-    cc = os.path.expandvars("$RISCV/bin/riscv64-unknown-elf-gcc")
-    cmd = [cc, "-g"]
-    if xlen == 32:
-        cmd.append("-march=rv32imac")
-        cmd.append("-mabi=ilp32")
-    else:
-        cmd.append("-march=rv64imac")
-        cmd.append("-mabi=lp64")
+def compile(args): # pylint: disable=redefined-builtin
+    cmd = ["riscv64-unknown-elf-gcc", "-g"]
     for arg in args:
         found = find_file(arg)
         if found:
@@ -56,13 +49,22 @@ def compile(args, xlen=32): # pylint: disable=redefined-builtin
         raise Exception("Compile failed!")
 
 class Spike(object):
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-locals
     def __init__(self, target, halted=False, timeout=None, with_jtag_gdb=True,
-            isa=None, progbufsize=None):
+            isa=None, progbufsize=None, dmi_rti=None, abstract_rti=None,
+            support_hasel=True, support_abstract_csr=True,
+            support_haltgroups=True):
         """Launch spike. Return tuple of its process and the port it's running
         on."""
         self.process = None
         self.isa = isa
         self.progbufsize = progbufsize
+        self.dmi_rti = dmi_rti
+        self.abstract_rti = abstract_rti
+        self.support_abstract_csr = support_abstract_csr
+        self.support_hasel = support_hasel
+        self.support_haltgroups = support_haltgroups
 
         if target.harts:
             harts = target.harts
@@ -99,13 +101,13 @@ class Spike(object):
                 raise Exception("Didn't get spike message about bitbang "
                         "connection")
 
+    # pylint: disable=too-many-branches
     def command(self, target, harts, halted, timeout, with_jtag_gdb):
         # pylint: disable=no-self-use
         if target.sim_cmd:
             cmd = shlex.split(target.sim_cmd)
         else:
-            spike = os.path.expandvars("$RISCV/bin/spike")
-            cmd = [spike]
+            cmd = ["spike"]
 
         cmd += ["-p%d" % len(harts)]
 
@@ -118,16 +120,32 @@ class Spike(object):
             isa = "RV%dG" % harts[0].xlen
 
         cmd += ["--isa", isa]
-        cmd += ["--debug-auth"]
+        cmd += ["--dm-auth"]
 
         if not self.progbufsize is None:
-            cmd += ["--progsize", str(self.progbufsize)]
-            cmd += ["--debug-sba", "32"]
+            cmd += ["--dm-progsize", str(self.progbufsize)]
+            cmd += ["--dm-sba", "32"]
+
+        if not self.dmi_rti is None:
+            cmd += ["--dmi-rti", str(self.dmi_rti)]
+
+        if not self.abstract_rti is None:
+            cmd += ["--dm-abstract-rti", str(self.abstract_rti)]
+
+        if not self.support_abstract_csr:
+            cmd.append("--dm-no-abstract-csr")
+
+        if not self.support_hasel:
+            cmd.append("--dm-no-hasel")
+
+        if not self.support_haltgroups:
+            cmd.append("--dm-no-halt-groups")
 
         assert len(set(t.ram for t in harts)) == 1, \
                 "All spike harts must have the same RAM layout"
         assert len(set(t.ram_size for t in harts)) == 1, \
                 "All spike harts must have the same RAM layout"
+        os.environ['WORK_AREA'] = '0x%x' % harts[0].ram
         cmd += ["-m0x%x:0x%x" % (harts[0].ram, harts[0].ram_size)]
 
         if timeout:
@@ -215,8 +233,7 @@ class Openocd(object):
         if server_cmd:
             cmd = shlex.split(server_cmd)
         else:
-            openocd = os.path.expandvars("$RISCV/bin/openocd")
-            cmd = [openocd]
+            cmd = ["openocd"]
             if debug:
                 cmd.append("-d")
 
@@ -236,19 +253,20 @@ class Openocd(object):
         ]
 
         if config:
-            f = find_file(config)
-            if f is None:
+            self.config_file = find_file(config)
+            if self.config_file is None:
                 print "Unable to read file " + config
                 exit(1)
 
-            cmd += ["-f", f]
+            cmd += ["-f", self.config_file]
         if debug:
             cmd.append("-d")
 
         logfile = open(Openocd.logname, "w")
         if print_log_names:
             real_stdout.write("Temporary OpenOCD log: %s\n" % Openocd.logname)
-        env_entries = ("REMOTE_BITBANG_HOST", "REMOTE_BITBANG_PORT")
+        env_entries = ("REMOTE_BITBANG_HOST", "REMOTE_BITBANG_PORT",
+                "WORK_AREA")
         env_entries = [key for key in env_entries if key in os.environ]
         logfile.write("+ %s%s\n" % (
             "".join("%s=%s " % (key, os.environ[key]) for key in env_entries),
@@ -301,14 +319,21 @@ class Openocd(object):
         try:
             self.process.terminate()
             start = time.time()
-            while time.time() < start + 10000:
+            while time.time() < start + 10:
                 if self.process.poll():
                     break
             else:
                 self.process.kill()
-            self.process.wait()
         except (OSError, AttributeError):
             pass
+
+    def smp(self):
+        """Return true iff OpenOCD internally sees the harts as part of an SMP
+        group."""
+        for line in file(self.config_file, "r"):
+            if "target smp" in line:
+                return True
+        return False
 
 class OpenocdCli(object):
     def __init__(self, port=4444):
@@ -350,6 +375,28 @@ class CouldNotFetch(Exception):
 Thread = collections.namedtuple('Thread', ('id', 'description', 'target_id',
     'name', 'frame'))
 
+def parse_rhs(text):
+    text = text.strip()
+    if text.startswith("{") and text.endswith("}"):
+        inner = text[1:-1]
+        parsed = [parse_rhs(t) for t in inner.split(", ")]
+        if all([isinstance(p, dict) for p in parsed]):
+            dictionary = {}
+            for p in parsed:
+                for k, v in p.iteritems():
+                    dictionary[k] = v
+            parsed = dictionary
+        return parsed
+    elif text.startswith('"') and text.endswith('"'):
+        return text[1:-1]
+    elif ' = ' in text:
+        lhs, rhs = text.split(' = ', 1)
+        return {lhs: parse_rhs(rhs)}
+    elif re.match(r"-?\d+\.\d+(e-?\d+)?", text):
+        return float(text)
+    else:
+        return int(text, 0)
+
 class Gdb(object):
     """A single gdb class which can interact with one or more gdb instances."""
 
@@ -357,7 +404,7 @@ class Gdb(object):
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self, ports,
-            cmd=os.path.expandvars("$RISCV/bin/riscv64-unknown-elf-gdb"),
+            cmd="riscv64-unknown-elf-gdb",
             timeout=60, binary=None):
         assert ports
 
@@ -387,13 +434,14 @@ class Gdb(object):
         for port, child in zip(self.ports, self.children):
             self.select_child(child)
             self.wait()
+            self.command("set style enabled off")
             self.command("set confirm off")
             self.command("set width 0")
             self.command("set height 0")
             # Force consistency.
             self.command("set print entry-values no")
             self.command("set remotetimeout %d" % self.timeout)
-            self.command("target extended-remote localhost:%d" % port)
+            self.command("target extended-remote localhost:%d" % port, ops=10)
             if self.binary:
                 self.command("file %s" % self.binary)
             threads = self.threads()
@@ -463,25 +511,27 @@ class Gdb(object):
                 self.select_child(child)
                 self.command(command)
 
-    def c(self, wait=True, async=False):
+    def c(self, wait=True, sync=True, checkOutput=True, ops=20):
         """
         Dumb c command.
         In RTOS mode, gdb will resume all harts.
         In multi-gdb mode, this command will just go to the current gdb, so
         will only resume one hart.
         """
-        if async:
-            async = "&"
+        if sync:
+            sync = ""
         else:
-            async = ""
-        ops = 10
+            sync = "&"
         if wait:
-            output = self.command("c%s" % async, ops=ops)
-            assert "Continuing" in output
+            output = self.command("c%s" % sync, ops=ops)
+            if checkOutput:
+                assert "Continuing" in output
+                assert "Could not insert hardware" not in output
             return output
         else:
-            self.active_child.sendline("c%s" % async)
+            self.active_child.sendline("c%s" % sync)
             self.active_child.expect("Continuing", timeout=ops * self.timeout)
+            return ""
 
     def c_all(self, wait=True):
         """
@@ -504,9 +554,9 @@ class Gdb(object):
                 for child in self.children:
                     child.expect(r"\(gdb\)")
 
-    def interrupt(self):
+    def interrupt(self, ops=1):
         self.active_child.send("\003")
-        self.active_child.expect(r"\(gdb\)", timeout=6000)
+        self.active_child.expect(r"\(gdb\)", timeout=self.timeout * ops)
         return self.active_child.before.strip()
 
     def interrupt_all(self):
@@ -524,28 +574,24 @@ class Gdb(object):
         m = re.search("Cannot access memory at address (0x[0-9a-f]+)", output)
         if m:
             raise CannotAccess(int(m.group(1), 0))
-        return output.split('=')[-1].strip()
+        return output.split('=', 1)[-1].strip()
 
-    def parse_string(self, text):
-        text = text.strip()
-        if text.startswith("{") and text.endswith("}"):
-            inner = text[1:-1]
-            return [self.parse_string(t) for t in inner.split(", ")]
-        elif text.startswith('"') and text.endswith('"'):
-            return text[1:-1]
-        else:
-            return int(text, 0)
-
-    def p(self, obj, fmt="/x"):
-        output = self.command("p%s %s" % (fmt, obj))
+    def p(self, obj, fmt="/x", ops=1):
+        output = self.command("p%s %s" % (fmt, obj), ops=ops).splitlines()[-1]
         m = re.search("Cannot access memory at address (0x[0-9a-f]+)", output)
         if m:
             raise CannotAccess(int(m.group(1), 0))
         m = re.search(r"Could not fetch register \"(\w+)\"; (.*)$", output)
         if m:
             raise CouldNotFetch(m.group(1), m.group(2))
-        rhs = output.split('=')[-1]
-        return self.parse_string(rhs)
+        rhs = output.split('=', 1)[-1]
+        return parse_rhs(rhs)
+
+    def p_fpr(self, obj, ops=1):
+        result = self.p(obj, fmt="", ops=ops)
+        if isinstance(result, dict):
+            return result['double']
+        return result
 
     def p_string(self, obj):
         output = self.command("p %s" % obj)
@@ -553,15 +599,19 @@ class Gdb(object):
         return value
 
     def info_registers(self, group):
-        output = self.command("info registers %s" % group)
+        output = self.command("info registers %s" % group, ops=5)
         result = {}
         for line in output.splitlines():
-            parts = line.split()
+            m = re.match(r"(\w+)\s+({.*})\s+(\(.*\))", line)
+            if m:
+                parts = m.groups()
+            else:
+                parts = line.split()
             name = parts[0]
             if "Could not fetch" in line:
                 result[name] = " ".join(parts[1:])
             else:
-                result[name] = int(parts[1], 0)
+                result[name] = parse_rhs(parts[1])
         return result
 
     def stepi(self):
@@ -573,18 +623,36 @@ class Gdb(object):
         assert "failed" not in  output
         assert "Transfer rate" in output
         output = self.command("compare-sections", ops=1000)
+        assert "matched" in output
         assert "MIS" not in output
 
     def b(self, location):
         output = self.command("b %s" % location, ops=5)
         assert "not defined" not in output
         assert "Breakpoint" in output
-        return output
+        m = re.search(r"Breakpoint (\d+),? ", output)
+        assert m, output
+        return int(m.group(1))
 
     def hbreak(self, location):
         output = self.command("hbreak %s" % location, ops=5)
         assert "not defined" not in output
         assert "Hardware assisted breakpoint" in output
+        return output
+
+    def watch(self, expr):
+        output = self.command("watch %s" % expr, ops=5)
+        assert "not defined" not in output
+        assert "atchpoint" in output
+        return output
+
+    def swatch(self, expr):
+        self.command("show can-use-hw-watchpoints")
+        self.command("set can-use-hw-watchpoints 0")
+        output = self.command("watch %s" % expr, ops=5)
+        assert "not defined" not in output
+        assert "atchpoint" in output
+        self.command("set can-use-hw-watchpoints 1")
         return output
 
     def threads(self):
@@ -751,7 +819,6 @@ class BaseTest(object):
             self.hart = hart
         else:
             self.hart = random.choice(target.harts)
-            self.hart = target.harts[-1]    #<<<
         self.server = None
         self.target_process = None
         self.binary = None
@@ -885,10 +952,11 @@ class GdbTest(BaseTest):
         if not self.gdb:
             return
         self.gdb.interrupt()
+        self.gdb.command("info breakpoints")
         self.gdb.command("disassemble", ops=20)
-        self.gdb.command("info registers all", ops=100)
+        self.gdb.command("info registers all", ops=20)
         self.gdb.command("flush regs")
-        self.gdb.command("info threads", ops=100)
+        self.gdb.command("info threads", ops=20)
 
     def classTeardown(self):
         del self.gdb
@@ -940,12 +1008,14 @@ class ExamineTarget(GdbTest):
             print txt,
 
 class TestFailed(Exception):
-    def __init__(self, message):
+    def __init__(self, message, comment=None):
         Exception.__init__(self)
         self.message = message
+        if comment:
+            self.message += ": %s" % comment
 
 class TestNotApplicable(Exception):
-    def __init__(self, message):
+    def __init__(self, message=""):
         Exception.__init__(self)
         self.message = message
 
@@ -953,25 +1023,25 @@ def assertEqual(a, b):
     if a != b:
         raise TestFailed("%r != %r" % (a, b))
 
-def assertNotEqual(a, b):
+def assertNotEqual(a, b, comment=None):
     if a == b:
-        raise TestFailed("%r == %r" % (a, b))
+        raise TestFailed("%r == %r" % (a, b), comment)
 
 def assertIn(a, b):
     if a not in b:
         raise TestFailed("%r not in %r" % (a, b))
 
-def assertNotIn(a, b):
+def assertNotIn(a, b, comment=None):
     if a in b:
-        raise TestFailed("%r in %r" % (a, b))
+        raise TestFailed("%r in %r" % (a, b), comment)
 
 def assertGreater(a, b):
     if not a > b:
         raise TestFailed("%r not greater than %r" % (a, b))
 
-def assertLess(a, b):
+def assertLess(a, b, comment=None):
     if not a < b:
-        raise TestFailed("%r not less than %r" % (a, b))
+        raise TestFailed("%r not less than %r" % (a, b), comment)
 
 def assertTrue(a):
     if not a:
