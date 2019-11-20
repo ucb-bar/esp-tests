@@ -4,7 +4,7 @@
 **
 */
 
-#include "machine/tordef.h"
+//#include "machine/tordef.h"
 
 /* This function takes an input image, separated into 3 color planes, 
 and performs a colorspace conversion described by the given transformation
@@ -53,6 +53,7 @@ void nv_conv(size_t n_pixels,	size of each color plane (in bytes)
 #define t3_r		t3
 #define done_r		t4
 #define len_r		t5
+#define	in1_r2		t6
 
 /*Hwacha scalar registers*/
 #define	n_pixels_r_h	vs0
@@ -79,8 +80,6 @@ void nv_conv(size_t n_pixels,	size of each color plane (in bytes)
 
 	.globl	conv
 
-	.ent	conv
-
 conv:
 setup:
 	# get the last few arguments from the stack
@@ -93,9 +92,9 @@ setup:
 	vmca	in1_r_h1, in1_r
 	vmca	in2_r_h1, in2_r
 	vmca	in3_r_h1, in3_r
-	vmca	o1_r_h1, o1_r
-	vmca	o2_r_h1, o2_r
-	vmca	o3_r_h1, o3_r
+	vmca	o1_r_h, o1_r
+	vmca	o2_r_h, o2_r
+	vmca	o3_r_h, o3_r
 	lh	t1_r, 0(matrix_r)
 	lh	t2_r, 2(matrix_r)
 	lh	t3_r, 4(matrix_r)
@@ -117,12 +116,15 @@ setup:
 	vmcs	done_r_h, done_r
 	vmcs	len_r_h, len_r
 	andi	rshift_r, rshift_r, 0x1f
-	beq	n_pixels_r, $0, done
+	beqz	n_pixels_r, done
 	
 	vsetvl	len_r, n_pixels_r
         add     in1_r2, in1_r, len_r
-	vmca	in1_r_h2, in1_r2
-	vf	enter_loop
+	vmca	in1_r_h2, in1_r
+1:
+        auipc	t4, %pcrel_hi(enter_loop)
+        vf	%pcrel_lo(1b)(t4)
+	#vf	enter_loop
 
 	# produce len_r, rshift_r, done_r
 outer:	vsetvl	len_r, n_pixels_r
@@ -132,7 +134,10 @@ outer:	vsetvl	len_r, n_pixels_r
 	vmca	in2_r_h1, in2_r
 	vmca	in3_r_h1, in3_r
 	vmca	in1_r_h2, in1_r2
-	vf	loop
+2:
+        auipc	t4, %pcrel_hi(loop)
+        vf	%pcrel_lo(2b)(t4)
+	#vf	loop
         sub	n_pixels_r, n_pixels_r, len_r
 	add	o1_r, o1_r, len_r
 	add	o2_r, o2_r, len_r
@@ -142,15 +147,16 @@ outer:	vsetvl	len_r, n_pixels_r
 	vmca	o3_r_h, o3_r
 	add	in1_r, in1_r, len_r
 	vmca	in1_r_h1, in1_r
-        bne     n_pixels_r, $0, outer
+        bnez     n_pixels_r, outer
 
 done:
 	# then return
-	vf	exit
+3:
+        auipc	t4, %pcrel_hi(exit)
+        vf	%pcrel_lo(3b)(t4)
+	#vf	exit
 	fence
 	ret
-
-	.end	conv
 
 
 enter_loop:
@@ -172,7 +178,6 @@ enter_loop:
 	vsra.vs		out2_v, out2_v, rshift_r_h
 	vmul.vs		temp1_v, in2_v, t23_r_h
 	vlbu		in1_v, in1_r_h2
-	add		in1_r_h, in1_r_h, len_r
 	vadd.vv		o3_v, o3_v, temp1_v
 	vmul.vs		temp2_v, in3_v, t33_r_h
         vstop
@@ -182,14 +187,11 @@ loop:
 	vadd.vv		out3_v, o3_v, temp2_v
 	vsra.vs		out3_v, out3_v, rshift_r_h
 	vlbu		in2_v, in2_r_h1
-	add		in2_r_h, in2_r_h, len_r
 	vmul.vs		o2_v, in1_v, t12_r_h
-	vlbu		in3_v, in3_r_h1
-	addv		in3_r, in3_r_h, len_r
 	vmul.vs		o3_v, in1_v, t13_r_h
 	vsb		out1_v, o1_r_h
 	vmul.vs		temp1_v, in2_v, t21_r_h
-	vsb		out2_v, o2_r
+	vsb		out2_v, o2_r_h
 	vadd.vv		o1_v, o1_v, temp1_v
 	vmul.vs		temp2_v, in3_v, t31_r_h
 	vsb		out3_v, o3_r_h

@@ -1,0 +1,12 @@
+COLORSPACE CONVERSION
+
+This benchmark is based on a T0 benchmark program by Krste Asanovic.
+Instead of taking an input RGB image, it generate a random RBG image within
+the main binary.
+
+The T0 program converts an input RGB image to a YCrCb image.  For more
+info on colorspaces check out http://icsl.ee.washington.edu/
+~zjin/thesis/node10.html.  As the program now stands, the output image is
+simply a ppm file, with the Y represented as red, the Cr as G, and Cb as
+B.
+
