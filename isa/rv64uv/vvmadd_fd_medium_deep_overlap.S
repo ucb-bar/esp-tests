@@ -13,8 +13,8 @@
 RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
-  vsetcfg 8,1
-  li a3,64
+  vsetcfg 32,1
+  li a3,16
   vsetvl a3,a3
 
   la a3,srcC
@@ -119,7 +119,13 @@ vtcode:
   vld vv3,va4 #b1
   vld vv4,va5 #b2
   vld vv5,va6 #b3
-  vfvmmadd.d.vvv vv0, vv1, vv2, vv0, 4  #c0 =+ a*b
+  vld vv6,va7 #b4
+  vld vv7,va8 #b5
+  vld vv8,va9 #b6
+  vld vv9,va10 #b7
+  vld vv10,va0 #c0
+  vfvmmadd.d.vvv vv0, vv1, vv2, vv0, 8  #c0 =+ a*b
+  vfvmmadd.d.vvv vv10, vv1, vv2, vv10, 8  #c0 =+ a*b
   vsd vv0,va2
   vstop
 
@@ -206,23 +212,71 @@ srcB:
   .double 62.0
   .double 63.0
   .double 64.0
+  .double 65.0
+  .double 66.0
+  .double 67.0
+  .double 68.0
+  .double 69.0
+  .double 70.0
+  .double 71.0
+  .double 72.0
+  .double 73.0
+  .double 74.0
+  .double 75.0
+  .double 76.0
+  .double 77.0
+  .double 78.0
+  .double 79.0
+  .double 80.0
+  .double 81.0
+  .double 82.0
+  .double 83.0
+  .double 84.0
+  .double 85.0
+  .double 86.0
+  .double 87.0
+  .double 88.0
+  .double 89.0
+  .double 90.0
+  .double 91.0
+  .double 92.0
+  .double 93.0
+  .double 94.0
+  .double 95.0
+  .double 96.0
+  .double 97.0
+  .double 98.0
+  .double 99.0
+  .double 100.0
+  .double 101.0
+  .double 102.0
+  .double 103.0
+  .double 104.0
+  .double 105.0
+  .double 106.0
+  .double 107.0
+  .double 108.0
+  .double 109.0
+  .double 110.0
+  .double 111.0
+  .double 112.0
+  .double 113.0
+  .double 114.0
+  .double 115.0
+  .double 116.0
+  .double 117.0
+  .double 118.0
+  .double 119.0
+  .double 120.0
+  .double 121.0
+  .double 122.0
+  .double 123.0
+  .double 124.0
+  .double 125.0
+  .double 126.0
+  .double 127.0
+  .double 128.0
 srcC:
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
   .double 0.0
   .double 0.0
   .double 0.0
@@ -256,38 +310,22 @@ dest:
   .double 0.0
   .double 0.0
   .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
 result:
-  .double 330.0
-  .double 340.0
-  .double 350.0
-  .double 360.0
-  .double 370.0
-  .double 380.0
-  .double 390.0
-  .double 400.0
-  .double 410.0
-  .double 420.0
-  .double 430.0
-  .double 440.0
-  .double 450.0
-  .double 460.0
-  .double 470.0
-  .double 480.0
+  .double 2724.0
+  .double 2760.0
+  .double 2796.0
+  .double 2832.0
+  .double 2868.0
+  .double 2904.0
+  .double 2940.0
+  .double 2976.0
+  .double 3012.0
+  .double 3048.0
+  .double 3084.0
+  .double 3120.0
+  .double 3156.0
+  .double 3192.0
+  .double 3228.0
+  .double 3264.0
 
 RVTEST_DATA_END

@@ -119,7 +119,7 @@ vtcode:
   vld vv3,va4 #b1
   vld vv4,va5 #b2
   vld vv5,va6 #b3
-  vfvmmadd.d.vvv vv0, vv1, vv2, vv0, 4  #c0 =+ a*b
+  vfvmmadd.d.vvv vv0, vv1, vv2, vv0, 2  #c0 =+ a*b
   vsd vv0,va2
   vstop
 
@@ -223,39 +223,7 @@ srcC:
   .double 0.0
   .double 0.0
   .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
 dest:
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
   .double 0.0
   .double 0.0
   .double 0.0

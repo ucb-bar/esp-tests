@@ -13,8 +13,8 @@
 RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
-  vsetcfg 8,1
-  li a3,64
+  vsetcfg 32,1
+  li a3,8
   vsetvl a3,a3
 
   la a3,srcC
@@ -23,19 +23,19 @@ RVTEST_CODE_BEGIN
   vmca va1,a4
   la a5,srcB
   vmca va3,a5
-  addi a5, a5, 128
+  addi a5, a5, 64
   vmca va4,a5
-  addi a5, a5, 128
+  addi a5, a5, 64
   vmca va5,a5
-  addi a5, a5, 128
+  addi a5, a5, 64
   vmca va6,a5
-  addi a5, a5, 128
+  addi a5, a5, 64
   vmca va7,a5
-  addi a5, a5, 128
+  addi a5, a5, 64
   vmca va8,a5
-  addi a5, a5, 128
+  addi a5, a5, 64
   vmca va9,a5
-  addi a5, a5, 128
+  addi a5, a5, 64
   vmca va10,a5
   la a6,dest
   vmca va2,a6
@@ -76,38 +76,6 @@ RVTEST_CODE_BEGIN
   ld a2,56(a6)
   li TESTNUM,9
   bne a1,a2,fail
-  ld a1,64(a5)
-  ld a2,64(a6)
-  li TESTNUM,10
-  bne a1,a2,fail
-  ld a1,72(a5)
-  ld a2,72(a6)
-  li TESTNUM,11
-  bne a1,a2,fail
-  ld a1,80(a5)
-  ld a2,80(a6)
-  li TESTNUM,12
-  bne a1,a2,fail
-  ld a1,88(a5)
-  ld a2,88(a6)
-  li TESTNUM,13
-  bne a1,a2,fail
-  ld a1,96(a5)
-  ld a2,96(a6)
-  li TESTNUM,14
-  bne a1,a2,fail
-  ld a1,104(a5)
-  ld a2,104(a6)
-  li TESTNUM,15
-  bne a1,a2,fail
-  ld a1,112(a5)
-  ld a2,112(a6)
-  li TESTNUM,16
-  bne a1,a2,fail
-  ld a1,120(a5)
-  ld a2,120(a6)
-  li TESTNUM,17
-  bne a1,a2,fail
   j pass
 
 .align 3
@@ -119,7 +87,13 @@ vtcode:
   vld vv3,va4 #b1
   vld vv4,va5 #b2
   vld vv5,va6 #b3
-  vfvmmadd.d.vvv vv0, vv1, vv2, vv0, 4  #c0 =+ a*b
+  vld vv6,va7 #b4
+  vld vv7,va8 #b5
+  vld vv8,va9 #b6
+  vld vv9,va10 #b7
+  vld vv10,va0 #c0
+  vfvmmadd.d.vvv vv0, vv1, vv2, vv0, 8  #c0 =+ a*b
+  vfvmmadd.d.vvv vv10, vv1, vv2, vv10, 8  #c0 =+ a*b
   vsd vv0,va2
   vstop
 
@@ -215,30 +189,6 @@ srcC:
   .double 0.0
   .double 0.0
   .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
 dest:
   .double 0.0
   .double 0.0
@@ -248,46 +198,14 @@ dest:
   .double 0.0
   .double 0.0
   .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
 result:
-  .double 330.0
-  .double 340.0
-  .double 350.0
-  .double 360.0
-  .double 370.0
-  .double 380.0
-  .double 390.0
-  .double 400.0
-  .double 410.0
-  .double 420.0
-  .double 430.0
-  .double 440.0
-  .double 450.0
-  .double 460.0
-  .double 470.0
-  .double 480.0
+  .double 1380.0
+  .double 1416.0
+  .double 1452.0
+  .double 1488.0
+  .double 1524.0
+  .double 1560.0
+  .double 1596.0
+  .double 1632.0
 
 RVTEST_DATA_END

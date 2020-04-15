@@ -13,8 +13,8 @@
 RVTEST_RV64UV
 RVTEST_CODE_BEGIN
 
-  vsetcfg 8,1
-  li a3,64
+  vsetcfg 32,1
+  li a3,16
   vsetvl a3,a3
 
   la a3,srcC
@@ -29,14 +29,6 @@ RVTEST_CODE_BEGIN
   vmca va5,a5
   addi a5, a5, 128
   vmca va6,a5
-  addi a5, a5, 128
-  vmca va7,a5
-  addi a5, a5, 128
-  vmca va8,a5
-  addi a5, a5, 128
-  vmca va9,a5
-  addi a5, a5, 128
-  vmca va10,a5
   la a6,dest
   vmca va2,a6
 1:auipc a0,%pcrel_hi(vtcode)
@@ -119,7 +111,9 @@ vtcode:
   vld vv3,va4 #b1
   vld vv4,va5 #b2
   vld vv5,va6 #b3
+  vld vv10,va0 #c0
   vfvmmadd.d.vvv vv0, vv1, vv2, vv0, 4  #c0 =+ a*b
+  vfvmmadd.d.vvv vv10, vv1, vv2, vv10, 4  #c0 =+ a*b
   vsd vv0,va2
   vstop
 
@@ -137,10 +131,6 @@ srcA:
   .double 2.0
   .double 3.0
   .double 4.0
-  .double 5.0
-  .double 6.0
-  .double 7.0
-  .double 8.0
 srcB:
   .double 1.0
   .double 2.0
@@ -223,39 +213,7 @@ srcC:
   .double 0.0
   .double 0.0
   .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
 dest:
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
-  .double 0.0
   .double 0.0
   .double 0.0
   .double 0.0
