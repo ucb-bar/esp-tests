@@ -43,6 +43,8 @@ bmarks = \
 	vec-dgemm-opt  \
 	vec-dgemm-opt-multi  \
 	vec-dgemm-opt-vtmm  \
+	vec-dgemm-opt-vtmm-8x8  \
+	vec-dgemm-opt-vtmm-4x4  \
 	vec-sdgemm-opt  \
 	vec-hsgemm-opt \
 	vec-saxpy-streamx \

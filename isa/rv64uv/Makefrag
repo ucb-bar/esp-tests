@@ -15,6 +15,7 @@ rv64uv_sc_tests = \
 	vl_empty vs_empty vlx_empty vsx_empty vamo_empty \
 	vlxb vlxbu vlxh vlxhu vlxw vlxwu vlxd \
 	vsxb vsxh vsxw vsxd \
+	vlsmd \
 	amoadd_d amoand_d amomax_d amomaxu_d amomin_d amominu_d amoor_d amoswap_d amoxor_d \
 	amoadd_w amoand_w amomax_w amomaxu_w amomin_w amominu_w amoor_w amoswap_w amoxor_w \
 	imul \

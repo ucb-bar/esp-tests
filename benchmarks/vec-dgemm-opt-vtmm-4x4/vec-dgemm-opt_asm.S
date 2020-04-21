@@ -136,7 +136,99 @@ dgemm_opt_v_8_8_last:
 dgemm_opt_v_8_8_post:
     vsd vv6, va6 # c6
     vsd vv7, va7 # c7
+
     vstop
+    
+#.align 3
+#dgemm_opt_v_8_8_pre:
+#    vld vv0, va0 # c0
+#    vld vv1, va1 # c1
+#    vld vv2, va2 # c2
+#    vld vv3, va3 # c3
+#    vld vv4, va4 # c4
+#    vld vv5, va5 # c5
+#    vld vv6, va6 # c6
+#    vld vv7, va7 # c7
+#
+#
+#    vld vv8, va8                          # b0
+#    vld vv9, va9                          # b1
+#    vld vv10, va10                        # b2
+#    vld vv11, va11                        # b3
+#    vld vv12, va12                        # b4
+#    vld vv13, va13                        # b5
+#    vld vv14, va14                        # b6
+#    vld vv15, va15                        # b7
+#    vstop
+
+#.align 3
+#dgemm_opt_v_8_8_even:
+#    vldd vv16, va16, 8                    # a0
+#    vfvmmadd.d.vvv vv0, vv16, vv8, vv0, 8 # c0 += a0 * b[0-7]
+#    vld vv24, va8                         # nb0
+#    vldd vv16, va17, 8                    # a1
+#    vfvmmadd.d.vvv vv1, vv16, vv8, vv1, 8 # c1 += a1 * b[0-7]
+#    vld vv24, va9                         # nb1
+#    vldd vv16, va18, 8                    # a2
+#    vfvmmadd.d.vvv vv2, vv16, vv8, vv2, 8 # c2 += a2 * b[0-7]
+#    vld vv24, va10                        # nb2
+#    vldd vv16, va19, 8                    # a3
+#    vfvmmadd.d.vvv vv3, vv16, vv8, vv3, 8 # c3 += a3 * b[0-7]
+#    vld vv24, va11                        # nb3
+#    vldd vv16, va20, 8                    # a4
+#    vfvmmadd.d.vvv vv4, vv16, vv8, vv0, 8 # c4 += a4 * b[0-7]
+#    vld vv24, va12                        # nb4
+#    vldd vv16, va21, 8                    # a5
+#    vfvmmadd.d.vvv vv5, vv16, vv8, vv1, 8 # c5 += a5 * b[0-7]
+#    vld vv24, va13                        # nb5
+#    vldd vv16, va22, 8                    # a6
+#    vfvmmadd.d.vvv vv6, vv16, vv8, vv2, 8 # c6 += a6 * b[0-7]
+#    vld vv24, va14                        # nb6
+#    vldd vv16, va23, 8                    # a7
+#    vfvmmadd.d.vvv vv7, vv16, vv8, vv3, 8 # c7 += a7 * b[0-7]
+#    vld vv24, va14                        # nb7
+#    vstop
+
+#.align 3
+#dgemm_opt_v_8_8_odd:
+#    vldd vv16, va16, 8                    # a0
+#    vfvmmadd.d.vvv vv0, vv16, vv8, vv0, 8 # c0 += a0 * b[0-7]
+#    vld vv24, va8                         # nb0
+#    vldd vv16, va17, 8                    # a1
+#    vfvmmadd.d.vvv vv1, vv16, vv8, vv1, 8 # c1 += a1 * b[0-7]
+#    vld vv24, va9                         # nb1
+#    vldd vv16, va18, 8                    # a2
+#    vfvmmadd.d.vvv vv2, vv16, vv8, vv2, 8 # c2 += a2 * b[0-7]
+#    vld vv24, va10                        # nb2
+#    vldd vv16, va19, 8                    # a3
+#    vfvmmadd.d.vvv vv3, vv16, vv8, vv3, 8 # c3 += a3 * b[0-7]
+#    vld vv24, va11                        # nb3
+#    vldd vv16, va20, 8                    # a4
+#    vfvmmadd.d.vvv vv4, vv16, vv8, vv0, 8 # c4 += a4 * b[0-7]
+#    vld vv24, va12                        # nb4
+#    vldd vv16, va21, 8                    # a5
+#    vfvmmadd.d.vvv vv5, vv16, vv8, vv1, 8 # c5 += a5 * b[0-7]
+#    vld vv24, va13                        # nb5
+#    vldd vv16, va22, 8                    # a6
+#    vfvmmadd.d.vvv vv6, vv16, vv8, vv2, 8 # c6 += a6 * b[0-7]
+#    vld vv24, va14                        # nb6
+#    vldd vv16, va23, 8                    # a7
+#    vfvmmadd.d.vvv vv7, vv16, vv8, vv3, 8 # c7 += a7 * b[0-7]
+#    vld vv24, va14                        # nb7
+#    vstop
+
+#.align 3
+#dgemm_opt_v_8_8_post:
+#    vsd vv0, va0 # c0
+#    vsd vv1, va1 # c1
+#    vsd vv2, va2 # c2
+#    vsd vv3, va3 # c3
+#    vsd vv4, va4 # c4
+#    vsd vv5, va5 # c5
+#    vsd vv6, va6 # c6
+#    vsd vv7, va7 # c7
+#    vstop
+
 
 
     # vld vv4, va4                    # b0
