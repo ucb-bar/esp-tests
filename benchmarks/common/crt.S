@@ -116,7 +116,7 @@ _start:
   la gp, __global_pointer$
 .option pop
 
-  la  tp, _end + 63
+  LREG tp, _end_ptr
   and tp, tp, -64
 
   # get core id
@@ -223,3 +223,8 @@ tohost: .dword 0
 .align 6
 .globl fromhost
 fromhost: .dword 0
+
+  .section .rodata
+  .align 3
+_end_ptr:
+  .dc.a _end + 63

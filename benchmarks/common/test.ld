@@ -60,6 +60,16 @@ SECTIONS
     _tbss_end = .;
   }
 
+  /* large bss segment */
+  .lbss (NOLOAD) : {
+    *(.lbss .lbss.*)
+  }
+
+  /* large data segment */
+  .ldata : {
+    *(.ldata .ldata.*)
+  }
+
   /* End of uninitalized data segement */
   _end = .;
 }
