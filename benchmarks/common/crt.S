@@ -131,11 +131,11 @@ _start:
 
   # give each core 128KB of stack + TLS
 #define STKSHIFT 17
-  sll a2, a0, STKSHIFT
-  add tp, tp, a2
   add sp, a0, 1
   sll sp, sp, STKSHIFT
   add sp, sp, tp
+  sll a2, a0, STKSHIFT
+  add tp, tp, a2
 
   j _init
 
@@ -219,18 +219,6 @@ trap_entry:
 
   addi sp, sp, 272
   mret
-
-.section ".tdata.begin"
-.globl _tdata_begin
-_tdata_begin:
-
-.section ".tdata.end"
-.globl _tdata_end
-_tdata_end:
-
-.section ".tbss.end"
-.globl _tbss_end
-_tbss_end:
 
 .section ".tohost","aw",@progbits
 .align 6
