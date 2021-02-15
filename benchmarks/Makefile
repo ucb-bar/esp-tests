@@ -57,8 +57,12 @@ $(foreach bmark,$(bmarks),$(eval $(call compile_template,$(bmark))))
 # Build and run benchmarks on riscv simulator
 
 bmarks_riscv_bin  = $(addsuffix .riscv,  $(bmarks))
+bmarks_riscv_hex  = $(addsuffix .riscv.hex,  $(bmarks))
 bmarks_riscv_dump = $(addsuffix .riscv.dump, $(bmarks))
 bmarks_riscv_out  = $(addsuffix .riscv.out,  $(bmarks))
+
+$(bmarks_riscv_hex): %.riscv.hex: %.riscv
+	$(src_dir)/smartelf2hex.sh $< > $@
 
 $(bmarks_riscv_dump): %.riscv.dump: %.riscv
 	$(RISCV_OBJDUMP) $< > $@
@@ -66,7 +70,7 @@ $(bmarks_riscv_dump): %.riscv.dump: %.riscv
 $(bmarks_riscv_out): %.riscv.out: %.riscv
 	$(RISCV_SIM) $< > $@
 
-riscv: $(bmarks_riscv_dump)
+riscv: $(bmarks_riscv_dump) $(bmarks_riscv_hex)
 run: $(bmarks_riscv_out)
 
 junk += $(bmarks_riscv_bin) $(bmarks_riscv_dump) $(bmarks_riscv_hex) $(bmarks_riscv_out)
@@ -85,7 +89,7 @@ latest_install = $(shell ls -1 -d $(instbasedir)/$(instname)* | tail -n 1)
 
 install:
 	mkdir $(install_dir)
-	cp -r $(bmarks_riscv_bin) $(bmarks_riscv_dump) $(install_dir)
+	cp -r $(bmarks_riscv_bin) $(bmarks_riscv_hex) $(bmarks_riscv_dump) $(install_dir)
 
 install-link:
 	rm -rf $(instbasedir)/$(instname)
