@@ -41,6 +41,11 @@ RISCV_SIM ?= spike
 
 vpath %.S $(src_dir)
 
+USE_HWACHA ?= true
+ifeq ($(USE_HWACHA),true)
+RISCV_GCC_OPTS += -DUSE_HWACHA
+endif
+
 #------------------------------------------------------------
 # Build assembly tests
 
