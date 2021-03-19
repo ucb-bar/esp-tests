@@ -19,7 +19,7 @@ vec_hsaxpy_asm:
     fmv.x.s a3, fa0
     vmcs vs1, a3
 stripmine:
-    vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
+    hvsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
     vmca va0, a1
     vmca va1, a2
     la t5, hsaxpy_v

@@ -23,7 +23,7 @@ void vec_sdgemm_opt_c(int n, float * result, float * A, float * B) {
             int artificial = n;
 #endif
 
-            asm volatile ("vsetvl %0, %1"
+            asm volatile ("hvsetvl %0, %1"
                     : "=r" (consumed)
                     : "r" (artificial));
 

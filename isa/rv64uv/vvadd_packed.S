@@ -18,7 +18,7 @@ RVTEST_CODE_BEGIN
 	vsetucfg x2, 0x2
 	vsetcfg x2, 3, 1
 loop:
-	vsetvl x4, x1
+	hvsetvl x4, x1
 	la x2, addr
   vmca va1,x2
 	la x3, test

@@ -11,7 +11,7 @@ void vec_sgemm_opt_c(int n, float * result, float * A, float * B)
     asm volatile ("vsetcfg %0" : : "r" (VCFG(0, 8, 0, 1)));
 
     int vlen_result;
-    asm volatile ("vsetvl %0, %1" : "=r" (vlen_result) : "r" (n));
+    asm volatile ("hvsetvl %0, %1" : "=r" (vlen_result) : "r" (n));
 
     void * vpset_vfblockaddr;
     asm volatile ("la %0, sgemm_opt_v_4_4_vpset" : "=r" (vpset_vfblockaddr));
@@ -33,7 +33,7 @@ void vec_sgemm_opt_c(int n, float * result, float * A, float * B)
             int artificial = n;
 #endif
 
-            asm volatile ("vsetvl %0, %1" : "=r" (consumed) : "r" (artificial));
+            asm volatile ("hvsetvl %0, %1" : "=r" (consumed) : "r" (artificial));
 
             // C rows 1, 2, 3, 4
             asm volatile ("vmca va0, %0" : : "r" (&result[i*n+k]));

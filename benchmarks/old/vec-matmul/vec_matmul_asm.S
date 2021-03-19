@@ -142,7 +142,7 @@ vec_loopi:
         slli rI4, rI, 2
         
         sub rNum, rN, rI  # book keeping 
-        vsetvl rVlen, rNum   # set the vector length
+        hvsetvl rVlen, rNum   # set the vector length
                              # rN is the desired (application) vector length
                              # rVlen is what vector length we were given
 
@@ -300,7 +300,7 @@ transpose:
         move rI, zero
 tloopi:
         sub   rNum, rLda, rI 
-        vsetvl rVlen, rNum
+        hvsetvl rVlen, rNum
 
         move rJ, zero
 tloopj:

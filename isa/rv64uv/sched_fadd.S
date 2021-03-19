@@ -15,7 +15,7 @@ RVTEST_CODE_BEGIN
 
   vsetcfg 1,1
   li a3,128
-  vsetvl a3,a3
+  hvsetvl a3,a3
 
   la a5,src
   ld a6,0(a5)

@@ -37,7 +37,7 @@ test_ ## testnum: \
   li a3, VCFG(nxreg, 0, 0, 1); \
   vsetcfg a3; \
   li a3,2048; \
-  vsetvl a3,a3; \
+  hvsetvl a3,a3; \
   li a4, val1; \
   vmcs vs1, a4; \
   li a4, val2; \
@@ -231,7 +231,7 @@ test_ ## testnum: \
   li a3, VCFG(nxreg, 0, 0, npreg); \
   vsetcfg a3; \
   li a3,2048; \
-  vsetvl a3,a3; \
+  hvsetvl a3,a3; \
   la a5, 3f; vmca va3, a5; \
   la a5, 4f; vmca va4, a5; \
   la a5, 5f; vmca va5, a5; \

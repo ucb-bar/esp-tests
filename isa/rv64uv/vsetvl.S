@@ -1,10 +1,10 @@
 # See LICENSE for license details.
 
 #*****************************************************************************
-# vsetvl.S
+# hvsetvl.S
 #-----------------------------------------------------------------------------
 #
-# Test vsetvl instruction.
+# Test hvsetvl instruction.
 #
 
 #include "riscv_test.h"

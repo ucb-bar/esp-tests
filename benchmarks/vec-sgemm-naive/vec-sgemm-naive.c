@@ -25,7 +25,7 @@ void vec_sgemm_naive_c(int n, float * result, float * A, float * B) {
 #else
                 int artificial = n;
 #endif
-                asm volatile ("vsetvl %0, %1"
+                asm volatile ("hvsetvl %0, %1"
                         : "=r" (consumed)
                         : "r" (artificial));
 

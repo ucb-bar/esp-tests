@@ -17,7 +17,7 @@ vec_vvadd_asm:
     li a4, VCFG(3, 0, 0, 1)
     vsetcfg a4
 stripmine:
-    vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
+    hvsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
     vmca va0, a2
     vmca va1, a3
     vmca va2, a1

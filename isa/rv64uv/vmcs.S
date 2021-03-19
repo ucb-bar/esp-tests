@@ -15,7 +15,7 @@ RVTEST_CODE_BEGIN
 
   vsetcfg 3,1
   li a2,2048
-  vsetvl a2,a2
+  hvsetvl a2,a2
 
   li a3,-1
   vmcs vs2,a3

@@ -15,7 +15,7 @@ RVTEST_CODE_BEGIN
 
   vsetcfg 4,4
   li a3,33
-  vsetvl a3,a3
+  hvsetvl a3,a3
 
   la a3, vcjump
   vmcs vs1, a3

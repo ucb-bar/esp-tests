@@ -17,7 +17,7 @@ RVTEST_CODE_BEGIN
 
   vsetcfg 32,1
   li a3,4
-  vsetvl a3,a3
+  hvsetvl a3,a3
 
 .align 3
 vtcode1:
@@ -49,7 +49,7 @@ stvec_handler:
   # make sure vector unit has cleared out
   vsetcfg 32,1
   li a3,4
-  vsetvl a3,a3
+  hvsetvl a3,a3
 
   la a3,src1
   vmca va2,a3
