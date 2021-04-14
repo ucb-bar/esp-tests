@@ -15,7 +15,7 @@ rv64ud_sc_svec_tests = \
 rv64ud_p_tests = $(addprefix rv64ud-p-, $(rv64ud_sc_tests))
 rv64ud_v_tests = $(addprefix rv64ud-v-, $(rv64ud_sc_tests))
 
-ifeq($(USE_HWACHA),true)
+ifeq ($(USE_HWACHA),true)
 rv64ud_p_vec_tests = $(addprefix rv64ud-p-vec-, $(rv64ud_sc_vec_tests))
 rv64ud_pt_vec_tests = $(addprefix rv64ud-pt-vec-, $(rv64ud_sc_vec_tests))
 rv64ud_v_vec_tests = $(addprefix rv64ud-v-vec-, $(rv64ud_sc_vec_tests))
