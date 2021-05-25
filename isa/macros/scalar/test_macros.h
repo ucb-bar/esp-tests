@@ -114,7 +114,7 @@ test_ ## testnum: \
       hvsetvl x1,x1; \
     )
 
-#define TEST_VSETVL( testnum, nvvd, nvp, vl, result ) \
+#define TEST_HVSETVL( testnum, nvvd, nvp, vl, result ) \
     TEST_CASE( testnum, x1, result, \
       li x1, VCFG(nvvd,0,0,nvp); \
       vsetcfg x1; \
