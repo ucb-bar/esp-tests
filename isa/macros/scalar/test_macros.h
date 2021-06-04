@@ -103,7 +103,7 @@ test_ ## testnum: \
     TEST_CASE( testnum, x1, result, \
       vsetcfg (nvvd),(nvp); \
       li x1, vl; \
-      hvsetvl x1,x1; \
+      vsetvl x1,x1; \
     )
 
 #define TEST_VVCFG( testnum, nvvd, nvp, vl, result ) \
@@ -111,15 +111,15 @@ test_ ## testnum: \
       li x1, VCFG(nvvd,0,0,nvp); \
       vsetcfg x1; \
       li x1, vl; \
-      hvsetvl x1,x1; \
+      vsetvl x1,x1; \
     )
 
-#define TEST_HVSETVL( testnum, nvvd, nvp, vl, result ) \
+#define TEST_VSETVL( testnum, nvvd, nvp, vl, result ) \
     TEST_CASE( testnum, x1, result, \
       li x1, VCFG(nvvd,0,0,nvp); \
       vsetcfg x1; \
       li x1, vl; \
-      hvsetvl x1, x1; \
+      vsetvl x1, x1; \
     )
 
 #-----------------------------------------------------------------------
@@ -745,7 +745,7 @@ test_ ## testnum: \
 test_ ## testnum: \
   vsetcfg nxreg,npreg; \
   li a3,2048; \
-  hvsetvl a3,a3; \
+  vsetvl a3,a3; \
   li a1,input; \
   vmcs vs3, a1; \
   la a4,src1; \
@@ -794,7 +794,7 @@ next ## testnum :
   csrw stvec, a0; \
   vsetcfg nxreg, nfreg; \
   li a0, 4; \
-  hvsetvl a0, a0; \
+  vsetvl a0, a0; \
   la a0, src1; \
   vmca va0, a0; \
   la a1, src2; \
@@ -831,7 +831,7 @@ handler ## testnum: \
   bne a0,a1,fail; \
   vsetcfg 32,1; \
   li a0,4; \
-  hvsetvl a0,a0; \
+  vsetvl a0,a0; \
   la a0, src1; \
   vmca va0, a0; \
   la a1, src2; \

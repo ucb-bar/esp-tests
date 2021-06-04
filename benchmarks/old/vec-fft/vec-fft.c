@@ -35,7 +35,7 @@ void fft(fftval_t workspace_real[], fftval_t workspace_imag[],
     #error wat
   #endif
 #endif
-  asm volatile ("hvsetvl %[gvl], %[nvl]" : [gvl]"=r"(given_vl) : [nvl]"r"(num_stage_ops));
+  asm volatile ("vsetvl %[gvl], %[nvl]" : [gvl]"=r"(given_vl) : [nvl]"r"(num_stage_ops));
   asm volatile ("fence"); // Make sure prefilling of workspace is complete
 
   for(int stage = 0; stage < logfftsize; stage++)
@@ -50,7 +50,7 @@ void fft(fftval_t workspace_real[], fftval_t workspace_imag[],
     {
       // Setup new vector length for this stripmining pass
       const int needed_vl = num_stage_ops - lane_start;
-      asm volatile ("hvsetvl %[gvl], %[nvl]" : [gvl]"=r"(given_vl) : [nvl]"r"(needed_vl));
+      asm volatile ("vsetvl %[gvl], %[nvl]" : [gvl]"=r"(given_vl) : [nvl]"r"(needed_vl));
       
 #if defined(FFT_FIXED)
       // First VF block to have vector unit determine what op it is doing

@@ -19,7 +19,7 @@ vec_sdaxpy_asm:
     fmv.x.d a4, fa0
     vmcs vs1, a4
 stripmine:
-    hvsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
+    vsetvl t0, a0 #a0 is requested vec len, actual is placed in t0
     vmca va0, a1
     vmca va1, a2
     la t5, sdaxpy_v

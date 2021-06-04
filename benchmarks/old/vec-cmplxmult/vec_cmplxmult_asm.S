@@ -98,7 +98,7 @@ vt_cmplxmult_asm:
 stripmineloop:
 
          # ADD YOUR CODE HERE....
-        hvsetvl rVlen, rN   # set the vector length
+        vsetvl rVlen, rN   # set the vector length
                            # rN is the desired (application) vector length
                            # rVLen is what vector length we were given
 

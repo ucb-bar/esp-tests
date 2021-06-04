@@ -4,7 +4,7 @@
 
 rv64uv_sc_tests = \
 	wakeup fence \
-	vsetcfg hvsetvl keepcfg \
+	vsetcfg vsetvlh keepcfg \
 	vmca vmcs \
 	vssd vssw vssh vssb vlsd vlsw vlsh vlsb vlswu vlshu vlsbu \
 	vsad vsaw vsah vsab vlad vlaw vlah vlab vlawu vlahu vlabu \
@@ -31,7 +31,7 @@ rv64uv_sc_vec_tests = \
 	 \
 
 rv64uv_p_tests = $(addprefix rv64uv-p-, $(rv64uv_sc_tests))
-rv64uv_v_tests = $(addprefix rv64uv-v-, $(filter-out vsetcfgi vsetcfg hvsetvl,$(rv64uv_sc_tests))) #FIXME: fix long tests in v env
-rv64uv_vp_tests = $(addprefix rv64uv-vp-, $(filter-out vsetcfgi vsetcfg hvsetvl,$(rv64uv_sc_tests))) #FIXME: fix long tests in v env
+rv64uv_v_tests = $(addprefix rv64uv-v-, $(filter-out vsetcfgi vsetcfg vsetvlh,$(rv64uv_sc_tests))) #FIXME: fix long tests in v env
+rv64uv_vp_tests = $(addprefix rv64uv-vp-, $(filter-out vsetcfgi vsetcfg vsetvlh,$(rv64uv_sc_tests))) #FIXME: fix long tests in v env
 
 spike_tests += $(rv64uv_p_tests) $(rv64uv_vp_tests) $(rv64uv_v_tests)

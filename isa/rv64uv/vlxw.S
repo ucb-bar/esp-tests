@@ -16,7 +16,7 @@ RVTEST_CODE_BEGIN
   li a4, VCFG(2,3,0,1)
   vsetcfg a4
   li a4,512
-  hvsetvl a4,a4
+  vsetvl a4,a4
 
   la a5,src
   vmcs vs2,a5

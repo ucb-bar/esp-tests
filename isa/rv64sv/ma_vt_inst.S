@@ -15,7 +15,7 @@ RVTEST_CODE_BEGIN
 
   vsetcfg 32,1
   li a3,4
-  hvsetvl a3,a3
+  vsetvl a3,a3
 
 1:auipc a0,%pcrel_hi(vtcode1+2)
   vf %pcrel_lo(1b)(a0)
@@ -49,7 +49,7 @@ stvec_handler:
   # make sure vector unit has cleared out
   vsetcfg 32,1
   li a3,4
-  hvsetvl a3,a3
+  vsetvl a3,a3
 
   la a3,src1
   vmca va2,a3

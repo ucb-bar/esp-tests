@@ -45,31 +45,31 @@ RVTEST_CODE_BEGIN
 
   # check default hw vector length, which is 32
   li a3, 8
-  hvsetvl a3, a3
+  vsetvl a3, a3
   li a0, 8
   li TESTNUM, 6
   bne a3, a0, fail
 
   # this is check is dependent on HW size
   #li a3, 9
-  #hvsetvl a3, a3
+  #vsetvl a3, a3
   #li a0, 8
   #li TESTNUM, 7
   #bne a3, a0, fail
 
   li a3, 7
-  hvsetvl a3, a3
+  vsetvl a3, a3
   li a0, 7
   li TESTNUM, 8
   bne a3, a0, fail
 
   # now do some vector stuff without vsetcfg
-  hvsetvl x0, x0
+  vsetvl x0, x0
 
   li a3, 4
   la a4,src1
   la a5,src2
-  hvsetvl a3, a3
+  vsetvl a3, a3
   vmca va2,a4
   vmca va3,a5
   la a5,dest
@@ -101,7 +101,7 @@ RVTEST_CODE_BEGIN
 
   # test app vl zero again
   li a3, 0
-  hvsetvl a3, a3
+  vsetvl a3, a3
 
   la a3,src1
   la a4,src2

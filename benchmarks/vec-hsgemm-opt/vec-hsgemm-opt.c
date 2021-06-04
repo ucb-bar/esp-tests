@@ -24,7 +24,7 @@ void vec_hsgemm_opt_c(int n, uint16_t * result, uint16_t * A, uint16_t * B) {
             int artificial = n;
 #endif
 
-            asm volatile ("hvsetvl %0, %1"
+            asm volatile ("vsetvl %0, %1"
                     : "=r" (consumed)
                     : "r" (artificial));
 
