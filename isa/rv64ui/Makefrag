@@ -34,6 +34,8 @@ rv64ui_sc_vec_tests = \
 
 rv64ui_p_tests = $(addprefix rv64ui-p-, $(rv64ui_sc_tests))
 rv64ui_v_tests = $(addprefix rv64ui-v-, $(rv64ui_sc_tests))
+
+ifeq ($(USE_HWACHA),true)
 rv64ui_p_svec_tests = $(addprefix rv64ui-p-svec-, $(rv64ui_sc_vec_tests))
 rv64ui_pt_svec_tests = $(addprefix rv64ui-pt-svec-, $(rv64ui_sc_vec_tests))
 rv64ui_v_svec_tests = $(addprefix rv64ui-v-svec-, $(rv64ui_sc_vec_tests))
@@ -44,3 +46,5 @@ rv64ui_v_vec_tests = $(addprefix rv64ui-v-vec-, $(rv64ui_sc_vec_tests))
 rv64ui_vp_vec_tests = $(addprefix rv64ui-vp-vec-, $(rv64ui_sc_vec_tests))
 
 spike_tests += $(rv64ui_p_tests) $(rv64ui_v_tests) $(rv64ui_p_vec_tests) $(rv64ui_vp_vec_tests) $(rv64ui_v_vec_tests) $(rv64ui_p_svec_tests) $(rv64ui_vp_svec_tests) $(rv64ui_v_svec_tests)
+
+endif
