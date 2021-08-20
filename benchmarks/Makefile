@@ -48,6 +48,8 @@ bmarks = \
 	pmp \
 	conv3x3 \
 	vec-conv3x3 \
+	sconv3x3 \
+	vec-sconv3x3 \
 
 #--------------------------------------------------------------------
 # Build rules
