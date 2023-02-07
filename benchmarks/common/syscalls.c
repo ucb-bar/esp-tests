@@ -33,9 +33,30 @@ static uintptr_t syscall(uintptr_t which, uint64_t arg0, uint64_t arg1, uint64_t
   return magic_mem[0];
 }
 
-#define NUM_COUNTERS 2
+#define NUM_COUNTERS 16
 static uintptr_t counters[NUM_COUNTERS];
-static char* counter_names[NUM_COUNTERS];
+static char* counter_names[NUM_COUNTERS] = {
+  "",
+  "",
+  "loads",
+  "stores",
+  "I$ miss",
+  "D$ regular miss",
+  "D$ prefetch miss",
+  "D$ release",
+  "ITLB miss",
+  "DTLB miss",
+  "L2 TLB miss",
+  "branches",
+  "mispredicts",
+  "load-use interlock",
+  "I$ blocked",
+  "D$ blocked",
+};
+
+#define HPM_EVENTSET_BITS       8
+#define HPM_EVENTSET_MASK       ((1U << HPM_EVENTSET_BITS) - 1)
+#define HPM_EVENT(event, set)   ((1U << ((event) + HPM_EVENTSET_BITS)) | ((set) & HPM_EVENTSET_MASK))
 
 void setStats(int enable)
 {
@@ -47,8 +68,61 @@ void setStats(int enable)
     counters[i++] = csr; \
   } while (0)
 
+  if (enable) {
+    // Initialize Rocket hardware performance monitor
+    write_csr(mhpmevent3,  HPM_EVENT(1, 0)); // loads
+    write_csr(mhpmevent4,  HPM_EVENT(2, 0)); // stores
+
+    write_csr(mhpmevent5,  HPM_EVENT(0, 2)); // I$ miss
+    write_csr(mhpmevent6,  HPM_EVENT(1, 2)); // D$ regular miss
+    write_csr(mhpmevent16, HPM_EVENT(6, 2)); // D$ prefetch miss
+    write_csr(mhpmevent7,  HPM_EVENT(2, 2)); // D$ release
+    write_csr(mhpmevent8,  HPM_EVENT(3, 2)); // ITLB miss
+    write_csr(mhpmevent9,  HPM_EVENT(4, 2)); // DTLB miss
+    write_csr(mhpmevent10, HPM_EVENT(5, 2)); // L2 TLB miss
+
+    write_csr(mhpmevent11, HPM_EVENT(6, 0)); // branches
+    write_csr(mhpmevent12, HPM_EVENT(5, 1)); // branch misprediction
+
+    write_csr(mhpmevent13, HPM_EVENT(0, 1)); // load-use interlock
+    write_csr(mhpmevent14, HPM_EVENT(3, 1)); // I$ blocked
+    write_csr(mhpmevent15, HPM_EVENT(4, 1)); // D$ blocked
+
+    counters[2] = read_csr(hpmcounter3);
+    counters[3] = read_csr(hpmcounter4);
+    counters[4] = read_csr(hpmcounter5);
+    counters[5] = read_csr(hpmcounter6);
+    counters[6] = read_csr(hpmcounter16);
+    counters[7] = read_csr(hpmcounter7);
+    counters[8] = read_csr(hpmcounter8);
+    counters[9] = read_csr(hpmcounter9);
+    counters[10] = read_csr(hpmcounter10);
+    counters[11] = read_csr(hpmcounter11);
+    counters[12] = read_csr(hpmcounter12);
+    counters[13] = read_csr(hpmcounter13);
+    counters[14] = read_csr(hpmcounter14);
+    counters[15] = read_csr(hpmcounter15);
+  }
+
   READ_CTR(mcycle);
   READ_CTR(minstret);
+
+  if (!enable) {
+    counters[2] = read_csr(hpmcounter3) - counters[2];
+    counters[3] = read_csr(hpmcounter4) - counters[3];
+    counters[4] = read_csr(hpmcounter5) - counters[4];
+    counters[5] = read_csr(hpmcounter6) - counters[5];
+    counters[6] = read_csr(hpmcounter16) - counters[6];
+    counters[7] = read_csr(hpmcounter7) - counters[7];
+    counters[8] = read_csr(hpmcounter8) - counters[8];
+    counters[9] = read_csr(hpmcounter9) - counters[9];
+    counters[10] = read_csr(hpmcounter10) - counters[10];
+    counters[11] = read_csr(hpmcounter11) - counters[11];
+    counters[12] = read_csr(hpmcounter12) - counters[12];
+    counters[13] = read_csr(hpmcounter13) - counters[13];
+    counters[14] = read_csr(hpmcounter14) - counters[14];
+    counters[15] = read_csr(hpmcounter15) - counters[15];
+  }
 
 #undef READ_CTR
 }
@@ -114,8 +188,7 @@ void _init(int cid, int nc)
   char buf[NUM_COUNTERS * 32] __attribute__((aligned(64)));
   char* pbuf = buf;
   for (int i = 0; i < NUM_COUNTERS; i++)
-    if (counters[i])
-      pbuf += sprintf(pbuf, "%s = %d\n", counter_names[i], counters[i]);
+    pbuf += sprintf(pbuf, "%s = %d\n", counter_names[i], counters[i]);
   if (pbuf != buf)
     printstr(buf);
 
